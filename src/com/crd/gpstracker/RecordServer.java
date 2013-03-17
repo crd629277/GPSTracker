@@ -23,6 +23,7 @@ public class RecordServer extends Service {
         bindLocationListener();
     }
 
+    
 
     /**
      * 绑定 GPS，获得地理位置等信息
