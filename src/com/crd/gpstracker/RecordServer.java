@@ -1,6 +1,6 @@
 package com.crd.gpstracker;
 
-import com.crd.gpstracker.util.LocationListener;
+import com.crd.gpstracker.util.Location;
 
 import android.app.Service;
 import android.content.Context;
@@ -14,12 +14,11 @@ public class RecordServer extends Service {
     private final String TAG = RecordServer.class.getName();
 
     LocationManager locManager;
-    LocationListener locListener;
+    Location loc;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         bindLocationListener();
     }
 
@@ -29,27 +28,24 @@ public class RecordServer extends Service {
      * 绑定 GPS，获得地理位置等信息
      */
     public void bindLocationListener() {
-
         locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locListener = new LocationListener(this.getApplicationContext());
+        loc = new Location(this.getApplicationContext());
 
         Log.e(TAG, "Start location listener");
-        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, loc);
     }
 
 
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-
         Log.e(TAG, "Start the server");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        locManager.removeUpdates(locListener);
+        locManager.removeUpdates(loc);
     }
 
     @Override
@@ -57,3 +53,4 @@ public class RecordServer extends Service {
         return null;
     }
 }
+

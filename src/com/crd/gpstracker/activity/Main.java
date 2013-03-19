@@ -44,8 +44,14 @@ public class Main extends Activity implements View.OnClickListener {
         this.context = this.getApplicationContext();
         db = new Database(context);
 
+        recordServerIntent = new Intent(Main.this, RecordServer.class);
+        startService(recordServerIntent);
         bindElements();
+        initialViewUpdater();
+    }
 
+
+    private void initialViewUpdater() {
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -53,14 +59,10 @@ public class Main extends Activity implements View.OnClickListener {
                 handle.sendMessage(new Message());
             }
         }, 0, 1000);
-
-        recordServerIntent = new Intent(Main.this, RecordServer.class);
-        startService(recordServerIntent);
     }
 
 
     private void bindElements() {
-
 
     }
 
@@ -68,7 +70,7 @@ public class Main extends Activity implements View.OnClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.main, menu);
         return true;
     }
 
@@ -78,54 +80,73 @@ public class Main extends Activity implements View.OnClickListener {
             case R.id.stop:
                 stopService(recordServerIntent);
                 finish();
+                return true;
+
+            case R.id.records:
+                Intent t = new Intent(Main.this, Records.class);
+                startActivity(t);
+                return true;
+
             default:
                 return false;
         }
     }
 
 
-    private void updateView() {
+    private static double maxSpeed = 0.0;
 
-        Cursor result = null;
+    private void updateView() {
+        String resultString = "";
+
         try {
+            Cursor result = null;
             result = db.getReadableDatabase().rawQuery(
                 "SELECT * FROM location WHERE del = 0 ORDER BY time DESC LIMIT 1", null);
+
+            if (result.getCount() <= 0) {
+                resultString = getResources().getString(R.string.is_empty);
+            } else {
+
+                double latitude, longitude, speed, bearing, altitude, accuracy;
+                String timeStamp;
+                result.moveToFirst();
+
+                latitude = result.getDouble(result.getColumnIndex("latitude"));
+                longitude = result.getDouble(result.getColumnIndex("longitude"));
+
+                speed = result.getDouble(result.getColumnIndex("speed"));
+                if (maxSpeed < speed) {
+                    maxSpeed = speed;
+                }
+
+                bearing = result.getDouble(result.getColumnIndex("bearing"));
+                altitude = result.getDouble(result.getColumnIndex("altitude"));
+                accuracy = result.getDouble(result.getColumnIndex("accuracy"));
+
+                timeStamp = result.getString(result.getColumnIndex("time"));
+                timeStamp = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+                    .format(new java.util.Date(Long.parseLong(timeStamp)));
+
+                resultString = String.format(
+                    "count %d, \n"
+                        + "latitude %.3f, \n"
+                        + "longitude %.3f, \n"
+                        + "speed %.2f / %.2f, \n"
+                        + "bearing %.2f,\n"
+                        + "altitude %.2f,\n"
+                        + "accuracy %.2f,\n"
+                        + "time %s\n",
+                    db.getValvedCount(), latitude, longitude, speed, maxSpeed, bearing, altitude, accuracy, timeStamp);
+
+                resultString += String.format("update %s",
+                    new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+
+            }
+
+            result.close();
         } catch (SQLiteException e) {
-            Log.e(TAG, e.getMessage());
+            resultString = e.getMessage();
         }
-
-        if (result.getCount() <= 0) {
-            return;
-        }
-
-        double latitude, longitude, speed, bearing, altitude, accuracy;
-        String timeStamp;
-        result.moveToFirst();
-        latitude = result.getDouble(result.getColumnIndex("latitude"));
-        longitude = result.getDouble(result.getColumnIndex("longitude"));
-        speed = result.getDouble(result.getColumnIndex("speed"));
-        bearing = result.getDouble(result.getColumnIndex("bearing"));
-
-        altitude = result.getDouble(result.getColumnIndex("altitude"));
-        accuracy = result.getDouble(result.getColumnIndex("accuracy"));
-
-        timeStamp = result.getString(result.getColumnIndex("time"));
-        timeStamp = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-            .format(new java.util.Date(Long.parseLong(timeStamp)));
-
-        String resultString = String.format(
-            "count %d, \n"
-                + "latitude %.3f, \n"
-                + "longitude %.3f, \n"
-                + "speed %.2f, \n"
-                + "bearing %.2f,\n"
-                + "altitude %.2f,\n"
-                + "accuracy %.2f,\n"
-                + "time %s\n",
-            db.getValvedCount(), latitude, longitude, speed, bearing, altitude, accuracy, timeStamp);
-
-        resultString += String.format("update %s",
-            new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 
         TextView t = (TextView) findViewById(R.id.status);
         t.setText(resultString);
@@ -136,9 +157,18 @@ public class Main extends Activity implements View.OnClickListener {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    public void onResume() {
+        super.onResume();
+        if (timer != null) {
+            timer.cancel();
+        }
+        initialViewUpdater();
+    }
+
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
+
         if (db != null) {
             db.close();
         }
