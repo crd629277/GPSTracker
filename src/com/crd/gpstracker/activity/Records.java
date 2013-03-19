@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,8 +31,8 @@ import android.widget.Toast;
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.Database;
 
-public class Records extends Activity {
-	private static final int HIDE_PROGRESS_DIALOG = 0x1;
+public class Records extends BaseActivity {
+    public static final int HIDE_PROGRESS_DIALOG = 0x1;
     private final String TAG = Records.class.getName();
     private Database db;
     private Context context;
@@ -41,6 +42,7 @@ public class Records extends Activity {
     protected ArrayList<HashMap<String, String>> storageFileHashList = new ArrayList<HashMap<String, String>>();
     private SimpleAdapter listViewAdapter;
     private ProgressDialog progressDialog;
+    private Thread saveKMLFileThread;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,13 +87,15 @@ public class Records extends Activity {
         for (File dbFile : storageFileList) {
             try {
                 Database d = new Database(context, dbFile);
-                HashMap<String, String> map = new HashMap<String, String>();
+                if (d.getValvedCount() > 0) {
+                    HashMap<String, String> map = new HashMap<String, String>();
 
-                map.put("database", dbFile.getName());
-                map.put("count", String.format("%d records", d.getValvedCount()));
-                map.put("absolute", dbFile.getAbsolutePath());
+                    map.put("database", dbFile.getName());
+                    map.put("count", String.format("%d records", d.getValvedCount()));
+                    map.put("absolute", dbFile.getAbsolutePath());
 
-                storageFileHashList.add(map);
+                    storageFileHashList.add(map);
+                }
                 d.close();
             } catch (SQLiteException e) {
                 Log.e(TAG, e.getMessage());
@@ -121,45 +125,40 @@ public class Records extends Activity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        HashMap<String, String> map = storageFileHashList.get(info.position);
+        final HashMap<String, String> map = storageFileHashList.get(info.position);
         String absolutePath = map.get("absolute");
 
         db = new Database(context, new File(absolutePath));
         switch (item.getItemId()) {
             case R.id.export:
-                String name = map.get("database");
-                String description = "";
-                final KMLHelper kml = new KMLHelper(name, description, db.getValvedData());
-
-                String basePath = getString(R.string.app_database_store_path);
-                final File kmlFile = new File(basePath + "/" + name.replace(".sqlite", ".kml"));
                 progressDialog.show();
-                
-                new Thread(
-                	new Runnable() {
-						
-						@Override
-						public void run() {
-							try {
-			                    kml.saveKMLFile(kmlFile.getAbsoluteFile());
-			                    
-			                    Message message = new Message();
-			                    message.what = HIDE_PROGRESS_DIALOG;
-			                    handle.sendMessage(message);
-			                    
-			                    Toast.makeText(context,
-			                        String.format(getString(R.string.save_kml_finished), kmlFile.getAbsolutePath()
-			                        ), Toast.LENGTH_LONG).show();
-			                } catch (IOException e) {
-			                    Log.e(TAG, e.getMessage());
-			                }
-							
-						}
-					}
-                ).run();
+                saveKMLFileThread = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            String name = map.get("database");
+                            String description = "";
 
-                
-                //
+                            // @todo convert cursor into list
+                            Cursor data = db.getValvedData();
+                            final KMLHelper kml = new KMLHelper(name, description, data);
+
+                            String basePath = getString(R.string.app_database_store_path);
+                            File kmlFile = new File(basePath + "/" + name.replace(".sqlite", ".kml"));
+                            kml.saveKMLFile(kmlFile.getAbsoluteFile());
+
+                            Message message = new Message();
+                            message.what = HIDE_PROGRESS_DIALOG;
+                            handle.sendMessage(message);
+
+                            data.close();
+                        } catch (IOException e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+
+                };
+                saveKMLFileThread.start();
                 return true;
             /**
              * Mark as deleted not really delete the data.
@@ -190,18 +189,21 @@ public class Records extends Activity {
 
                 return true;
         }
+        db.close();
         return false;
     }
 
-    
     private Handler handle = new Handler() {
-    	public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case HIDE_PROGRESS_DIALOG:
-				progressDialog.dismiss();
-				break;
-			}
-		}
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case HIDE_PROGRESS_DIALOG:
+                    Toast.makeText(context,
+                        getString(R.string.save_kml_finished), Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                    break;
+            }
+        }
     };
 
     @Override
@@ -212,4 +214,3 @@ public class Records extends Activity {
         }
     }
 }
-

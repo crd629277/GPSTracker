@@ -1,7 +1,7 @@
 package com.crd.gpstracker;
 
-import com.crd.gpstracker.util.Location;
-
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +9,14 @@ import android.location.LocationManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.crd.gpstracker.util.Location;
+
 public class RecordServer extends Service {
 
     private final String TAG = RecordServer.class.getName();
 
+    private static final int LED_NOTIFICATION_ID = 1;
+    NotificationManager notificationManager;
     LocationManager locManager;
     Location loc;
 
@@ -20,9 +24,23 @@ public class RecordServer extends Service {
     public void onCreate() {
         super.onCreate();
         bindLocationListener();
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
-    
+
+    private void turnOnLED() {
+        Notification notif = new Notification();
+        notif.ledARGB = 0xFFff0000;
+        notif.flags = Notification.FLAG_SHOW_LIGHTS;
+        notif.ledOnMS = 1000;
+        notif.ledOffMS = 1500;
+        notificationManager.notify(LED_NOTIFICATION_ID, notif);
+    }
+
+    private void turnOffLED() {
+        notificationManager.cancel(LED_NOTIFICATION_ID);
+    }
+
 
     /**
      * 绑定 GPS，获得地理位置等信息
@@ -39,12 +57,13 @@ public class RecordServer extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-        Log.e(TAG, "Start the server");
+        turnOnLED();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        turnOffLED();
         locManager.removeUpdates(loc);
     }
 
@@ -53,4 +72,3 @@ public class RecordServer extends Service {
         return null;
     }
 }
-

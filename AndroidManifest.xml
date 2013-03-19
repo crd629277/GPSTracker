@@ -6,9 +6,14 @@
 
     <uses-sdk android:minSdkVersion="10" />
     
-   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+
 
     <application 
         android:icon="@drawable/ic_launcher"
@@ -32,5 +37,6 @@
             android:label="@string/service_name"
             >
         </service>
+        <meta-data android:value="5148772b56240b5f05002f64" android:name="UMENG_APPKEY"></meta-data>
     </application>
 </manifest>

@@ -1,7 +1,7 @@
 package com.crd.gpstracker.util;
 
 
-import com.crd.gpstracker.dao.Database;
+import java.text.DecimalFormat;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.crd.gpstracker.dao.Database;
 
 public class Location implements android.location.LocationListener {
 
@@ -22,22 +24,24 @@ public class Location implements android.location.LocationListener {
         db = new Database(context).getWritableDatabase();
     }
 
+    private String latitude, longitude;
 
     @Override
     public void onLocationChanged(android.location.Location loc) {
         ContentValues values = new ContentValues();
-        
-//        DecimalFormat format = new DecimalFormat("####.##");
-//        String tmpLongitude = format.format(loc.getLongitude());
-//        String tmpLatitude = format.format(loc.getLatitude());
-//
-//        if (tmpLatitude.equals(latitude) && tmpLongitude.equals(longitude)) {
-//            Log.v(TAG, String.format("The same latitude %f and longitude %f, ignore this.",
-//                loc.getLatitude(), loc.getLongitude()));
-//            return;
-//        }
-//        latitude = tmpLatitude;
-//        longitude = tmpLongitude;
+
+        DecimalFormat formatter = new DecimalFormat("####.###");
+        String tmpLongitude = formatter.format(loc.getLongitude());
+        String tmpLatitude = formatter.format(loc.getLatitude());
+
+        // @todo need new fliter for this feature
+        if (tmpLatitude.equals(latitude) && tmpLongitude.equals(longitude)) {
+            Log.v(TAG, String.format("The same latitude %f and longitude %f, ignore this.",
+                loc.getLatitude(), loc.getLongitude()));
+            return;
+        }
+        latitude = tmpLatitude;
+        longitude = tmpLongitude;
 
         values.put("latitude", loc.getLatitude());
         values.put("longitude", loc.getLongitude());
@@ -47,22 +51,18 @@ public class Location implements android.location.LocationListener {
         values.put("accuracy", loc.getAccuracy());
         values.put("time", loc.getTime());
 
-        // Save to database
         try {
             db.insert("location", null, values);
             Log.v(TAG, String.format("gps record which latitude is %.3f and is longitude %.3f has saved.",
-                    loc.getLatitude(), loc.getLongitude()));
+                loc.getLatitude(), loc.getLongitude()));
         } catch (SQLException e) {
             Log.e(TAG, e.getMessage());
         }
-
-        // Save the last location record
-//        lastLocationRecord = loc;
     }
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override

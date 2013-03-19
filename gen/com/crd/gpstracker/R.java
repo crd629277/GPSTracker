@@ -25,15 +25,17 @@ public final class R {
         public static final int stop=0x7f060006;
     }
     public static final class layout {
-        public static final int main=0x7f030000;
-        public static final int records=0x7f030001;
-        public static final int records_item=0x7f030002;
+        public static final int about=0x7f030000;
+        public static final int main=0x7f030001;
+        public static final int records=0x7f030002;
+        public static final int records_item=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f050000;
         public static final int records=0x7f050001;
     }
     public static final class string {
+        public static final int about_string=0x7f040012;
         public static final int app_database_store_path=0x7f040003;
         public static final int app_name=0x7f040001;
         public static final int btn_cancel=0x7f04000e;
@@ -50,6 +52,7 @@ public final class R {
         public static final int save_kml_finished=0x7f04000f;
         public static final int saving=0x7f040010;
         public static final int service_name=0x7f040002;
+        public static final int still_running=0x7f040011;
         public static final int sure_to_del=0x7f04000c;
     }
 }
