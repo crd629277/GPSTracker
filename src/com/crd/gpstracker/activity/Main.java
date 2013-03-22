@@ -1,16 +1,15 @@
 package com.crd.gpstracker.activity;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,40 +18,75 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crd.gpstracker.R;
-import com.crd.gpstracker.RecordServer;
-import com.crd.gpstracker.dao.Database;
+import com.crd.gpstracker.RecordService;
+import com.crd.gpstracker.RecordService.ServiceBinder;
+import com.crd.gpstracker.dao.Points;
+import com.crd.gpstracker.util.Environment;
 
 public class Main extends BaseActivity {
     private static final String TAG = Main.class.getName();
-    private Intent recordServerIntent;
-    private Database db;
-    private Context context;
     private Timer timer;
+    private static double maxSpeed = 0.0;
 
+    private ArrayList<TextView> textViewsGroup = new ArrayList<TextView>();
+    private Points lastLocationRecord;
+    private static final int MESSAGE_UPDATE_STATE_VIEW = 0x0001;
+
+    public Intent recordServerIntent;
+
+    /**
+     * Handle the records for show the last recorded status.
+     */
     private Handler handle = new Handler() {
+        long visible_flag = 0;
+
         public void handleMessage(Message msg) {
-            updateView();
+            switch (msg.what) {
+                case MESSAGE_UPDATE_STATE_VIEW:
+                    TextView records = (TextView) findViewById(R.id.status);
+                    String statusLabel = getString(R.string.ready);
+
+                    try {
+                        switch (serviceBinder.getStatus()) {
+                            case ServiceBinder.STATUS_RUNNING:
+                                statusLabel = getString(R.string.recording);
+                                break;
+                            case ServiceBinder.STATUS_STOPPED:
+                                statusLabel = getString(R.string.ready);
+                            default:
+                        }
+                        records.setText(statusLabel);
+                        records.setVisibility(++visible_flag % 2 == 0 ? View.INVISIBLE : View.VISIBLE);
+
+                        // update the ui status
+                        updateView();
+                    } catch (NullPointerException e) {
+                        Log.e(TAG, "ServerBinder is null, maybe service is not ready.");
+                    }
+                    break;
+            }
         }
     };
-    private boolean isServerStoped = false;
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-
-        this.context = this.getApplicationContext();
-        db = new Database(context);
-
-        initialViewUpdater();
-
-        recordServerIntent = new Intent(Main.this, RecordServer.class);
-        startService(recordServerIntent);
+    /**
+     * 找到所有的 TextView 元素
+     *
+     * @param v
+     */
+    private void findAllTextView(ViewGroup v) {
+        for (int i = 0; i < v.getChildCount(); i++) {
+            View item = v.getChildAt(i);
+            if (item instanceof TextView) {
+                textViewsGroup.add((TextView) item);
+            } else if (item instanceof ViewGroup) {
+                findAllTextView((ViewGroup) item);
+            }
+        }
     }
 
     private void initialViewUpdater() {
@@ -60,10 +94,124 @@ public class Main extends BaseActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                handle.sendMessage(new Message());
+                Message message = new Message();
+                message.what = MESSAGE_UPDATE_STATE_VIEW;
+                handle.sendMessage(message);
             }
-        }, 0, 1000);
+        }, 1000, 1000);
+
+        // change the font for nice look
+        Typeface face = Typeface.createFromAsset(getAssets(),
+            getString(R.string.default_font));
+        for (int i = 0; i < textViewsGroup.size(); i++) {
+            TextView t = textViewsGroup.get(i);
+            t.setTypeface(face);
+        }
     }
+
+    private void updateView() {
+        // get last record by server binder
+        lastLocationRecord = serviceBinder.getLastRecord();
+
+        for (int i = 0; i < textViewsGroup.size(); i++) {
+            double numberValue = 0;
+            String stringValue = "";
+            TextView textView = textViewsGroup.get(i);
+            int count = lastLocationRecord.getCount();
+            Boolean isrunning = (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING);
+
+            try {
+                switch (textView.getId()) {
+                    case R.id.status:
+                        int stamp = (isrunning) ? R.string.recording : R.string.idle;
+                        stringValue = getString(stamp);
+                        break;
+                    case R.id.records:
+                        if (count > 0) {
+                            stringValue = String.format(getString(R.string.records), count);
+                        } else {
+                            stringValue = getString(R.string.norecords);
+                        }
+                        break;
+                    case R.id.time:
+                        stringValue = new SimpleDateFormat(getString(R.string.time_format)).format(
+                            new Date(isrunning ? lastLocationRecord.getTime() : System.currentTimeMillis()));
+                        break;
+                    case R.id.speed:
+                        double speed = lastLocationRecord.getSpeed();
+                        if (maxSpeed < speed) {
+                            maxSpeed = speed;
+                        }
+
+                        if (maxSpeed != 0.0) {
+                            stringValue = String.format("%.1f(%.1f)", speed, maxSpeed);
+                        } else {
+                            throw new NullPointerException();
+                        }
+                        break;
+                    case R.id.longitude:
+                        numberValue = lastLocationRecord.getLongitude();
+                        break;
+                    case R.id.latitude:
+                        numberValue = lastLocationRecord.getLatitude();
+                        break;
+                    case R.id.bearing:
+                        numberValue = lastLocationRecord.getBearing();
+                        break;
+                    case R.id.altitude:
+                        numberValue = lastLocationRecord.getAltitude();
+                        break;
+                    case R.id.accuracy:
+//                        numberValue = lastLocationRecord.getAccuracy();
+                        stringValue = String.format("%sm/%ds",
+                            sharedPreferences.getString(Preference.GPS_MINDISTANCE,
+                                Preference.DEFAULT_GPS_MINDISTANCE),
+                            Integer.parseInt(sharedPreferences.getString(Preference.GPS_MINTIME,
+                                Preference.DEFAULT_GPS_MINTIME)) / 1000);
+                        break;
+                }
+            } catch (NullPointerException e) {
+                stringValue = getString(R.string.norecords);
+            }
+
+            if (stringValue.length() > 0) {
+                textView.setText(stringValue);
+            } else if (numberValue != 0) {
+                textView.setText(String.format("%.2f", numberValue));
+            }
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem pauseMenuItem = menu.findItem(R.id.pause);
+        MenuItem startMenuItem = menu.findItem(R.id.start);
+        Boolean isRunning = (ServiceBinder.STATUS_RUNNING == serviceBinder.getStatus());
+
+        pauseMenuItem.setEnabled(isRunning ? true : false);
+        startMenuItem.setEnabled(isRunning ? false : true);
+
+        return true;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
+        if (!Environment.isExternalStoragePresent()) {
+            Log.e(TAG, "External storage not presented.");
+            return;
+        }
+
+        recordServerIntent = new Intent(this, RecordService.class);
+        startService(recordServerIntent);
+        bindService(recordServerIntent, serviceConnection, BIND_AUTO_CREATE);
+
+        findAllTextView((ViewGroup) findViewById(R.id.root));
+        initialViewUpdater();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,17 +221,33 @@ public class Main extends BaseActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent t;
+
         switch (item.getItemId()) {
+            case R.id.start:
+                serviceBinder.startRecord();
+                return true;
+
+            case R.id.pause:
+                serviceBinder.stopRecord();
+                return true;
+
             case R.id.stop:
-                isServerStoped = true;
+                serviceBinder.stopRecord();
                 stopService(recordServerIntent);
                 finish();
                 return true;
 
             case R.id.records:
-                Intent t = new Intent(Main.this, Records.class);
+                t = new Intent(Main.this, Records.class);
+                startActivity(t);
+                return true;
+
+            case R.id.configure:
+                t = new Intent(Main.this, Preference.class);
                 startActivity(t);
                 return true;
 
@@ -100,95 +264,15 @@ public class Main extends BaseActivity {
     }
 
 
-    private static double maxSpeed = 0.0;
-
-    private void updateView() {
-        String resultString = "";
-
-        try {
-            Cursor result = null;
-            SQLiteDatabase tmpDb = db.getReadableDatabase();
-            result = tmpDb.rawQuery(
-                "SELECT * FROM location WHERE del = 0 ORDER BY time DESC LIMIT 1", null);
-
-            if (result.getCount() <= 0) {
-                resultString = getResources().getString(R.string.is_empty);
-            } else {
-
-                double latitude, longitude, speed, bearing, altitude, accuracy;
-                String timeStamp;
-                result.moveToFirst();
-
-                latitude = result.getDouble(result.getColumnIndex("latitude"));
-                longitude = result.getDouble(result.getColumnIndex("longitude"));
-
-                speed = result.getDouble(result.getColumnIndex("speed"));
-                if (maxSpeed < speed) {
-                    maxSpeed = speed;
-                }
-
-                bearing = result.getDouble(result.getColumnIndex("bearing"));
-                altitude = result.getDouble(result.getColumnIndex("altitude"));
-                accuracy = result.getDouble(result.getColumnIndex("accuracy"));
-
-                timeStamp = result.getString(result.getColumnIndex("time"));
-                timeStamp = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-                    .format(new java.util.Date(Long.parseLong(timeStamp)));
-
-                resultString = String.format(
-                    "count %d, \n"
-                        + "latitude %.3f, \n"
-                        + "longitude %.3f, \n"
-                        + "speed %.2f / %.2f, \n"
-                        + "bearing %.2f,\n"
-                        + "altitude %.2f,\n"
-                        + "accuracy %.2f,\n"
-                        + "time %s\n",
-                    db.getValvedCount(), latitude, longitude, speed, maxSpeed, bearing, altitude, accuracy, timeStamp);
-
-                resultString += String.format("update %s",
-                    new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-
-            }
-
-            result.close();
-            tmpDb.close();
-        } catch (SQLiteException e) {
-            resultString = e.getMessage();
-        }
-
-        TextView t = (TextView) findViewById(R.id.status);
-        t.setText(resultString);
-    }
-
-//    @Override
-//    public void onClick(View view) {
-//        //To change body of implemented methods use File | Settings | File Templates.
-//    }
-//
-//    public void onResume() {
-//        super.onResume();
-//        if (timer != null) {
-//            timer.cancel();
-//        }
-//        initialViewUpdater();
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//    }
-
     @Override
     public void onDestroy() {
-        if (isServerStoped == false) {
-            Toast.makeText(context, getString(R.string.still_running), Toast.LENGTH_LONG).show();
+        if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
+            Toast.makeText(this, getString(R.string.still_running), Toast.LENGTH_SHORT).show();
         }
-        if (db != null) {
-            db.close();
-        }
+
         timer.cancel();
         super.onDestroy();
     }
 }
+
 

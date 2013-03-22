@@ -1,17 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-    >
-    <TextView
-        android:textSize="18dp"
-        android:padding="5dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#0f0"
-        android:id="@+id/status"
-        android:text="@string/pls_wait"
-        />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-</LinearLayout>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/root"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:padding="20dp" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/status"
+                style="@style/Status.Status" />
+
+            <TextView
+                android:id="@+id/records"
+                style="@style/Status.Records" />
+
+            <TextView
+                android:id="@+id/time"
+                style="@style/Status.Time" />
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:stretchColumns="1" >
+
+            <TableRow>
+
+                <TextView
+                    style="@style/Item.Title"
+                    android:layout_column="1"
+                    android:text="Latitude" />
+
+                <TextView
+                    style="@style/Item.Title"
+                    android:gravity="right"
+                    android:text="Longitude" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/latitude"
+                    style="@style/Item.Content"
+                    android:layout_column="1"
+                    android:text="" />
+
+                <TextView
+                    android:id="@+id/longitude"
+                    style="@style/Item.Content"
+                    android:gravity="right"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/Item.Title"
+                    android:layout_column="1"
+                    android:text="Bearing" />
+
+                <TextView
+                    style="@style/Item.Title"
+                    android:gravity="right"
+                    android:text="Speed(high)" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/bearing"
+                    style="@style/Item.Content"
+                    android:layout_column="1"
+                    android:text="" />
+
+                <TextView
+                    android:id="@+id/speed"
+                    style="@style/Item.Content"
+                    android:gravity="right"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/Item.Title"
+                    android:layout_column="1"
+                    android:text="Altitude" />
+
+                <TextView
+                    style="@style/Item.Title"
+                    android:gravity="right"
+                    android:text="Accuracy" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/altitude"
+                    style="@style/Item.Content"
+                    android:layout_column="1"
+                    android:text="" />
+
+                <TextView
+                    android:id="@+id/accuracy"
+                    style="@style/Item.Content"
+                    android:gravity="right"
+                    android:text="" />
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

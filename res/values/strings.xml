@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, GPSTrackerActivity!</string>
     <string name="app_name">GPSTracker</string>
     <string name="service_name">GPS Tracker Service</string>
-    <string name="app_database_store_path">/mnt/sdcard/gpstracker/</string>
-    <string name="menu_label_stop">Exit</string>
+    <string name="menu_label_stop">Stop &amp; Exit</string>
+    <string name="default_font">chillout.ttf</string>
     <string name="pls_wait">Loading, please wait</string>
-    <string name="is_empty">Today\'s record is empty right now, please wait for a while.</string>
+    <string name="time_format">MM/dd HH:mm:ss</string>
+    <string name="no_description">- none description -</string>
     <string name="export_kml">Export KML</string>
     <string name="delete">Delete</string>
     <string name="has_deleted">%s rows marked as deleted</string>
@@ -17,8 +16,22 @@
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">Cancel</string>
     <string name="save_kml_finished">KML file is ready.</string>
-    <string name="saving">Saving. Please wait...</string>
-    <string name="still_running">GPS Recorder is still running.\n If you wanna to stop recording, open the Menu and select the "Stop" item.</string>
-    <string name="about_string">Winfred</string>
+    <string name="saving">Saving. Please wait.</string>
+    <string name="still_running">GPS Recorder is still running, open the menu to stop recording.</string>
+    <string name="about_string">Author:Winfred \nWeibo: http://weibo.com/chenrongda</string>
+    <string name="initialing">Initialing</string>
+    <string name="recording">Recording</string>
+    <string name="idle">idle</string>
+    <string name="ready">Ready for record</string>
+    <string name="norecords">---</string>
+    <string name="records">%d Points</string>
+    <string name="menu_about">About</string>
+    <string name="menu_configure">Configure</string>
+    <string name="menu_records">Records</string>
+    <string name="menu_pause">Pause</string>
+    <string name="menu_start">Start</string>
+    <string name="not_record_anything">Noes\'t record anything</string>
+    <string name="result_report">Recorded %s points, bye</string>
+    <string name="use_recovery_database_file">Use recovery database file for records</string>
     
 </resources>

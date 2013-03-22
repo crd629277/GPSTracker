@@ -5,38 +5,52 @@
     android:versionName="1.0" >
 
     <uses-sdk android:minSdkVersion="10" />
-    
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
-
-    <application 
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name">
-        <activity android:name=".activity.Main"
-                  android:label="@string/app_name">
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name" >
+        <activity
+            android:name=".activity.Main"
+            android:theme="@style/Window" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.Records"
-           		  android:label="@string/app_name">      
-        	<intent-filter>
-        	    <action android:name="android.intent.action.MAIN"/>
-        	</intent-filter>      
+        <activity
+            android:name=".activity.Records"
+            android:theme="@style/Window">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
         </activity>
+        <activity 
+            android:name=".activity.Preference" android:theme="@style/Window">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
+
         <service
-            android:name="com.crd.gpstracker.RecordServer"
-            android:process=":my_process"
+            android:name=".RecordService"
             android:label="@string/service_name"
-            >
+            android:enabled="true" >
         </service>
-        <meta-data android:value="5148772b56240b5f05002f64" android:name="UMENG_APPKEY"></meta-data>
+
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5148772b56240b5f05002f64" >
+        </meta-data>
     </application>
+
 </manifest>

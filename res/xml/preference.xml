@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Record Options" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="autoStart"
+            android:summaryOff="Manual start record by user"
+            android:summaryOn="Start record on application launched"
+            android:title="Auto Start Record" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="autoClean"
+            android:summary="Note! Uncheck this maybe have many empty record database"
+            android:title="Auto Clean" />
+
+        <ListPreference
+            android:defaultValue="RECORD_BY_TIMES"
+            android:entries="@array/recordByItem"
+            android:entryValues="@array/recordByValues"
+            android:key="recordBy"
+            android:summary="How to save points into each database"
+            android:title="Save Record By" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Environment" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="switchAirplaneMode"
+            android:summary="Switch AirPlane Mode while recording"
+            android:title="AirPlane Mode" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="lightLed"
+            android:summary="Turn on Lightning LED(if have) while recording"
+            android:title="Lightning LED" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="GPS Listener" >
+        <ListPreference
+            android:defaultValue="2000"
+            android:entries="@array/gpsMinTimeValues"
+            android:entryValues="@array/gpsMinTimeValues"
+            android:key="gpsMinTime"
+            android:summary="The minimum time interval for GPS notifications, in milliseconds."
+            android:title="GPS Time Interval" />
+        <ListPreference
+            android:defaultValue="5"
+            android:entries="@array/gpsMinDistanceValues"
+            android:entryValues="@array/gpsMinDistanceValues"
+            android:key="gpsMinDistance"
+            android:summary="The minimum distance interval for notifications, in meters."
+            android:title="GPS Distance Interval" />
+    </PreferenceCategory>
+
+    <!--  -->
+    <!-- led -->
+    <!-- airport -->
+
+</PreferenceScreen>
