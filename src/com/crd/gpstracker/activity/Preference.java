@@ -10,6 +10,7 @@ import com.crd.gpstracker.R;
 public class Preference extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
+	public static final String USER_ORIGENTATION = "orientation";
     public static final String AUTO_START = "autoStart";
     public static final String RECORD_BY = "recordBy";
     public static final String LIGHTNING_LED = "lightLed";
@@ -23,6 +24,7 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
 
     public static final String DEFAULT_GPS_MINTIME = "2000";
     public static final String DEFAULT_GPS_MINDISTANCE = "10";
+    public static final String DEFAULT_USER_ORIENTATION = "portrait";
     private SharedPreferences preferenceManager;
     private static final String TAG = Preference.class.getName();
 

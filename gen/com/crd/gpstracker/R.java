@@ -11,6 +11,7 @@ public final class R {
     public static final class array {
         public static final int gpsMinDistanceValues=0x7f050003;
         public static final int gpsMinTimeValues=0x7f050002;
+        public static final int orientation=0x7f050004;
         public static final int recordByItem=0x7f050000;
         public static final int recordByValues=0x7f050001;
     }
@@ -82,6 +83,7 @@ public final class R {
         public static final int default_font=0x7f070003;
         public static final int delete=0x7f070008;
         public static final int export_kml=0x7f070007;
+        public static final int gps_not_presented=0x7f070024;
         public static final int has_deleted=0x7f070009;
         public static final int idle=0x7f070015;
         public static final int info=0x7f07000a;
@@ -106,6 +108,7 @@ public final class R {
         public static final int saving=0x7f070010;
         public static final int service_name=0x7f070001;
         public static final int still_running=0x7f070011;
+        public static final int storage_not_presented=0x7f070025;
         public static final int sure_to_del=0x7f07000c;
         public static final int time_format=0x7f070005;
         public static final int update_description=0x7f070022;

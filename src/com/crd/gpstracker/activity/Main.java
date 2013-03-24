@@ -9,10 +9,14 @@ import java.util.TimerTask;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
+import android.test.PerformanceTestCase;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +34,7 @@ import com.crd.gpstracker.util.Environment;
 
 public class Main extends BaseActivity {
     private static final String TAG = Main.class.getName();
-    private Timer timer;
+    private Timer timer = null;
     private static double maxSpeed = 0.0;
 
     private ArrayList<TextView> textViewsGroup = new ArrayList<TextView>();
@@ -197,20 +201,44 @@ public class Main extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
 
+        // 判断外界条件
         if (!Environment.isExternalStoragePresent()) {
             Log.e(TAG, "External storage not presented.");
-            return;
+            Toast.makeText(this, getString(R.string.storage_not_presented), Toast.LENGTH_LONG);
+            Intent myIntent = new Intent(Settings.ACTION_MEMORY_CARD_SETTINGS);
+            startActivity(myIntent);
+        }
+        
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        	Log.e(TAG, "GPS not Enabled");
+        	Toast.makeText(this, getString(R.string.gps_not_presented), Toast.LENGTH_SHORT).show();
+        	
+        	Intent myIntent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+        	startActivity(myIntent);
         }
 
         recordServerIntent = new Intent(this, RecordService.class);
         startService(recordServerIntent);
         bindService(recordServerIntent, serviceConnection, BIND_AUTO_CREATE);
 
+        setContentView(R.layout.main);
         findAllTextView((ViewGroup) findViewById(R.id.root));
         initialViewUpdater();
     }
+    
+    @Override
+    public void onStart() {
+		super.onStart();
+		updateOrientation();
+	}
+    
+    @Override
+    public void onResume() {
+		super.onResume();
+		updateOrientation();
+	}
 
 
     @Override
@@ -220,6 +248,21 @@ public class Main extends BaseActivity {
         inflater.inflate(R.menu.main, menu);
         return true;
     }
+    
+    public void updateOrientation() {
+		String userConfOrient = sharedPreferences.getString(Preference.USER_ORIGENTATION, Preference.DEFAULT_USER_ORIENTATION);
+		int orgOrient = getRequestedOrientation();
+		
+		if(userConfOrient.equals(Preference.DEFAULT_USER_ORIENTATION)) {
+			if(orgOrient != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			}
+		} else {
+			if(orgOrient != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			}
+		}
+	}
 
 
     @Override
@@ -266,11 +309,13 @@ public class Main extends BaseActivity {
 
     @Override
     public void onDestroy() {
-        if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
-            Toast.makeText(this, getString(R.string.still_running), Toast.LENGTH_SHORT).show();
-        }
+//        if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
+//            Toast.makeText(this, getString(R.string.still_running), Toast.LENGTH_SHORT).show();
+//        }
 
-        timer.cancel();
+    	if(timer != null) {
+    		timer.cancel();
+    	}
         super.onDestroy();
     }
 }

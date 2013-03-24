@@ -20,7 +20,8 @@
         android:label="@string/app_name" >
         <activity
             android:name=".activity.Main"
-            android:theme="@style/Window" >
+            android:theme="@style/Window" 
+            android:screenOrientation="behind">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,13 +30,16 @@
         </activity>
         <activity
             android:name=".activity.Records"
+            android:screenOrientation="behind"
             android:theme="@style/Window">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity 
-            android:name=".activity.Preference" android:theme="@style/Window">
+            android:name=".activity.Preference" 
+            android:screenOrientation="behind"
+            android:theme="@style/Window">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>

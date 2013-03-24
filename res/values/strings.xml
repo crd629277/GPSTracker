@@ -3,7 +3,7 @@
     <string name="app_name">GPSTracker</string>
     <string name="service_name">GPS Tracker Service</string>
     <string name="menu_label_stop">Stop &amp; Exit</string>
-    <string name="default_font">chillout.ttf</string>
+    <string name="default_font">digital.ttf</string>
     <string name="pls_wait">Loading, please wait</string>
     <string name="time_format">MM/dd HH:mm:ss</string>
     <string name="no_description">- none description -</string>
@@ -36,4 +36,8 @@
     <string name="update_title">Title</string>
     <string name="update_description">Description</string>
     <string name="merge">Merge</string>
+    <string name="gps_not_presented">GPS Not Presented</string>
+    <string name="storage_not_presented">Storage Not Presented</string>
+    
+    
 </resources>

@@ -224,6 +224,10 @@ public class GPSDatabase {
     protected void openDatabase(File databaseFile) throws SQLException {
         boolean isNeedCreateTable = false;
         if (!databaseFile.exists()) {
+        	File parentDir = databaseFile.getParentFile();
+        	if(!parentDir.exists()) {
+        		parentDir.mkdir();
+        	}
             isNeedCreateTable = true;
         }
 
