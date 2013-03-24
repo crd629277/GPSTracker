@@ -2,260 +2,261 @@ package com.crd.gpstracker.activity;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.GPSDatabase;
 import com.crd.gpstracker.util.Environment;
 
 public class Records extends BaseActivity {
-    public static final int HIDE_PROGRESS_DIALOG = 0x1;
-    private final String TAG = Records.class.getName();
-    private Context context;
+	public static final int HIDE_PROGRESS_DIALOG = 0x1;
+	private final String TAG = Records.class.getName();
+	private Context context;
 
-    //
-    private ListView listView;
-    protected File[] storageFileList;
+	//
+	private ListView listView;
+	protected ArrayList<File> storageFileList;
 
-    protected ArrayList<GPSDatabase> gpsDatabaseList;
-    //    private SimpleAdapter listViewAdapter;
-    private ProgressDialog progressDialog;
-//    private Thread saveKMLFileThread;
+	protected ArrayList<GPSDatabase> gpsDatabaseList;
+	// private SimpleAdapter listViewAdapter;
+	private ProgressDialog progressDialog;
 
-    public class GPSDatabaseAdapter extends ArrayAdapter<GPSDatabase> {
-        public GPSDatabaseAdapter(ArrayList<GPSDatabase> values) {
-            super(Records.this, R.layout.records_row, values);
-        }
+	// private Thread saveKMLFileThread;
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            GPSDatabase database = gpsDatabaseList.get(position);
-            File databaseFile = storageFileList[position];
-            GPSDatabase.Meta meta = database.getMeta();
+	public class GPSDatabaseAdapter extends ArrayAdapter<GPSDatabase> {
+		public GPSDatabaseAdapter(ArrayList<GPSDatabase> values) {
+			super(Records.this, R.layout.records_row, values);
+		}
 
-            LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View rowView = inflater.inflate(R.layout.records_row, parent, false);
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			GPSDatabase database = gpsDatabaseList.get(position);
+			File databaseFile = storageFileList.get(position);
+			GPSDatabase.Meta meta = database.getMeta();
 
+			LayoutInflater inflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View rowView = inflater
+					.inflate(R.layout.records_row, parent, false);
 
-            TextView countView = (TextView) rowView.findViewById(R.id.db_records_num);
-            TextView nameView = (TextView) rowView.findViewById(R.id.db_name);
-            TextView descriptionView = (TextView) rowView.findViewById(R.id.description);
-            TextView betweenView = (TextView) rowView.findViewById(R.id.between);
+			TextView countView = (TextView) rowView
+					.findViewById(R.id.db_records_num);
+			TextView nameView = (TextView) rowView.findViewById(R.id.db_name);
+			TextView descriptionView = (TextView) rowView
+					.findViewById(R.id.description);
+			TextView betweenView = (TextView) rowView
+					.findViewById(R.id.between);
 
-            countView.setText(String.valueOf(database.getValvedCount()));
+			countView.setText(String.valueOf(database.getValvedCount()));
 
-            String title = meta.getTitle();
-            if (title.length() <= 0) {
-                title = databaseFile.getName().replace(Environment.SQLITE_DATABASE_FILENAME_EXT, "");
-            }
-            nameView.setText(title);
+			String title = meta.getTitle();
+			if (title.length() <= 0) {
+				title = databaseFile.getName().replace(
+						Environment.SQLITE_DATABASE_FILENAME_EXT, "");
+			}
+			nameView.setText(title);
 
-            String description = meta.getDescription();
-            if (description.length() <= 0) {
-                description = getString(R.string.no_description);
-            }
-            descriptionView.setText(description);
+			String description = meta.getDescription();
+			if (description.length() <= 0) {
+				description = getString(R.string.no_description);
+			}
+			descriptionView.setText(description);
 
-            SimpleDateFormat formatter = new SimpleDateFormat(getString(R.string.time_format));
-            Date startTime = meta.getStartTime();
-            Date stopTime = meta.getStopTime();
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					getString(R.string.time_format));
+			Date startTime = meta.getStartTime();
+			Date stopTime = meta.getStopTime();
 
-            String between = String.format("%s%s",
-                startTime != null ? formatter.format(startTime) : "",
-                stopTime != null ? " - " + formatter.format(stopTime) : "");
-            betweenView.setText(between);
+			String between = String.format("%s%s",
+					startTime != null ? formatter.format(startTime) : "",
+					stopTime != null ? " - " + formatter.format(stopTime) : "");
+			betweenView.setText(between);
 
-            return rowView;
-        }
-    }
+			return rowView;
+		}
+	}
 
-    private GPSDatabaseAdapter gpsdatabaseAdapter;
+	private GPSDatabaseAdapter gpsdatabaseAdapter;
 
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.records);
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.records);
+		this.context = getApplicationContext();
 
-        this.context = getApplicationContext();
+		listView = (ListView) findViewById(R.id.records_list);
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progressDialog.setMessage(getString(R.string.saving));
+		progressDialog.setCancelable(false);
 
-        listView = (ListView) findViewById(R.id.records_list);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage(getString(R.string.saving));
-        progressDialog.setCancelable(false);
+		gpsDatabaseList = new ArrayList<GPSDatabase>();
+		storageFileList = new ArrayList<File>();
+		getStorageDatabases();
 
-        gpsDatabaseList = new ArrayList<GPSDatabase>();
-        getStorageDatabases();
-    }
+		updateListView();
+	}
 
+	protected void getStorageDatabases() {
+		getStorageDatabasesMeta(new Date());
+	}
 
-    protected void getStorageDatabases() {
-        getStorageDatabasesMeta(new Date());
-    }
+	protected void getStorageDatabasesMeta(Date selectedDate) {
+		gpsDatabaseList.clear();
+		storageFileList.clear();
+		
+		// get the parent directory handle
+		File currentStorageDir = Environment.getStorageDirectory(selectedDate);
+		boolean autoClean = sharedPreferences.getBoolean(Preference.AUTO_CLEAN,
+				true);
 
-    protected void getStorageDatabasesMeta(Date selectedDate) {
-        // get the parent directory handle
-        File currentStorageDir = Environment.getStorageDirectory(selectedDate);
-        boolean autoClean = sharedPreferences.getBoolean(Preference.AUTO_CLEAN, true);
+		File[] storageFileArray = currentStorageDir
+				.listFiles(new FilenameFilter() {
+					@Override
+					public boolean accept(File file, String s) {
+						if (s.endsWith(Environment.SQLITE_DATABASE_FILENAME_EXT)) {
+							return true;
+						}
+						return false;
+					}
+				});
 
-        storageFileList = currentStorageDir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                if (s.endsWith(Environment.SQLITE_DATABASE_FILENAME_EXT)) {
-                    return true;
-                }
-                return false;
-            }
-        });
+		// comparator with last modified
+		Arrays.sort(storageFileArray, new Comparator<File>() {
+			public int compare(File f1, File f2) {
+				return Long.valueOf(f2.lastModified()).compareTo(
+						f1.lastModified());
+			}
+		});
 
-        closeDatabases();
-        gpsDatabaseList.clear();
-        for (File dbFile : storageFileList) {
-            if (dbFile.exists() && dbFile.isFile()) {
-                try {
-                    GPSDatabase database = new GPSDatabase(dbFile);
-                    if (autoClean && database.getValvedCount() <= 0) {
-                        dbFile.delete();
-                    } else {
-                        gpsDatabaseList.add(database);
-                    }
-                } catch (SQLiteException e) {
-                    Log.e(TAG, e.getMessage());
-                }
-            }
-        }
+		// reopen the database
+		closeDatabases();
+		for (File dbFile : storageFileArray) {
+			if (dbFile.exists() && dbFile.isFile()) {
+				storageFileList.add(dbFile);
+				try {
+					GPSDatabase database = new GPSDatabase(dbFile);
+					if (autoClean && database.getValvedCount() <= 0) {
+						dbFile.delete();
+					} else {
+						gpsDatabaseList.add(database);
+					}
+				} catch (SQLiteException e) {
+					Log.e(TAG, e.getMessage());
+				}
+			}
+		}
 
-        gpsdatabaseAdapter = new GPSDatabaseAdapter(gpsDatabaseList);
-        listView.setAdapter(gpsdatabaseAdapter);
-        return;
-    }
+		gpsdatabaseAdapter = new GPSDatabaseAdapter(gpsDatabaseList);
+	}
 
+	private void updateListView() {
+		listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+			@Override
+			public void onCreateContextMenu(ContextMenu contextMenu, View view,
+					ContextMenu.ContextMenuInfo contextMenuInfo) {
+				MenuInflater inflater = getMenuInflater();
+				inflater.inflate(R.menu.records, contextMenu);
+			}
+		});
 
-    private void updateListView() {
-//        listViewAdapter = new SimpleAdapter(this, storageFileHashList,
-//            R.layout.records_row,
-//            new String[]{"database", "count"},
-//            new int[]{R.id.db_name, R.id.db_records_num});
+		listView.setAdapter(gpsdatabaseAdapter);
+	}
 
-//        listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-//            @Override
-//            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-//                MenuInflater inflater = getMenuInflater();
-//                inflater.inflate(R.menu.records, contextMenu);
-//            }
-//        });
+	// 长按菜单响应函数
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+				.getMenuInfo();
+		int position = info.position;
+		switch (item.getItemId()) {
+		case R.id.export:
 
-        listView.setAdapter(gpsdatabaseAdapter);
-    }
+			return true;
 
-    //长按菜单响应函数
-    //@Override
-//    public boolean onContextItemSelected(MenuItem item) {
-//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-//        final HashMap<String, String> map = storageFileHashList.get(info.position);
-//        String absolutePath = map.get("absolute");
-//
-//        gpsDatabase = new GPSDatabase(new File(absolutePath));
-//        switch (item.getItemId()) {
-//            case R.id.export:
-//                progressDialog.show();
-//                saveKMLFileThread = new Thread() {
-//                    @Override
-//                    public void run() {
-////                        String name = map.get("database");
-////                        String description = "";
-//
-//                        // @todo convert cursor into list
-//                        ArrayList<Points> data = gpsDatabase.getValvedData();
-////                            final KMLHelper kml = new KMLHelper(name, description, data);
-////
-////                            String basePath = getString(R.string.app_database_store_path);
-////                            File kmlFile = new File(basePath + "/" + name.replace(".sqlite", ".kml"));
-////                            kml.saveKMLFile(kmlFile.getAbsoluteFile());
-////
-////                            Message message = new Message();
-////                            message.what = HIDE_PROGRESS_DIALOG;
-////                            handle.sendMessage(message);
-//
-//                    }
-//
-//                };
-//                saveKMLFileThread.start();
-//                return true;
-//            /**
-//             * Mark as deleted not really delete the data.
-//             */
-//            case R.id.delete:
-//                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-//                dialog.setTitle(getString(R.string.notice))
-//                    .setMessage(getString(R.string.sure_to_del))
-//                    .setIcon(android.R.drawable.ic_dialog_alert);
-//
-//                dialog.setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int whichButton) {
-//                        int effectedRows = 0;
-//                        if (effectedRows > 0) {
-//                            getStorageDatabases();
-//                            listViewAdapter.notifyDataSetChanged();
-//
-//                            Toast.makeText(context,
-//                                String.format(getString(R.string.has_deleted), Integer.toString(effectedRows)),
-//                                Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                }).setNegativeButton(getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int whichButton) {
-//
-//                    }
-//                }).show();
-//
-//                return true;
-//        }
-//        gpsDatabase.closeDatabases();
-//        return false;
-//    }
+		case R.id.delete:
+			confirmDeleteDatabaseFile(position);
+			return true;
 
-    //    private Handler handle = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            switch (msg.what) {
-//                case HIDE_PROGRESS_DIALOG:
-//                    Toast.makeText(context,
-//                        getString(R.string.save_kml_finished), Toast.LENGTH_LONG).show();
-//                    progressDialog.dismiss();
-//                    break;
-//            }
-//        }
-//    };
+		}
 
-    private void closeDatabases() {
-        if (gpsDatabaseList.size() > 0) {
-            for (GPSDatabase gpsDatabase : gpsDatabaseList) {
-                gpsDatabase.close();
-            }
-        }
-    }
+		return false;
 
-    @Override
-    public void onDestroy() {
-        closeDatabases();
-        super.onDestroy();
-    }
+	}
+
+	private void confirmDeleteDatabaseFile(final int position) {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		final File storageFile = storageFileList.get(position);
+		final GPSDatabase storageDatabase = gpsDatabaseList.get(position);
+		
+		if(storageFile.isFile() && storageFile.canWrite()) {
+			dialog.setTitle(getString(R.string.notice))
+				.setMessage(getString(R.string.sure_to_del))
+				.setIcon(android.R.drawable.ic_dialog_alert);
+			
+			dialog.setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					storageDatabase.close();
+					if(storageFile.delete()) {
+						Toast.makeText(context, String.format(getString(R.string.has_deleted), storageFile, storageFile.getAbsolutePath()),
+							Toast.LENGTH_LONG).show();
+						
+						gpsDatabaseList.remove(position);
+						storageFileList.remove(position);
+						gpsdatabaseAdapter.notifyDataSetChanged();
+					}
+					
+				}
+			});
+			
+			dialog.setNegativeButton(getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+				}
+			});
+			
+			dialog.show();
+		}
+	}
+
+	private void closeDatabases() {
+		if (gpsDatabaseList.size() > 0) {
+			for (GPSDatabase gpsDatabase : gpsDatabaseList) {
+				gpsDatabase.close();
+			}
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		closeDatabases();
+		super.onDestroy();
+	}
 }
-

@@ -22,6 +22,8 @@
             android:summary="How to save points into each database"
             android:title="Save Record By" />
     </PreferenceCategory>
+    
+    
     <PreferenceCategory android:title="Environment" >
         <CheckBoxPreference
             android:defaultValue="false"
@@ -34,6 +36,8 @@
             android:summary="Turn on Lightning LED(if have) while recording"
             android:title="Lightning LED" />
     </PreferenceCategory>
+    
+    
     <PreferenceCategory android:title="GPS Listener" >
         <ListPreference
             android:defaultValue="2000"
