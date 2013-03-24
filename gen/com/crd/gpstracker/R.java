@@ -48,10 +48,10 @@ public final class R {
         public static final int configure=0x7f0a0011;
         public static final int db_name=0x7f0a000b;
         public static final int db_records_num=0x7f0a000d;
-        public static final int delete=0x7f0a0017;
+        public static final int delete=0x7f0a0016;
         public static final int description=0x7f0a000c;
         public static final int export=0x7f0a0014;
-        public static final int info=0x7f0a0016;
+        public static final int info=0x7f0a0015;
         public static final int latitude=0x7f0a0004;
         public static final int longitude=0x7f0a0005;
         public static final int pause=0x7f0a0010;
@@ -63,7 +63,6 @@ public final class R {
         public static final int status=0x7f0a0001;
         public static final int stop=0x7f0a0013;
         public static final int time=0x7f0a0003;
-        public static final int title=0x7f0a0015;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -93,6 +92,7 @@ public final class R {
         public static final int menu_pause=0x7f07001c;
         public static final int menu_records=0x7f07001b;
         public static final int menu_start=0x7f07001d;
+        public static final int merge=0x7f070023;
         public static final int no_description=0x7f070006;
         public static final int norecords=0x7f070017;
         public static final int not_record_anything=0x7f07001e;

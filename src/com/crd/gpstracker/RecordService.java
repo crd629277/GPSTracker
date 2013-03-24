@@ -35,14 +35,14 @@ interface RecordServerBinder {
 public class RecordService extends Service {
     private final String TAG = RecordService.class.getName();
     private SharedPreferences sharedPreferences;
-    private GPSDatabase gpsDatabase;
+    private static GPSDatabase gpsDatabase;
     private RecordService.ServiceBinder serviceBinder;
     private File gpsDatabaseFile;
 
 
     private int currentAirPlaneMode;
-    private boolean switchAirplaneMode;
-    private Boolean lightningLed;
+    private boolean switchAirplaneMode = false;
+    private Boolean lightningLed = false;
     private Environment environment;
     private static final String LAST_OPENED_DATABASE_PATH = "lastOpenedDatabasePath";
     private String lastOpenedDatabasePath;
@@ -56,8 +56,6 @@ public class RecordService extends Service {
         ServiceBinder() {
             gpsWatcher = new GPSWatcher(getApplicationContext(), gpsDatabase);
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-            lightningLed = sharedPreferences.getBoolean(Preference.LIGHTNING_LED, true);
         }
 
         @Override
@@ -67,6 +65,9 @@ public class RecordService extends Service {
                     Preference.DEFAULT_GPS_MINTIME));
                 float minDistance = Float.parseFloat(sharedPreferences.getString(Preference.GPS_MINDISTANCE,
                     Preference.DEFAULT_GPS_MINDISTANCE));
+
+                lightningLed = sharedPreferences.getBoolean(Preference.LIGHTNING_LED, true);
+                switchAirplaneMode = sharedPreferences.getBoolean(Preference.SWITCH_AIRPLANE_MODE, false);
 
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsWatcher);
 
@@ -94,7 +95,6 @@ public class RecordService extends Service {
                     environment.setAirPlaneMode(currentAirPlaneMode);
                 }
 
-                clearLastOpenedDatabaseFilePath();
                 status = ServiceBinder.STATUS_STOPPED;
             }
         }
@@ -150,7 +150,7 @@ public class RecordService extends Service {
         serviceBinder = new ServiceBinder();
 
         if (useRecoveryDatabaseFile) {
-            gpsDatabase.addMeta(GPSDatabase.Meta.RESUME_TIME, String.valueOf(System.currentTimeMillis()));
+            gpsDatabase.getMeta().addOrUpdateMeta(GPSDatabase.Meta.RESUME_TIME, String.valueOf(System.currentTimeMillis()));
             Toast.makeText(this, getString(R.string.use_recovery_database_file), Toast.LENGTH_LONG).show();
         } else {
             gpsDatabase.addMeta(GPSDatabase.Meta.START_TIME, String.valueOf(System.currentTimeMillis()));
@@ -167,9 +167,7 @@ public class RecordService extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-
         currentAirPlaneMode = environment.getCurrentAirPlaneMode();
-        switchAirplaneMode = sharedPreferences.getBoolean(Preference.SWITCH_AIRPLANE_MODE, false);
     }
 
     @Override
@@ -182,8 +180,9 @@ public class RecordService extends Service {
             environment.setAirPlaneMode(currentAirPlaneMode);
         }
         serviceBinder.stopRecord();
-        gpsDatabase.addMeta(GPSDatabase.Meta.STOP_TIME, String.valueOf(System.currentTimeMillis()));
+        gpsDatabase.getMeta().addOrUpdateMeta(GPSDatabase.Meta.STOP_TIME, String.valueOf(System.currentTimeMillis()));
         gpsDatabase.close();
+        clearLastOpenedDatabaseFilePath();
 
         if (autoClean && valvedCount <= 0) {
             resultMessage = getString(R.string.not_record_anything);

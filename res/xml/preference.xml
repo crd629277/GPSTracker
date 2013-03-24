@@ -12,7 +12,8 @@
             android:defaultValue="true"
             android:key="autoClean"
             android:summary="Note! Uncheck this maybe have many empty record database"
-            android:title="Auto Clean" />
+            android:title="Auto Clean" 
+            android:enabled="false"/>
 
         <ListPreference
             android:defaultValue="RECORD_BY_TIMES"
@@ -47,12 +48,12 @@
             android:summary="The minimum time interval for GPS notifications, in milliseconds."
             android:title="GPS Time Interval" />
         <ListPreference
-            android:defaultValue="5"
             android:entries="@array/gpsMinDistanceValues"
             android:entryValues="@array/gpsMinDistanceValues"
             android:key="gpsMinDistance"
             android:summary="The minimum distance interval for notifications, in meters."
-            android:title="GPS Distance Interval" />
+            android:title="GPS Distance Interval" 
+            android:defaultValue="3"/>
     </PreferenceCategory>
 
     <!--  -->

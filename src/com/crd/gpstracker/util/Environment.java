@@ -4,14 +4,19 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
+import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.Preference;
 
 public class Environment extends android.os.Environment {
@@ -114,4 +119,36 @@ public class Environment extends android.os.Environment {
         }
         return 0;
     }
+    
+    public void showModalDialog(String title, String message, View view, 
+    		final Runnable runOnPositiveButtonSelected, final Runnable runOnNegativeButtonSelected) {
+    	AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+    	dialog.setTitle(title).setMessage(message).setIcon(android.R.drawable.ic_dialog_alert);
+    	
+    	if(view != null) {
+    		dialog.setView(view);
+    	}
+    	
+    	dialog.setPositiveButton(context.getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				runOnPositiveButtonSelected.run();
+			}
+		});
+    	
+    	dialog.setNegativeButton(context.getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				runOnNegativeButtonSelected.run();
+			}
+		});
+    	
+    	dialog.show();
+    }
+    
+    public void showConfirmDialog(String title, String message,
+    		final Runnable runOnPositiveButtonSelected, final Runnable runOnNegativeButtonSelected) {
+		showModalDialog(title, message, null, runOnPositiveButtonSelected, runOnNegativeButtonSelected);
+	}
+    
 }

@@ -11,12 +11,14 @@ import android.preference.PreferenceManager;
 
 import com.crd.gpstracker.RecordService;
 import com.crd.gpstracker.dao.GPSDatabase;
+import com.crd.gpstracker.util.Environment;
 import com.umeng.analytics.MobclickAgent;
 
 public class BaseActivity extends Activity {
     protected GPSDatabase gpsDatabase;
     protected SharedPreferences sharedPreferences;
 
+    protected Environment environment;
     protected RecordService.ServiceBinder serviceBinder;
     public ServiceConnection serviceConnection = new ServiceConnection() {
 
@@ -36,6 +38,7 @@ public class BaseActivity extends Activity {
         super.onCreate(savedInstanceState);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
+        environment = new Environment(this);
         MobclickAgent.onError(this);
     }
 
