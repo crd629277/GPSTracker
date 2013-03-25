@@ -1,7 +1,7 @@
 <?php 
 
 if (PHP_SAPI != "cli") {
-    exit; 
+    die("cli only!");
 }
 
 $database_file = realpath(isset($argv[1]) ? $argv[1] : null);
@@ -18,7 +18,7 @@ try {
 //"<when>2011-12-03T07:49:46.712-08:00</when> \n <gx:coord>120.107078 30.282008 0</gx:coord>"
 $track_template = "<when>%s</when>\n<gx:coord>%s %s %s</gx:coord>\n";
 
-$sql = "SELECT DISTINCT * from location WHERE del = 0 ORDER BY time";
+$sql = "SELECT DISTINCT * from records WHERE del = 0 ORDER BY time";
 
 $coordinates = array();
 foreach($db->query($sql) as $row) {
@@ -27,9 +27,9 @@ foreach($db->query($sql) as $row) {
 
 $coordinates = trim(implode("", $coordinates));
 
-$kml_tempalte = file_get_contents("template.kml");
+$kml_tempalte_file = dirname(__FILE__) . "/template.kml";
 
 
-printf($kml_tempalte, 'name', 'name', 'desp', $coordinates);
+printf(file_get_contents($kml_tempalte_file), 'name', 'name', 'desp', $coordinates);
 
 $db = null;

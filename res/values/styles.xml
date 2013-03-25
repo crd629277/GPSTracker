@@ -1,9 +1,13 @@
 <resources>
 
-
-    <style name="Window" parent="@android:style/Theme.NoTitleBar">
-
-    </style>
+    <style name="Window" parent="@android:style/Theme.NoTitleBar"></style>
+<!-- 
+    <style name="ActionBar">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@drawable/actionbar_background</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/actionbar_height</item>
+    </style> -->
 
     <style name="Item.Content" parent="@android:style/TextAppearance.Large">
         <item name="android:textColor">@color/highlight</item>
@@ -34,7 +38,7 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginTop">32dp</item>
         <item name="android:textSize">24sp</item>
     </style>
 
@@ -46,4 +50,12 @@
         <item name="android:layout_marginTop">28dp</item>
         <item name="android:textSize">24sp</item>
     </style>
+
+    <style name="Status.Distance" parent="Status.Status"></style>
+    <!--
+         <style name="TrackerActionBar" parent="ActionBar">
+        <item name="android:background">@color/actionbar_background</item>
+    </style>
+    -->
+
 </resources>

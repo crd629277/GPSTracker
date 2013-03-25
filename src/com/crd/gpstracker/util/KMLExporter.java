@@ -4,8 +4,8 @@ import android.database.Cursor;
 
 import java.io.*;
 
-public class KMLHelper {
-    private final static String TAG = KMLHelper.class.getName();
+public class KMLExporter {
+    private final static String TAG = KMLExporter.class.getName();
 
     private final static String KML_FILE_TEMPLATE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<kml xmlns=\"http://www.opengis.net/kml/2.2\" \n" +
@@ -13,7 +13,7 @@ public class KMLHelper {
         "    xmlns:kml=\"http://www.opengis.net/kml/2.2\" \n" +
         "    xmlns:atom=\"http://www.w3.org/2005/Atom\">\n" +
         "    <Document>\n" +
-        "        <name>%s</name>\n" +
+        "        <archiveName>%s</archiveName>\n" +
         "        <description><![CDATA[%s]]></description>\n" +
         "        <Style id=\"redLine\">\n" +
         "            <LineStyle>\n" +
@@ -26,7 +26,7 @@ public class KMLHelper {
         "</kml>";
 
     private final static String COORDINATES_TEMPLATE = "<Placemark>\n" +
-        "            <name>%s</name>\n" +
+        "            <archiveName>%s</archiveName>\n" +
         "            <description><![CDATA[%s]]></description>\n" +
         "            <styleUrl>#redLine</styleUrl>\n" +
         "            <MultiGeometry>\n" +
@@ -37,7 +37,7 @@ public class KMLHelper {
         "        </Placemark>";
 
 //    private final static String POINT_TEMPLATE = "<Placemark>\n" +
-//        "            <name>在第一路口向右转，朝新月路行进 目的地在左侧</name>\n" +
+//        "            <archiveName>在第一路口向右转，朝新月路行进 目的地在左侧</archiveName>\n" +
 //        "            <description>行驶 140&amp;#160;米</description>\n" +
 //        "            <LookAt>\n" +
 //        "                <longitude>120.21091</longitude>\n" +
@@ -60,7 +60,7 @@ public class KMLHelper {
     private String multiGeometryCoordinatesString;
     private String coordinatesString;
 
-    public KMLHelper(String name, String description, Cursor data) {
+    public KMLExporter(String name, String description, Cursor data) {
         this.data = data;
         this.name = name;
         this.description = description;
@@ -127,4 +127,5 @@ public class KMLHelper {
         return sbContent.toString();
     }
 }
+
 

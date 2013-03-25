@@ -9,15 +9,13 @@ import java.util.TimerTask;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import android.test.PerformanceTestCase;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,26 +23,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.crd.gpstracker.R;
-import com.crd.gpstracker.RecordService;
-import com.crd.gpstracker.RecordService.ServiceBinder;
-import com.crd.gpstracker.dao.Points;
-import com.crd.gpstracker.util.Environment;
+import com.crd.gpstracker.dao.ArchiveMeta;
+import com.crd.gpstracker.service.ArchiveNameHelper;
+import com.crd.gpstracker.service.Recoder.ServiceBinder;
+import com.crd.gpstracker.util.Logger;
+import com.markupartist.android.widget.ActionBar;
 
-public class Main extends BaseActivity {
+public class Main extends Base {
     private static final String TAG = Main.class.getName();
     private Timer timer = null;
     private static double maxSpeed = 0.0;
 
     private ArrayList<TextView> textViewsGroup = new ArrayList<TextView>();
-    private Points lastLocationRecord;
+    private Location lastLocationRecord;
     private static final int MESSAGE_UPDATE_STATE_VIEW = 0x0001;
-
-    public Intent recordServerIntent;
+    protected ArchiveMeta archiveMeta = null;
 
     /**
-     * Handle the records for show the last recorded status.
+     * Handle the records_context for show the last recorded status.
      */
     private Handler handle = new Handler() {
         long visible_flag = 0;
@@ -52,30 +51,33 @@ public class Main extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_UPDATE_STATE_VIEW:
+                    if (serviceBinder == null) {
+                        return;
+                    }
+
                     TextView records = (TextView) findViewById(R.id.status);
                     String statusLabel = getString(R.string.ready);
 
-                    try {
-                        switch (serviceBinder.getStatus()) {
-                            case ServiceBinder.STATUS_RUNNING:
-                                statusLabel = getString(R.string.recording);
-                                break;
-                            case ServiceBinder.STATUS_STOPPED:
-                                statusLabel = getString(R.string.ready);
-                            default:
-                        }
-                        records.setText(statusLabel);
-                        records.setVisibility(++visible_flag % 2 == 0 ? View.INVISIBLE : View.VISIBLE);
-
-                        // update the ui status
-                        updateView();
-                    } catch (NullPointerException e) {
-                        Log.e(TAG, "ServerBinder is null, maybe service is not ready.");
+                    switch (serviceBinder.getStatus()) {
+                        case ServiceBinder.STATUS_RUNNING:
+                            statusLabel = getString(R.string.recording);
+                            toggleButton.setChecked(true);
+                            break;
+                        case ServiceBinder.STATUS_STOPPED:
+                            statusLabel = getString(R.string.ready);
+                            toggleButton.setChecked(false);
+                        default:
                     }
+                    records.setText(statusLabel);
+                    records.setVisibility(++visible_flag % 2 == 0 ? View.INVISIBLE : View.VISIBLE);
+
+                    updateView();
                     break;
             }
         }
     };
+    private long needCountDistance = 0;
+    private ToggleButton toggleButton;
 
     /**
      * 找到所有的 TextView 元素
@@ -93,7 +95,7 @@ public class Main extends BaseActivity {
         }
     }
 
-    private void initialViewUpdater() {
+    private void updateViewStatus() {
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -114,20 +116,27 @@ public class Main extends BaseActivity {
     }
 
     private void updateView() {
-        // get last record by server binder
-        lastLocationRecord = serviceBinder.getLastRecord();
+        if (serviceBinder == null) {
+            return;
+        }
+        Boolean isRunning = (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING);
 
         for (int i = 0; i < textViewsGroup.size(); i++) {
             double numberValue = 0;
             String stringValue = "";
             TextView textView = textViewsGroup.get(i);
-            int count = lastLocationRecord.getCount();
-            Boolean isrunning = (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING);
+            long count = 0;
 
             try {
+                if (isRunning) {
+                    lastLocationRecord = serviceBinder.getLastRecord();
+                    archiveMeta = serviceBinder.getArchiveMeta();
+                    count = archiveMeta.getCount();
+                }
+
                 switch (textView.getId()) {
                     case R.id.status:
-                        int stamp = (isrunning) ? R.string.recording : R.string.idle;
+                        int stamp = (isRunning) ? R.string.recording : R.string.idle;
                         stringValue = getString(stamp);
                         break;
                     case R.id.records:
@@ -137,9 +146,21 @@ public class Main extends BaseActivity {
                             stringValue = getString(R.string.norecords);
                         }
                         break;
+                    case R.id.distance:
+                        // @todo 考虑性能问题
+                        if (++needCountDistance % 5 == 0) {
+                            float distance = archiveMeta.getDistance();
+                            if (distance > 0) {
+                                numberValue = distance;
+                                textView.setVisibility(View.VISIBLE);
+                            } else {
+                                textView.setVisibility(View.INVISIBLE);
+                            }
+                        }
+                        break;
                     case R.id.time:
                         stringValue = new SimpleDateFormat(getString(R.string.time_format)).format(
-                            new Date(isrunning ? lastLocationRecord.getTime() : System.currentTimeMillis()));
+                            new Date(isRunning ? lastLocationRecord.getTime() : System.currentTimeMillis()));
                         break;
                     case R.id.speed:
                         double speed = lastLocationRecord.getSpeed();
@@ -202,43 +223,73 @@ public class Main extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.main);
+
         // 判断外界条件
-        if (!Environment.isExternalStoragePresent()) {
-            Log.e(TAG, "External storage not presented.");
-            Toast.makeText(this, getString(R.string.storage_not_presented), Toast.LENGTH_LONG);
+        if (!ArchiveNameHelper.isExternalStoragePresent()) {
+            Logger.e("External storage not presented.");
+            Toast.makeText(this, getString(R.string.storage_not_presented), Toast.LENGTH_SHORT).show();
             Intent myIntent = new Intent(Settings.ACTION_MEMORY_CARD_SETTINGS);
             startActivity(myIntent);
         }
-        
+
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-        	Log.e(TAG, "GPS not Enabled");
-        	Toast.makeText(this, getString(R.string.gps_not_presented), Toast.LENGTH_SHORT).show();
-        	
-        	Intent myIntent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
-        	startActivity(myIntent);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Logger.e("GPS not Enabled");
+            Toast.makeText(this, getString(R.string.gps_not_presented), Toast.LENGTH_SHORT).show();
+
+            Intent myIntent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+            startActivity(myIntent);
         }
 
-        recordServerIntent = new Intent(this, RecordService.class);
-        startService(recordServerIntent);
-        bindService(recordServerIntent, serviceConnection, BIND_AUTO_CREATE);
 
-        setContentView(R.layout.main);
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        toggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (serviceBinder != null) {
+                    if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
+                        serviceBinder.stopRecord();
+                        toggleButton.setChecked(false);
+                    } else {
+                        serviceBinder.startRecord();
+                        toggleButton.setChecked(true);
+                    }
+                }
+            }
+        });
+
         findAllTextView((ViewGroup) findViewById(R.id.root));
-        initialViewUpdater();
     }
-    
+
     @Override
     public void onStart() {
-		super.onStart();
-		updateOrientation();
-	}
-    
+        super.onStart();
+
+        if (actionBar != null) {
+            actionBar.setTitle(getString(R.string.app_name));
+            actionBar.removeAllActions();
+            actionBar.addAction(new ActionBar.IntentAction(this,
+                new Intent(this, Records.class), R.drawable.ic_menu_goto));
+        }
+        //updateOrientation();
+    }
+
     @Override
     public void onResume() {
-		super.onResume();
-		updateOrientation();
-	}
+        super.onResume();
+
+        updateViewStatus();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (timer != null) {
+            timer.cancel();
+        }
+    }
 
 
     @Override
@@ -248,22 +299,21 @@ public class Main extends BaseActivity {
         inflater.inflate(R.menu.main, menu);
         return true;
     }
-    
-    public void updateOrientation() {
-		String userConfOrient = sharedPreferences.getString(Preference.USER_ORIGENTATION, Preference.DEFAULT_USER_ORIENTATION);
-		int orgOrient = getRequestedOrientation();
-		
-		if(userConfOrient.equals(Preference.DEFAULT_USER_ORIENTATION)) {
-			if(orgOrient != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			}
-		} else {
-			if(orgOrient != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			}
-		}
-	}
 
+//    public void updateOrientation() {
+//        String userConfOrient = sharedPreferences.getString(Preference.USER_ORIENTATION, Preference.DEFAULT_USER_ORIENTATION);
+//        int orgOrient = getRequestedOrientation();
+//
+//        if (userConfOrient.equals(Preference.DEFAULT_USER_ORIENTATION)) {
+//            if (orgOrient != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+//                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//            }
+//        } else {
+//            if (orgOrient != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+//                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//            }
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -278,11 +328,11 @@ public class Main extends BaseActivity {
                 serviceBinder.stopRecord();
                 return true;
 
-            case R.id.stop:
-                serviceBinder.stopRecord();
-                stopService(recordServerIntent);
-                finish();
-                return true;
+//            case R.id.stop:
+//                serviceBinder.stopRecord();
+//                stopService(recordServerIntent);
+//                finish();
+//                return true;
 
             case R.id.records:
                 t = new Intent(Main.this, Records.class);
@@ -309,13 +359,14 @@ public class Main extends BaseActivity {
 
     @Override
     public void onDestroy() {
-//        if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
-//            Toast.makeText(this, getString(R.string.still_running), Toast.LENGTH_SHORT).show();
+//        try {
+//            if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
+//                Toast.makeText(this, getString(R.string.still_running), Toast.LENGTH_SHORT).show();
+//            }
+//        } catch (NullPointerException e) {
+//            Logger.e(TAG, "Make toast text error while destroy activity.");
 //        }
 
-    	if(timer != null) {
-    		timer.cancel();
-    	}
         super.onDestroy();
     }
 }
