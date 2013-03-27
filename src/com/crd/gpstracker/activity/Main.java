@@ -30,6 +30,7 @@ import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.service.ArchiveNameHelper;
 import com.crd.gpstracker.service.Recoder.ServiceBinder;
 import com.crd.gpstracker.util.Logger;
+import com.crd.gpstracker.util.Notifier;
 import com.markupartist.android.widget.ActionBar;
 
 public class Main extends Base {
@@ -41,6 +42,8 @@ public class Main extends Base {
     private Location lastLocationRecord;
     private static final int MESSAGE_UPDATE_STATE_VIEW = 0x0001;
     protected ArchiveMeta archiveMeta = null;
+    private long needCountDistance = 0;
+    private ToggleButton toggleButton;
 
     /**
      * Handle the records_context for show the last recorded status.
@@ -76,9 +79,7 @@ public class Main extends Base {
             }
         }
     };
-    private long needCountDistance = 0;
-    private ToggleButton toggleButton;
-
+    
     /**
      * 找到所有的 TextView 元素
      *
@@ -106,13 +107,13 @@ public class Main extends Base {
             }
         }, 1000, 1000);
 
-        // change the font for nice look
-        Typeface face = Typeface.createFromAsset(getAssets(),
-            getString(R.string.default_font));
-        for (int i = 0; i < textViewsGroup.size(); i++) {
-            TextView t = textViewsGroup.get(i);
-            t.setTypeface(face);
-        }
+//        // change the font for nice look
+//        Typeface face = Typeface.createFromAsset(getAssets(),
+//            getString(R.string.default_font));
+//        for (int i = 0; i < textViewsGroup.size(); i++) {
+//            TextView t = textViewsGroup.get(i);
+//            t.setTypeface(face);
+//        }
     }
 
     private void updateView() {
@@ -153,6 +154,7 @@ public class Main extends Base {
                             if (distance > 0) {
                                 numberValue = distance;
                                 textView.setVisibility(View.VISIBLE);
+                                
                             } else {
                                 textView.setVisibility(View.INVISIBLE);
                             }
@@ -224,6 +226,15 @@ public class Main extends Base {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
+        
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        findAllTextView((ViewGroup) findViewById(R.id.root));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        
 
         // 判断外界条件
         if (!ArchiveNameHelper.isExternalStoragePresent()) {
@@ -243,7 +254,6 @@ public class Main extends Base {
         }
 
 
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -259,20 +269,12 @@ public class Main extends Base {
             }
         });
 
-        findAllTextView((ViewGroup) findViewById(R.id.root));
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
         if (actionBar != null) {
             actionBar.setTitle(getString(R.string.app_name));
             actionBar.removeAllActions();
             actionBar.addAction(new ActionBar.IntentAction(this,
                 new Intent(this, Records.class), R.drawable.ic_menu_goto));
         }
-        //updateOrientation();
     }
 
     @Override
@@ -300,20 +302,6 @@ public class Main extends Base {
         return true;
     }
 
-//    public void updateOrientation() {
-//        String userConfOrient = sharedPreferences.getString(Preference.USER_ORIENTATION, Preference.DEFAULT_USER_ORIENTATION);
-//        int orgOrient = getRequestedOrientation();
-//
-//        if (userConfOrient.equals(Preference.DEFAULT_USER_ORIENTATION)) {
-//            if (orgOrient != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-//                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//            }
-//        } else {
-//            if (orgOrient != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-//                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//            }
-//        }
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -327,12 +315,6 @@ public class Main extends Base {
             case R.id.pause:
                 serviceBinder.stopRecord();
                 return true;
-
-//            case R.id.stop:
-//                serviceBinder.stopRecord();
-//                stopService(recordServerIntent);
-//                finish();
-//                return true;
 
             case R.id.records:
                 t = new Intent(Main.this, Records.class);
@@ -359,13 +341,9 @@ public class Main extends Base {
 
     @Override
     public void onDestroy() {
-//        try {
-//            if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
-//                Toast.makeText(this, getString(R.string.still_running), Toast.LENGTH_SHORT).show();
-//            }
-//        } catch (NullPointerException e) {
-//            Logger.e(TAG, "Make toast text error while destroy activity.");
-//        }
+        if (serviceBinder != null && serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
+            uiHelper.showLongToast(getString(R.string.still_running));
+        }
 
         super.onDestroy();
     }

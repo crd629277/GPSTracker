@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 import android.content.Context;
@@ -69,10 +71,20 @@ public class ArchiveNameHelper {
                 return s.endsWith(SQLITE_DATABASE_FILENAME_EXT);
             }
         });
+        
+        // 根据最后修改时间排序
+        Arrays.sort(archiveFiles, new Comparator<File>() {
+        	public int compare(File f1, File f2) {
+				return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+			}
+		});
 
-        for (int i = 0; i < archiveFiles.length; i++) {
-            result.add((archiveFiles[i]).getAbsolutePath());
+        if(archiveFiles != null) {
+            for (int i = 0; i < archiveFiles.length; i++) {
+                result.add((archiveFiles[i]).getAbsolutePath());
+            }
         }
+
 
         return result;
     }

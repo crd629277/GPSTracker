@@ -1,5 +1,7 @@
 package com.crd.gpstracker.dao;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
@@ -19,6 +21,7 @@ public class Archive {
     protected String archiveName;
 
     public final static class DATABASE_COLUMN {
+    	static final String ID = "id";
         static final String LATITUDE = "latitude";
         static final String LONGITUDE = "longitude";
         static final String SPEED = "speed";
@@ -27,7 +30,7 @@ public class Archive {
         static final String ACCURACY = "accuracy";
         static final String TIME = "time";
         static final String COUNT = "count";
-        static final String META_NAME = "archiveName";
+        static final String META_NAME = "meta";
         static final String META_VALUE = "value";
     }
 
@@ -50,7 +53,7 @@ public class Archive {
         private static final String SQL_CREATE_META_TABLE =
             "create table " + ArchiveMeta.TABLE_NAME + " ("
                 + "id integer primary key autoincrement, "
-                + "archiveName string not null unique,"
+                + "meta string not null unique,"
                 + "value string default null"
                 + ");";
 
@@ -87,10 +90,15 @@ public class Archive {
         geoPoints = new ArrayList<Location>();
     }
 
-    public Archive(Context context, String name) {
+    public Archive(Context context, String name) throws IOException{
         this.context = context;
         geoPoints = new ArrayList<Location>();
-
+        this.open(name);
+    }
+    
+    public Archive(Context context, String name, int mode) throws IOException{
+        this.context = context;
+        geoPoints = new ArrayList<Location>();
         this.open(name);
     }
 
@@ -98,11 +106,32 @@ public class Archive {
         return archiveName;
     }
 
-    public void open(String name) {
+    public void open(String name) throws IOException {
+    	File f = new File(name);
+    	if(!f.exists()) {
+    		 throw new IOException();
+    	}
         this.archiveName = name;
         databaseHelper = new ArchiveDatabaseHelper(context, name);
-        database = databaseHelper.getWritableDatabase();
+        database = databaseHelper.getReadableDatabase();
         archiveMeta = new ArchiveMeta(this);
+    }
+    
+    
+    public void openOrCreate(String name) {
+    	File file = new File(name);
+    	try {
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			
+			open(name);
+			
+			// 重新开启可读写的数据库
+			database = databaseHelper.getWritableDatabase();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
     }
 
     public ArchiveMeta getArchiveMeta() {

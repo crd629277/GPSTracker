@@ -9,7 +9,8 @@
     <string name="no_description">- none description -</string>
     <string name="export_kml">Export</string>
     <string name="delete">Delete</string>
-    <string name="has_deleted">%s is deleted</string>
+    <string name="has_deleted">%s has been deleted</string>
+    <string name="delete_error">delete error, pls check your card</string>
     <string name="info">Info</string>
     <string name="notice">Notice</string>
     <string name="sure_to_del">Confirm delete %s?</string>
@@ -24,6 +25,7 @@
     <string name="idle">idle</string>
     <string name="ready">Ready for record</string>
     <string name="norecords">---</string>
+    <string name="running">Tracker is running</string>
     <string name="records">%d Points</string>
     <string name="menu_about">About</string>
     <string name="menu_configure">Configure</string>
@@ -40,6 +42,7 @@
     <string name="use_resume_archive_file">Use Resume File: %s</string>
     <string name="storage_not_presented">Storage Not Presented</string>
     <string name="calendar">Select Month</string>
+    <string name="archive_not_exists">archive not exists</string>
     
     
 </resources>

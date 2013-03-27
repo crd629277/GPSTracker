@@ -10,11 +10,17 @@ import android.os.Bundle;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.util.Logger;
 
+/**
+ * 绑定 LocationListener 回调并记录到数据库
+ * 
+ * @author Chen
+ *
+ */
 public class Listener implements LocationListener {
     private Archive archive;
     private BigDecimal lastLatitude;
     private BigDecimal lastLongitude;
-    private final static int ACCURACY = 4;
+    private final static int ACCURACY = 3;
 
     public Listener(Archive archive) {
         this.archive = archive;

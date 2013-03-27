@@ -1,9 +1,10 @@
 package com.crd.gpstracker.activity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,24 +20,25 @@ import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.service.ArchiveNameHelper;
+import com.crd.gpstracker.util.Logger;
 
 public class Records extends Base implements AdapterView.OnItemClickListener {
     private Context context;
+    public static final String INTENT_ARCHIVE_FILE_NAME = "archiveName";
 
-    //
     private ListView listView;
     private ArrayList<String> archiveFileNames;
     private ArrayList<Archive> archives;
 
     //    private SimpleAdapter listViewAdapter;
-    private ProgressDialog progressDialog;
     private ArchiveNameHelper archiveFileNameHelper;
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Archive archive = archives.get(i);
-        Intent intent = new Intent(this, ArchiveMapView.class);
-        intent.putExtra("archiveName", archive.getArchiveFileName());
+        Intent intent = new Intent(this, BaiduMap.class);
+//        Intent intent = new Intent(this, GoogleMap.class);
+        intent.putExtra(INTENT_ARCHIVE_FILE_NAME, archive.getArchiveFileName());
 
         startActivity(intent);
     }
@@ -61,7 +63,10 @@ public class Records extends Base implements AdapterView.OnItemClickListener {
             TextView descriptionView = (TextView) rowView.findViewById(R.id.description);
             TextView betweenView = (TextView) rowView.findViewById(R.id.between);
 
-            countView.setText(String.valueOf(archiveMeta.getCount()));
+            File f = new File(archive.getArchiveFileName());
+            countView.setText(String.format("%.2f", archiveMeta.getDistance()));
+            betweenView.setText(String.valueOf(archiveMeta.getCount()));
+            nameView.setText(f.getName());
 
 //            String description = archiveMeta.getDescription();
 //            if (description.length() <= 0) {
@@ -87,16 +92,6 @@ public class Records extends Base implements AdapterView.OnItemClickListener {
         this.archiveFileNameHelper = new ArchiveNameHelper(context);
 
         archives = new ArrayList<Archive>();
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//        progressDialog.setMessage(getString(R.string.saving));
-//        progressDialog.setCancelable(false);
-//
-        //  locations = new ArrayList<Location>();
-
-//        getStorageDatabases();
-//
-//
     }
 
 
@@ -125,7 +120,12 @@ public class Records extends Base implements AdapterView.OnItemClickListener {
         Iterator<String> iterator = archiveFileNames.iterator();
         while (iterator.hasNext()) {
             String name = (String) iterator.next();
-            archives.add(new Archive(context, name));
+            try {
+				archives.add(new Archive(context, name));
+			} catch (IOException e) {
+				Logger.e(getString(R.string.archive_not_exists));
+				continue;
+			}
         }
     }
 

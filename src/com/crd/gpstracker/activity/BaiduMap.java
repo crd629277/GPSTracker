@@ -1,5 +1,7 @@
 package com.crd.gpstracker.activity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -9,30 +11,25 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
-
-import com.baidu.mapapi.BMapManager;
-import com.baidu.mapapi.CoordinateConvert;
-import com.baidu.mapapi.GeoPoint;
-import com.baidu.mapapi.MKEvent;
-import com.baidu.mapapi.MKGeneralListener;
-import com.baidu.mapapi.MapActivity;
-import com.baidu.mapapi.MapController;
-import com.baidu.mapapi.MapView;
-import com.baidu.mapapi.Overlay;
-import com.baidu.mapapi.Projection;
+import com.baidu.mapapi.*;
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.Archive;
+import com.crd.gpstracker.util.UIHelper;
+import com.markupartist.android.widget.ActionBar;
 
-public class ArchiveMapView extends MapActivity {
-    private static final String ARCHIVE_FILE_NAME = "archiveName";
-    private String archiveFileName;
+
+public class BaiduMap extends MapActivity {
     private Archive archive;
     private MapView mapView;
     private MapController mapViewController;
     private Context context;
     private ArrayList<Location> locations;
     private BMapManager bMapManager = null;
+    private ActionBar actionBar;
+    private UIHelper uiHelper;
+    private String archiveFileName;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -59,9 +56,9 @@ public class ArchiveMapView extends MapActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.map_view);
+        setContentView(R.layout.baidu_map);
 
-        context = getApplicationContext();
+        context = this;
 
         bMapManager = new BMapManager(getApplication());
         bMapManager.init("353EEEC233F62E4062BA1E3A87A9468141B21AEE", new MyGeneralListener());
@@ -69,21 +66,54 @@ public class ArchiveMapView extends MapActivity {
         super.initMapActivity(bMapManager);
 
         mapView = (MapView) findViewById(R.id.bmapsView);
-        mapView.setTraffic(true);
+        actionBar = (ActionBar) findViewById(R.id.action_bar);
 
+        mapView.setBuiltInZoomControls(true);
         mapViewController = mapView.getController();
 
-        archiveFileName = getIntent().getStringExtra(ARCHIVE_FILE_NAME);
-        archive = new Archive(getApplicationContext(), archiveFileName);
-        Location location = archive.getLastRecord();
-
-        GeoPoint point = new GeoPoint((int) (location.getLatitude() * 1E6), (int) (location.getLongitude() * 1E6));
-        mapView.setBuiltInZoomControls(true);
-        mapViewController.setCenter(point);
-        mapViewController.setZoom(16);
+        uiHelper = new UIHelper(context);
+        archiveFileName = getIntent().getStringExtra(Records.INTENT_ARCHIVE_FILE_NAME);
+        try {
+            archive = new Archive(getApplicationContext(), archiveFileName);
+        } catch (IOException e) {
+            uiHelper.showLongToast(getString(R.string.archive_not_exists));
+            finish();
+        }
 
         locations = archive.fetchAll();
-        mapView.getOverlays().add(new WalkedOverlay());
+
+
+        actionBar.addAction(new ActionBar.Action() {
+            @Override
+            public int getDrawable() {
+                return R.drawable.ic_menu_stop;
+            }
+
+            @Override
+            public void performAction(View view) {
+                uiHelper.showConfirmDialog(getString(R.string.delete),
+                    String.format(getString(R.string.sure_to_del), archiveFileName),
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            File archiveFile = new File(archiveFileName);
+                            if (archiveFile.delete()) {
+                                uiHelper.showShortToast(String.format(getString(R.string.has_deleted), archiveFileName));
+                            } else {
+                                uiHelper.showLongToast(getString(R.string.delete_error));
+                            }
+                            finish();
+                        }
+                    }, new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    }
+                );
+            }
+        });
+
     }
 
     @Override
@@ -95,9 +125,33 @@ public class ArchiveMapView extends MapActivity {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        int size = locations.size();
+        if (size <= 0) {
+            return;
+        }
+        Location firstLocation = locations.get(0);
+//        Location lastLocation = locations.get(size - 1);
+//        Location centerLocation = locations.get(size / 2);
+
+        mapView.getOverlays().add(new RouteOverlay());
+
+        GeoPoint firstLocationPoint = new GeoPoint(
+            (int) (firstLocation.getLatitude() * 1E6),
+            (int) (firstLocation.getLongitude() * 1E6)
+        );
+
+        //float distance = firstLocation.distanceTo(lastLocation);
+
+        // @todo 自动计算默认缩放的地图界面
+        mapViewController.setCenter(firstLocationPoint);
+        mapViewController.setZoom(13);
+    }
+
+    @Override
     public void onPause() {
-
-
         if (bMapManager != null) {
             bMapManager.stop();
         }
@@ -110,10 +164,11 @@ public class ArchiveMapView extends MapActivity {
             bMapManager.destroy();
         }
 
+        archive.close();
         super.onDestroy();
     }
 
-    private class WalkedOverlay extends Overlay {
+    private class RouteOverlay extends Overlay {
         @Override
         public void draw(Canvas canvas, MapView mapView, boolean shadow) {
             Projection projection = mapView.getProjection();
@@ -123,6 +178,7 @@ public class ArchiveMapView extends MapActivity {
             geoPoint = CoordinateConvert.bundleDecode(CoordinateConvert.fromWgs84ToBaidu(geoPoint));
 
             Paint paint = new Paint();
+            paint.setAntiAlias(true);
             paint.setColor(Color.RED);
             paint.setStrokeWidth(4);
 
@@ -141,7 +197,6 @@ public class ArchiveMapView extends MapActivity {
 
                 lastGeoPoint = geoPoint;
             }
-
 
             super.draw(canvas, mapView, shadow);
         }

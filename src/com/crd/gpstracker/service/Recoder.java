@@ -1,12 +1,14 @@
 package com.crd.gpstracker.service;
 
 import java.io.File;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.location.Location;
 import android.location.LocationManager;
@@ -18,6 +20,7 @@ import com.crd.gpstracker.activity.Preference;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.util.Logger;
+import com.crd.gpstracker.util.Notifier;
 import com.crd.gpstracker.util.UIHelper;
 
 interface Binder {
@@ -40,28 +43,53 @@ interface Binder {
 public class Recoder extends Service {
     protected Recoder.ServiceBinder serviceBinder;
     private SharedPreferences sharedPreferences;
-    private Archive geoArchive;
+    private Archive archive;
 
     private Listener listener;
-    private LocationManager locationManager;
+    private static LocationManager locationManager = null;
 
     private ArchiveNameHelper archiveFileNameHelper;
     private String archiveFileName;
     private UIHelper uiHelper;
     private Context context;
+    private Notifier notifier;
 
     public class ServiceBinder extends android.os.Binder implements Binder {
         private int status = ServiceBinder.STATUS_STOPPED;
+        private ArchiveMeta meta = null;
+        private TimerTask notifierTask;
+        private Timer timer = null;
 
         ServiceBinder() {
+        	archive = new Archive(getApplicationContext());
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            geoArchive = new Archive(getApplicationContext());
-            listener = new Listener(geoArchive);
+            listener = new Listener(archive);
         }
 
         @Override
         public void startRecord() {
             if (status != ServiceBinder.STATUS_RUNNING) {
+            	notifierTask = new TimerTask() {
+					
+					@Override
+					public void run() {
+						ArchiveMeta archiveMeta = getArchiveMeta();
+						float distance = archiveMeta.getDistance();
+						long count = archiveMeta.getCount();
+						
+						if(count > 0) {
+							notifier.setRecords(count);
+						}
+						if(distance > 0) {
+							notifier.setDistance(distance);
+						}
+						
+						notifier.publish();
+					}
+				};
+				
+				timer = new Timer();
+            	
                 // 从配置文件获取距离和精度选项
                 long minTime = Long.parseLong(sharedPreferences.getString(Preference.GPS_MINTIME,
                     Preference.DEFAULT_GPS_MINTIME));
@@ -79,16 +107,25 @@ public class Recoder extends Service {
                 }
 
                 try {
-                    geoArchive.open(archiveFileName);
+                    archive.openOrCreate(archiveFileName);
                     archiveFileNameHelper.setLastOpenedArchiveFileName(archiveFileName);
+                    
+                    //获取meta信息
+                    meta = getArchiveMeta();
+                    
+                    //设置开始时间
+                    meta.setStartTime(new Date());
 
                     // 绑定 GPS 回调
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         minTime, minDistance, listener);
+                    
                 } catch (SQLiteException e) {
                     Logger.e(e.getMessage());
                 }
 
+                // 另开个线程展示通知信息
+                timer.schedule(notifierTask, 0, 500);
                 status = ServiceBinder.STATUS_RUNNING;
             }
         }
@@ -103,12 +140,21 @@ public class Recoder extends Service {
                     (new File(archiveFileName)).delete();
                     uiHelper.showLongToast(getString(R.string.not_record_anything));
                 } else {
+                	//设置结束时间
+                	meta.setEndTime(new Date());
+                	
                     uiHelper.showLongToast(String.format(
                         getString(R.string.result_report), String.valueOf(totalCount)
                     ));
                 }
 
-                geoArchive.close();
+                //清楚操作
+                archive.close();
+                meta = null;
+                
+                notifier.cancel();
+                timer.cancel();
+                
                 archiveFileNameHelper.clearLastOpenedArchiveFileName();
                 status = ServiceBinder.STATUS_STOPPED;
             }
@@ -121,18 +167,19 @@ public class Recoder extends Service {
 
         @Override
         public ArchiveMeta getArchiveMeta() {
-            return geoArchive.getArchiveMeta();
+            return archive.getArchiveMeta();
         }
 
         @Override
         public Archive getArchive() {
-            return geoArchive;
+            return archive;
         }
 
         @Override
         public Location getLastRecord() {
-            return geoArchive.getLastRecord();
+            return archive.getLastRecord();
         }
+
     }
 
 
@@ -142,6 +189,8 @@ public class Recoder extends Service {
 
         this.context = getApplicationContext();
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        this.notifier = new Notifier(context);
+        
         this.archiveFileNameHelper = new ArchiveNameHelper(context);
         this.uiHelper = new UIHelper(context);
         this.serviceBinder = new ServiceBinder();
@@ -158,10 +207,10 @@ public class Recoder extends Service {
         super.onStart(intent, startId);
     }
 
-    @Override
-    public void onDestroy() {
-        serviceBinder.stopRecord();
-    }
+//    @Override
+//    public void onDestroy() {
+//        serviceBinder.stopRecord();
+//    }
 
     @Override
     public IBinder onBind(Intent intent) {
