@@ -26,6 +26,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.crd.gpstracker.R;
+import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.service.ArchiveNameHelper;
 import com.crd.gpstracker.service.Recoder.ServiceBinder;
@@ -42,6 +43,7 @@ public class Main extends Base {
     private Location lastLocationRecord;
     private static final int MESSAGE_UPDATE_STATE_VIEW = 0x0001;
     protected ArchiveMeta archiveMeta = null;
+    private Archive archive = null;
     private long needCountDistance = 0;
     private ToggleButton toggleButton;
 
@@ -132,6 +134,7 @@ public class Main extends Base {
                 if (isRunning) {
                     lastLocationRecord = serviceBinder.getLastRecord();
                     archiveMeta = serviceBinder.getArchiveMeta();
+                    archive = serviceBinder.getArchive();
                     count = archiveMeta.getCount();
                 }
 
@@ -259,8 +262,16 @@ public class Main extends Base {
             public void onClick(View view) {
                 if (serviceBinder != null) {
                     if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
+                    	long count = archiveMeta.getCount();
                         serviceBinder.stopRecord();
                         toggleButton.setChecked(false);
+                        
+                        // 如果已经有记录，则显示保存信息
+                        if(count > 0) {
+                        	Intent intent = new Intent(context, Detail.class);
+                        	intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archive.getArchiveFileName());
+                        	startActivity(intent);
+                        }
                     } else {
                         serviceBinder.startRecord();
                         toggleButton.setChecked(true);
@@ -273,7 +284,7 @@ public class Main extends Base {
             actionBar.setTitle(getString(R.string.app_name));
             actionBar.removeAllActions();
             actionBar.addAction(new ActionBar.IntentAction(this,
-                new Intent(this, Records.class), R.drawable.ic_menu_goto));
+                new Intent(this, Records.class), android.R.drawable.ic_menu_send));
         }
     }
 

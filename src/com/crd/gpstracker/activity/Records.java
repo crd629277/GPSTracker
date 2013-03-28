@@ -30,13 +30,13 @@ public class Records extends Base implements AdapterView.OnItemClickListener {
     private ArrayList<String> archiveFileNames;
     private ArrayList<Archive> archives;
 
-    //    private SimpleAdapter listViewAdapter;
     private ArchiveNameHelper archiveFileNameHelper;
+    private ArchivesAdapter archivesAdapter;
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Archive archive = archives.get(i);
-        Intent intent = new Intent(this, BaiduMap.class);
+        Intent intent = new Intent(this, Detail.class);
 //        Intent intent = new Intent(this, GoogleMap.class);
         intent.putExtra(INTENT_ARCHIVE_FILE_NAME, archive.getArchiveFileName());
 
@@ -68,11 +68,11 @@ public class Records extends Base implements AdapterView.OnItemClickListener {
             betweenView.setText(String.valueOf(archiveMeta.getCount()));
             nameView.setText(f.getName());
 
-//            String description = archiveMeta.getDescription();
-//            if (description.length() <= 0) {
-//                description = getString(R.string.no_description);
-//            }
-//            descriptionView.setText(description);
+            String description = archiveMeta.getDescription();
+            if (description.length() <= 0) {
+                description = getString(R.string.no_description);
+            }
+            descriptionView.setText(description);
 
             return rowView;
         }
@@ -92,18 +92,19 @@ public class Records extends Base implements AdapterView.OnItemClickListener {
         this.archiveFileNameHelper = new ArchiveNameHelper(context);
 
         archives = new ArrayList<Archive>();
+        
+        archiveFileNames = archiveFileNameHelper.getArchiveFilesFormCurrentMonth();
+        openArchivesFromFileNames();
+        
+        archivesAdapter = new ArchivesAdapter(archives);
+        listView.setAdapter(archivesAdapter);
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-
-        archiveFileNames = archiveFileNameHelper.getArchiveFilesFormCurrentMonth();
-        openArchivesFromFileNames();
-
-        listView.setAdapter(new ArchivesAdapter(archives));
-
+        archivesAdapter.notifyDataSetChanged();
 
     }
 
@@ -111,8 +112,6 @@ public class Records extends Base implements AdapterView.OnItemClickListener {
     @Override
     public void onPause() {
         super.onPause();
-
-        closeArchives();
     }
 
     private void openArchivesFromFileNames() {
@@ -302,9 +301,10 @@ public class Records extends Base implements AdapterView.OnItemClickListener {
 ////        }
 //    }
 //
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//    }
+    @Override
+    public void onDestroy() {
+    	closeArchives();
+        super.onDestroy();
+    }
 }
 

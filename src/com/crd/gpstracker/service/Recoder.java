@@ -61,30 +61,34 @@ public class Recoder extends Service {
         private Timer timer = null;
 
         ServiceBinder() {
-        	archive = new Archive(getApplicationContext());
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            listener = new Listener(archive);
         }
 
         @Override
         public void startRecord() {
             if (status != ServiceBinder.STATUS_RUNNING) {
+            	archive = new Archive(getApplicationContext());
+            	listener = new Listener(archive);
+            	
             	notifierTask = new TimerTask() {
 					
 					@Override
 					public void run() {
 						ArchiveMeta archiveMeta = getArchiveMeta();
-						float distance = archiveMeta.getDistance();
-						long count = archiveMeta.getCount();
-						
-						if(count > 0) {
-							notifier.setRecords(count);
+						if(archiveMeta != null) {
+							float distance = archiveMeta.getDistance();
+							long count = archiveMeta.getCount();
+							
+							if(count > 0) {
+								notifier.setRecords(count);
+							}
+							if(distance > 0) {
+								notifier.setDistance(distance);
+							}
+							
+							notifier.publish();
 						}
-						if(distance > 0) {
-							notifier.setDistance(distance);
-						}
 						
-						notifier.publish();
 					}
 				};
 				
@@ -114,7 +118,10 @@ public class Recoder extends Service {
                     meta = getArchiveMeta();
                     
                     //设置开始时间
-                    meta.setStartTime(new Date());
+                    if(meta != null) {
+                    	meta.setStartTime(new Date());
+                    }
+                    
 
                     // 绑定 GPS 回调
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
@@ -206,11 +213,6 @@ public class Recoder extends Service {
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
     }
-
-//    @Override
-//    public void onDestroy() {
-//        serviceBinder.stopRecord();
-//    }
 
     @Override
     public IBinder onBind(Intent intent) {

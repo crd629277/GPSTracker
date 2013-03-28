@@ -86,7 +86,7 @@ public class BaiduMap extends MapActivity {
         actionBar.addAction(new ActionBar.Action() {
             @Override
             public int getDrawable() {
-                return R.drawable.ic_menu_stop;
+                return android.R.drawable.ic_delete;
             }
 
             @Override
@@ -147,7 +147,7 @@ public class BaiduMap extends MapActivity {
 
         // @todo 自动计算默认缩放的地图界面
         mapViewController.setCenter(firstLocationPoint);
-        mapViewController.setZoom(13);
+        mapViewController.setZoom(15);
     }
 
     @Override
