@@ -8,6 +8,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 
 import com.crd.gpstracker.dao.Archive;
+import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.util.Logger;
 
 /**
@@ -17,10 +18,13 @@ import com.crd.gpstracker.util.Logger;
  *
  */
 public class Listener implements LocationListener {
+	private final static int ACCURACY = 3;
+	
     private Archive archive;
+    private ArchiveMeta meta = null;
     private BigDecimal lastLatitude;
     private BigDecimal lastLongitude;
-    private final static int ACCURACY = 3;
+    
 
     public Listener(Archive archive) {
         this.archive = archive;
@@ -45,9 +49,20 @@ public class Listener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         if (filter(location) && archive.add(location)) {
+            this.meta = archive.getMeta();
             Logger.i(String.format(
                 "Location(%f, %f) has been saved into database.", lastLatitude, lastLongitude
             ));
+
+            // 另外开个线程处理，避免线程锁住
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (meta != null) {
+                        meta.setRawDistance();
+                    }
+                }
+            }).start();
         }
     }
 

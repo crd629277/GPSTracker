@@ -2,6 +2,7 @@ package com.crd.gpstracker.util;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.Main;
+import com.crd.gpstracker.activity.Tracker;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -25,7 +26,7 @@ public class Notifier extends Notification{
     	this.flags |= Notification.DEFAULT_LIGHTS;
     	this.context = context;
     	
-    	this.intent = new Intent(context, Main.class);
+    	this.intent = new Intent(context, Tracker.class);
     	this.intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     	this.intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	this.contentIntent = PendingIntent.getActivity(context, 0, intent, 0);

@@ -33,23 +33,23 @@ interface Binder {
 
     public int getStatus();
 
-    public ArchiveMeta getArchiveMeta();
+    public ArchiveMeta getMeta();
 
     public Archive getArchive();
 
     public Location getLastRecord();
 }
 
-public class Recoder extends Service {
-    protected Recoder.ServiceBinder serviceBinder;
+public class Recorder extends Service {
+    protected Recorder.ServiceBinder serviceBinder;
     private SharedPreferences sharedPreferences;
     private Archive archive;
 
     private Listener listener;
-    private static LocationManager locationManager = null;
+    private LocationManager locationManager = null;
 
-    private ArchiveNameHelper archiveFileNameHelper;
-    private String archiveFileName;
+    private ArchiveNameHelper nameHelper;
+    private String archivName;
     private UIHelper uiHelper;
     private Context context;
     private Notifier notifier;
@@ -62,77 +62,66 @@ public class Recoder extends Service {
 
         ServiceBinder() {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            archive = new Archive(getApplicationContext());
+            listener = new Listener(archive);
         }
 
         @Override
         public void startRecord() {
             if (status != ServiceBinder.STATUS_RUNNING) {
-            	archive = new Archive(getApplicationContext());
-            	listener = new Listener(archive);
-            	
-            	notifierTask = new TimerTask() {
-					
-					@Override
-					public void run() {
-						ArchiveMeta archiveMeta = getArchiveMeta();
-						if(archiveMeta != null) {
-							float distance = archiveMeta.getDistance();
-							long count = archiveMeta.getCount();
-							
-							if(count > 0) {
-								notifier.setRecords(count);
-							}
-							if(distance > 0) {
-								notifier.setDistance(distance);
-							}
-							
-							notifier.publish();
-						}
-						
-					}
-				};
-				
-				timer = new Timer();
-            	
                 // 从配置文件获取距离和精度选项
                 long minTime = Long.parseLong(sharedPreferences.getString(Preference.GPS_MINTIME,
                     Preference.DEFAULT_GPS_MINTIME));
                 float minDistance = Float.parseFloat(sharedPreferences.getString(Preference.GPS_MINDISTANCE,
                     Preference.DEFAULT_GPS_MINDISTANCE));
 
-                if (archiveFileNameHelper.hasResumeArchiveFile()) {
-                    archiveFileName = archiveFileNameHelper.getResumeArchiveFileName();
+                // 判定是否上次为异常退出
+                if (nameHelper.hasResumeName()) {
+                    archivName = nameHelper.getResumeName();
                     uiHelper.showLongToast(
                         String.format(
-                            getString(R.string.use_resume_archive_file, archiveFileName)
+                            getString(R.string.use_resume_archive_file, archivName)
                         ));
                 } else {
-                    archiveFileName = archiveFileNameHelper.getNewArchiveFileName();
+                    archivName = nameHelper.getNewName();
                 }
 
                 try {
-                    archive.openOrCreate(archiveFileName);
-                    archiveFileNameHelper.setLastOpenedArchiveFileName(archiveFileName);
-                    
-                    //获取meta信息
-                    meta = getArchiveMeta();
-                    
-                    //设置开始时间
-                    if(meta != null) {
-                    	meta.setStartTime(new Date());
-                    }
-                    
+                    archive.open(archivName, Archive.MODE_READ_WRITE);
+                    nameHelper.setLastOpenedName(archivName);
+
+                    // 获取 Meta 信息
+                    meta = getMeta();
+
+                    // 设置开始时间
+                    meta.setStartTime(new Date());
 
                     // 绑定 GPS 回调
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         minTime, minDistance, listener);
-                    
+
                 } catch (SQLiteException e) {
                     Logger.e(e.getMessage());
                 }
 
                 // 另开个线程展示通知信息
-                timer.schedule(notifierTask, 0, 500);
+                notifierTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        float distance = meta.getDistance();
+                        long count = meta.getCount();
+                        if (count > 0) {
+                            notifier.setRecords(count);
+                        }
+                        if (distance > 0) {
+                            notifier.setDistance(distance);
+                        }
+                        notifier.publish();
+                    }
+                };
+
+                timer = new Timer();
+                timer.schedule(notifierTask, 0, 5000);
                 status = ServiceBinder.STATUS_RUNNING;
             }
         }
@@ -142,27 +131,25 @@ public class Recoder extends Service {
             if (status == ServiceBinder.STATUS_RUNNING) {
                 locationManager.removeUpdates(listener);
 
-                long totalCount = getArchiveMeta().getCount();
+                long totalCount = getMeta().getCount();
                 if (totalCount <= 0) {
-                    (new File(archiveFileName)).delete();
+                    (new File(archivName)).delete();
                     uiHelper.showLongToast(getString(R.string.not_record_anything));
                 } else {
-                	//设置结束时间
-                	meta.setEndTime(new Date());
-                	
+                    // 设置结束记录时间
+                    meta.setEndTime(new Date());
+
                     uiHelper.showLongToast(String.format(
                         getString(R.string.result_report), String.valueOf(totalCount)
                     ));
                 }
 
-                //清楚操作
+                // 清除操作
                 archive.close();
-                meta = null;
-                
                 notifier.cancel();
                 timer.cancel();
-                
-                archiveFileNameHelper.clearLastOpenedArchiveFileName();
+                nameHelper.clearLastOpenedName();
+
                 status = ServiceBinder.STATUS_STOPPED;
             }
         }
@@ -173,8 +160,8 @@ public class Recoder extends Service {
         }
 
         @Override
-        public ArchiveMeta getArchiveMeta() {
-            return archive.getArchiveMeta();
+        public ArchiveMeta getMeta() {
+            return archive.getMeta();
         }
 
         @Override
@@ -186,7 +173,6 @@ public class Recoder extends Service {
         public Location getLastRecord() {
             return archive.getLastRecord();
         }
-
     }
 
 
@@ -197,8 +183,8 @@ public class Recoder extends Service {
         this.context = getApplicationContext();
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.notifier = new Notifier(context);
-        
-        this.archiveFileNameHelper = new ArchiveNameHelper(context);
+
+        this.nameHelper = new ArchiveNameHelper(context);
         this.uiHelper = new UIHelper(context);
         this.serviceBinder = new ServiceBinder();
 
@@ -213,6 +199,7 @@ public class Recoder extends Service {
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
     }
+
 
     @Override
     public IBinder onBind(Intent intent) {

@@ -29,19 +29,15 @@ public class Detail extends Base implements View.OnClickListener {
     private Button mButton;
     private SimpleDateFormat formatter;
     private TextView mArchiveName;
+    private TextView mMaxSpeed;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         archiveFileName = getIntent().getStringExtra(Records.INTENT_ARCHIVE_FILE_NAME);
-        try {
-            archive = new Archive(context, archiveFileName);
-            archiveMeta = archive.getArchiveMeta();
-        } catch (IOException e) {
-            uiHelper.showLongToast(getString(R.string.archive_not_exists));
-            finish();
-        }
+        archive = new Archive(context, archiveFileName, Archive.MODE_READ_WRITE);
+        archiveMeta = archive.getMeta();
 
         setContentView(R.layout.detail);
 
@@ -51,6 +47,7 @@ public class Detail extends Base implements View.OnClickListener {
         mDistance = (TextView) findViewById(R.id.distance);
         mRecords = (TextView) findViewById(R.id.records);
         mSpeed = (TextView) findViewById(R.id.speed);
+        mMaxSpeed = (TextView) findViewById(R.id.max_speed);
         mDescription = (EditText) findViewById(R.id.description);
         mButton = (Button) findViewById(R.id.update);
 
@@ -61,13 +58,14 @@ public class Detail extends Base implements View.OnClickListener {
     public void onStart() {
         super.onStart();
 
-        mArchiveName.setText(archive.getArchiveFileName());
+        mArchiveName.setText(archive.getName());
         mStartTime.setText(formatter.format(archiveMeta.getStartTime()));
         mEndTime.setText(formatter.format(archiveMeta.getEndTime()));
 
         mDistance.setText(String.valueOf(archiveMeta.getDistance()));
         mRecords.setText(String.valueOf(archiveMeta.getCount()));
-
+        mSpeed.setText(String.valueOf(archiveMeta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
+        mSpeed.setText(String.valueOf(archiveMeta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
         mDescription.setText(archiveMeta.getDescription());
 
         mButton.setOnClickListener(this);
@@ -82,7 +80,7 @@ public class Detail extends Base implements View.OnClickListener {
             @Override
             public void performAction(View view) {
                 Intent intent = new Intent(context, BaiduMap.class);
-                intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archive.getArchiveFileName());
+                intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archive.getName());
                 startActivity(intent);
             }
         });

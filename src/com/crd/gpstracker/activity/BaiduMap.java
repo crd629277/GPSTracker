@@ -73,12 +73,8 @@ public class BaiduMap extends MapActivity {
 
         uiHelper = new UIHelper(context);
         archiveFileName = getIntent().getStringExtra(Records.INTENT_ARCHIVE_FILE_NAME);
-        try {
-            archive = new Archive(getApplicationContext(), archiveFileName);
-        } catch (IOException e) {
-            uiHelper.showLongToast(getString(R.string.archive_not_exists));
-            finish();
-        }
+        archive = new Archive(getApplicationContext(), archiveFileName);
+
 
         locations = archive.fetchAll();
 
@@ -96,8 +92,7 @@ public class BaiduMap extends MapActivity {
                     new Runnable() {
                         @Override
                         public void run() {
-                            File archiveFile = new File(archiveFileName);
-                            if (archiveFile.delete()) {
+                            if (archive.delete()) {
                                 uiHelper.showShortToast(String.format(getString(R.string.has_deleted), archiveFileName));
                             } else {
                                 uiHelper.showLongToast(getString(R.string.delete_error));

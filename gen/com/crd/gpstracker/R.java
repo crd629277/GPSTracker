@@ -51,8 +51,8 @@ containing a value of this type.
         public static final int icon=0x7f020006;
     }
     public static final class id {
-        public static final int about=0x7f0b0026;
-        public static final int accuracy=0x7f0b001d;
+        public static final int about=0x7f0b0027;
+        public static final int accuracy=0x7f0b001e;
         public static final int action_bar=0x7f0b0000;
         public static final int actionbar_actions=0x7f0b0007;
         public static final int actionbar_home=0x7f0b0002;
@@ -63,37 +63,38 @@ containing a value of this type.
         public static final int actionbar_item=0x7f0b000a;
         public static final int actionbar_progress=0x7f0b0008;
         public static final int actionbar_title=0x7f0b0009;
-        public static final int altitude=0x7f0b001c;
+        public static final int altitude=0x7f0b001d;
         public static final int archive_name=0x7f0b000c;
-        public static final int bearing=0x7f0b001b;
-        public static final int between=0x7f0b0022;
+        public static final int bearing=0x7f0b001c;
+        public static final int between=0x7f0b0023;
         public static final int bmapsView=0x7f0b000b;
-        public static final int calendar=0x7f0b0027;
-        public static final int configure=0x7f0b0025;
-        public static final int db_name=0x7f0b0020;
-        public static final int db_records_num=0x7f0b0021;
-        public static final int delete=0x7f0b002a;
-        public static final int description=0x7f0b0012;
+        public static final int calendar=0x7f0b0028;
+        public static final int configure=0x7f0b0026;
+        public static final int db_name=0x7f0b0021;
+        public static final int db_records_num=0x7f0b0022;
+        public static final int delete=0x7f0b002b;
+        public static final int description=0x7f0b0013;
         public static final int distance=0x7f0b000f;
         public static final int end_time=0x7f0b000e;
-        public static final int export=0x7f0b0028;
-        public static final int google_mapview=0x7f0b0014;
-        public static final int img=0x7f0b001e;
-        public static final int info=0x7f0b0029;
-        public static final int latitude=0x7f0b0019;
-        public static final int longitude=0x7f0b001a;
-        public static final int pause=0x7f0b0024;
+        public static final int export=0x7f0b0029;
+        public static final int google_mapview=0x7f0b0015;
+        public static final int img=0x7f0b001f;
+        public static final int info=0x7f0b002a;
+        public static final int latitude=0x7f0b001a;
+        public static final int longitude=0x7f0b001b;
+        public static final int max_speed=0x7f0b0012;
+        public static final int pause=0x7f0b0025;
         public static final int records=0x7f0b0010;
-        public static final int records_list=0x7f0b001f;
-        public static final int root=0x7f0b0015;
+        public static final int records_list=0x7f0b0020;
+        public static final int root=0x7f0b0016;
         public static final int screen=0x7f0b0001;
         public static final int speed=0x7f0b0011;
-        public static final int start=0x7f0b0023;
+        public static final int start=0x7f0b0024;
         public static final int start_time=0x7f0b000d;
-        public static final int status=0x7f0b0016;
-        public static final int time=0x7f0b0017;
-        public static final int toggleButton=0x7f0b0018;
-        public static final int update=0x7f0b0013;
+        public static final int status=0x7f0b0017;
+        public static final int time=0x7f0b0018;
+        public static final int toggleButton=0x7f0b0019;
+        public static final int update=0x7f0b0014;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -107,6 +108,7 @@ containing a value of this type.
         public static final int notifier=0x7f030008;
         public static final int records=0x7f030009;
         public static final int records_row=0x7f03000a;
+        public static final int tracker=0x7f03000b;
     }
     public static final class menu {
         public static final int main=0x7f0a0000;
@@ -167,14 +169,6 @@ containing a value of this type.
         public static final int ActionBarHomeLogo=0x7f080003;
         public static final int ActionBarItem=0x7f080001;
         public static final int ActionBarProgressBar=0x7f080004;
-        /**  
-    <style name="ActionBar">
-        <item name="android:orientation">horizontal</item>
-        <item name="android:background">@drawable/actionbar_background</item>
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">@dimen/actionbar_height</item>
-    </style> 
-         */
         public static final int Item_Content=0x7f080006;
         public static final int Item_Title=0x7f080007;
         public static final int Status_Distance=0x7f08000b;

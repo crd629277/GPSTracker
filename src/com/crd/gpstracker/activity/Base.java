@@ -10,7 +10,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 
 import com.crd.gpstracker.R;
-import com.crd.gpstracker.service.Recoder;
+import com.crd.gpstracker.service.Recorder;
 import com.crd.gpstracker.util.UIHelper;
 import com.markupartist.android.widget.ActionBar;
 import com.umeng.analytics.MobclickAgent;
@@ -21,6 +21,7 @@ public class Base extends Activity {
     public Intent recordServerIntent;
     protected ActionBar actionBar;
     protected Base context;
+    protected Recorder.ServiceBinder serviceBinder = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,11 +33,11 @@ public class Base extends Activity {
         MobclickAgent.onError(this);
     }
 
-    protected Recoder.ServiceBinder serviceBinder = null;
+    
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            serviceBinder = (Recoder.ServiceBinder) iBinder;
+            serviceBinder = (Recorder.ServiceBinder) iBinder;
         }
 
         @Override
@@ -48,7 +49,7 @@ public class Base extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-        recordServerIntent = new Intent(getApplicationContext(), Recoder.class);
+        recordServerIntent = new Intent(getApplicationContext(), Recorder.class);
         startService(recordServerIntent);
         bindService(recordServerIntent, serviceConnection, BIND_AUTO_CREATE);
 

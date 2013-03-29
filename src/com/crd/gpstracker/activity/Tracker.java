@@ -34,10 +34,8 @@ import com.crd.gpstracker.util.Logger;
 import com.crd.gpstracker.util.Notifier;
 import com.markupartist.android.widget.ActionBar;
 
-public class Main extends Base {
-    private static final String TAG = Main.class.getName();
+public class Tracker extends Base {
     private Timer timer = null;
-    private static double maxSpeed = 0.0;
 
     private ArrayList<TextView> textViewsGroup = new ArrayList<TextView>();
     private Location lastLocationRecord;
@@ -81,7 +79,8 @@ public class Main extends Base {
             }
         }
     };
-    
+
+
     /**
      * 找到所有的 TextView 元素
      *
@@ -107,11 +106,12 @@ public class Main extends Base {
                 message.what = MESSAGE_UPDATE_STATE_VIEW;
                 handle.sendMessage(message);
             }
-        }, 1000, 1000);
+        }, 0, 1000);
 
-//        // change the font for nice look
+        // change the font for nice look
 //        Typeface face = Typeface.createFromAsset(getAssets(),
 //            getString(R.string.default_font));
+//
 //        for (int i = 0; i < textViewsGroup.size(); i++) {
 //            TextView t = textViewsGroup.get(i);
 //            t.setTypeface(face);
@@ -130,6 +130,7 @@ public class Main extends Base {
             TextView textView = textViewsGroup.get(i);
             long count = 0;
             float speed = 0;
+            float maxSpeed = 0;
 
             try {
                 if (isRunning) {
@@ -138,6 +139,7 @@ public class Main extends Base {
                     archive = serviceBinder.getArchive();
                     count = archiveMeta.getCount();
                     speed = archiveMeta.getAverageSpeed();
+                    maxSpeed = archiveMeta.getMaxSpeed();
                 }
 
                 switch (textView.getId()) {
@@ -159,7 +161,6 @@ public class Main extends Base {
                             if (distance > 0) {
                                 numberValue = distance / 1000;
                                 textView.setVisibility(View.VISIBLE);
-                                
                             } else {
                                 textView.setVisibility(View.INVISIBLE);
                             }
@@ -170,12 +171,8 @@ public class Main extends Base {
                             new Date(isRunning ? lastLocationRecord.getTime() : System.currentTimeMillis()));
                         break;
                     case R.id.speed:
-                        if (maxSpeed < speed) {
-                            maxSpeed = speed;
-                        }
-
                         if (speed > 0) {
-                            stringValue = String.format("%.1f(%.1f)", speed * 3600 / 1000, maxSpeed * 3600 / 1000);
+                            stringValue = String.format("%.2f(%.2f)", speed, maxSpeed);
                         } else {
                             throw new NullPointerException();
                         }
@@ -228,9 +225,8 @@ public class Main extends Base {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.main);
-        
+
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         findAllTextView((ViewGroup) findViewById(R.id.root));
     }
@@ -238,7 +234,6 @@ public class Main extends Base {
     @Override
     public void onStart() {
         super.onStart();
-        
 
         // 判断外界条件
         if (!ArchiveNameHelper.isExternalStoragePresent()) {
@@ -257,21 +252,20 @@ public class Main extends Base {
             startActivity(myIntent);
         }
 
-
         toggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (serviceBinder != null) {
                     if (serviceBinder.getStatus() == ServiceBinder.STATUS_RUNNING) {
-                    	long count = archiveMeta.getCount();
+                        long count = archiveMeta.getCount();
                         serviceBinder.stopRecord();
                         toggleButton.setChecked(false);
-                        
+
                         // 如果已经有记录，则显示保存信息
-                        if(count > 0) {
-                        	Intent intent = new Intent(context, Detail.class);
-                        	intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archive.getName());
-                        	startActivity(intent);
+                        if (count > 0) {
+                            Intent intent = new Intent(context, Detail.class);
+                            intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archive.getName());
+                            startActivity(intent);
                         }
                     } else {
                         serviceBinder.startRecord();
@@ -292,7 +286,6 @@ public class Main extends Base {
     @Override
     public void onResume() {
         super.onResume();
-
         updateViewStatus();
     }
 
@@ -314,7 +307,6 @@ public class Main extends Base {
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent t;
@@ -329,12 +321,12 @@ public class Main extends Base {
                 return true;
 
             case R.id.records:
-                t = new Intent(Main.this, Records.class);
+                t = new Intent(Tracker.this, Records.class);
                 startActivity(t);
                 return true;
 
             case R.id.configure:
-                t = new Intent(Main.this, Preference.class);
+                t = new Intent(Tracker.this, Preference.class);
                 startActivity(t);
                 return true;
 

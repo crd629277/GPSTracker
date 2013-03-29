@@ -17,27 +17,33 @@ public class ArchiveMeta {
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String END_TIME = "END_TIME";
     public static final String START_TIME = "START_TIME";
+    public static final String COUNT = "COUNT";
+    public static final String AVERAGE_SPEED = "AVERAGE_SPEED";
+    public static final String DISTANCE = "distance";
     public static final String TABLE_NAME = "meta";
+    public static final double KM_PER_HOUR_CNT = 3.597;
 
     protected Archive archive;
     private Archive.ArchiveDatabaseHelper databaseHelper;
     private SQLiteDatabase database;
+    private static final int FUNC_AVG = 0x1;
+    private static final int FUNC_MAX = 0x2;
+    
 
     public ArchiveMeta(Archive archive) {
         this.archive = archive;
-        this.databaseHelper = archive.databaseHelper;
-        this.database = databaseHelper.getWritableDatabase();
+        this.database = archive.database;
     }
 
 
-    protected boolean setMeta(String name, String value) {
+    protected boolean set(String name, String value) {
         ContentValues values = new ContentValues();
         values.put(Archive.DATABASE_COLUMN.META_NAME, name);
         values.put(Archive.DATABASE_COLUMN.META_VALUE, value);
 
         long result = 0;
         try {
-            if (isMetaExists(name)) {
+            if (isExists(name)) {
                 result = database.update(TABLE_NAME, values,
                     Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'", null);
             } else {
@@ -50,7 +56,7 @@ public class ArchiveMeta {
         return result > 0 ? true : false;
     }
 
-    protected String getMeta(String name) {
+    protected String get(String name) {
         Cursor cursor;
         String result = "";
         try {
@@ -72,8 +78,16 @@ public class ArchiveMeta {
 
         return result;
     }
+    
+    protected String get(String name, String defaultValue) {
+    	String value = get(name);
+    	if(value.equals("") && defaultValue.length() > 0) {
+    		return defaultValue;
+    	}
+    	return value;
+    }
 
-    protected boolean isMetaExists(String name) {
+    protected boolean isExists(String name) {
         Cursor cursor;
         int count = 0;
         try {
@@ -94,34 +108,14 @@ public class ArchiveMeta {
         return count > 0 ? true : false;
     }
 
-    /**
-     * 获得当前已经记录的距离
-     *
-     * @return
-     */
-    public float getDistance() {
-        ArrayList<Location> locations = archive.fetchAll();
-        Location lastComputedLocation = null;
-        float distance = 0;
-        for (int i = 0; i < locations.size(); i++) {
-            Location location = locations.get(i);
-            if (lastComputedLocation != null) {
-                distance += lastComputedLocation.distanceTo(location);
-            }
-
-            lastComputedLocation = location;
-        }
-
-        return distance;
-    }
 
     public Date getStartTime() {
-        return new Date(Long.parseLong(getMeta(START_TIME), 10));
+        return new Date(Long.parseLong(get(START_TIME), 10));
     }
 
     public Date getEndTime() {
     	try {
-    		long endTime = Long.parseLong(getMeta(END_TIME), 10);
+    		long endTime = Long.parseLong(get(END_TIME), 10);
     		return new Date(endTime);
 		} catch (NumberFormatException e) {
 			return null;
@@ -131,22 +125,22 @@ public class ArchiveMeta {
 
     public boolean setStartTime(Date date) {
         long time = date.getTime();
-        return setMeta(START_TIME, String.valueOf(time));
+        return set(START_TIME, String.valueOf(time));
     }
 
     public boolean setEndTime(Date date) {
         long time = date.getTime();
-        return setMeta(END_TIME, String.valueOf(time));
+        return set(END_TIME, String.valueOf(time));
     }
 
     public String getDescription() {
-        return getMeta(DESCRIPTION);
+        return get(DESCRIPTION);
     }
 
     public boolean setDescription(String description) {
-        boolean result = setMeta(DESCRIPTION, description);
+        boolean result = set(DESCRIPTION, description);
         if (result) {
-            File file = new File(archive.getArchiveFileName());
+            File file = new File(archive.getName());
             file.setLastModified(getEndTime().getTime());
         }
         return result;
@@ -169,5 +163,78 @@ public class ArchiveMeta {
         }
 
         return count;
+    }
+    
+    
+
+    /**
+     * 获得当前已经记录的距离
+     *
+     * @return
+     */
+    public float getRawDistance() {
+        ArrayList<Location> locations = archive.fetchAll();
+        Location lastComputedLocation = null;
+        float distance = 0;
+        for (int i = 0; i < locations.size(); i++) {
+            Location location = locations.get(i);
+            if (lastComputedLocation != null) {
+                distance += lastComputedLocation.distanceTo(location);
+            }
+
+            lastComputedLocation = location;
+        }
+
+        return distance;
+    }
+    
+    public boolean setRawDistance() {
+        float distance = getRawDistance();
+        return set(DISTANCE, String.valueOf(distance));
+    }
+
+
+    public float getDistance() {
+        return Float.parseFloat(get(DISTANCE, "0.0"));
+    }
+
+    public float getSpeed(int type) {
+        String func;
+        switch (type) {
+		case FUNC_AVG:
+			func = "avg";
+			break;
+
+		case FUNC_MAX:
+			func = "max";
+			
+		default:
+			func = "max";
+			break;
+		}
+        
+        String sql = "SELECT " + func + "(" +Archive.DATABASE_COLUMN.SPEED + ") AS "
+        	+ Archive.DATABASE_COLUMN.SPEED + " FROM " + Archive.TABLE_NAME + " LIMIT 1";
+        
+        Cursor cursor;
+        float speed = 0;
+        try {
+			cursor = database.rawQuery(sql, null);
+			cursor.moveToFirst();
+			speed = cursor.getFloat(cursor.getColumnIndex(Archive.DATABASE_COLUMN.SPEED));
+			cursor.close();
+		} catch (SQLiteException e) {
+			Logger.e(e.getMessage());
+		}
+		
+		return speed;
+    }
+
+    public float getAverageSpeed() {
+    	return getSpeed(FUNC_AVG);
+    }
+
+    public float getMaxSpeed() {
+    	return getSpeed(FUNC_MAX);
     }
 }
