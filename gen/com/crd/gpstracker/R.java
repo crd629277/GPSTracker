@@ -26,6 +26,7 @@ containing a value of this type.
         public static final int title=0x7f010000;
     }
     public static final class color {
+        public static final int actionbar_background=0x7f050009;
         public static final int actionbar_background_end=0x7f050003;
         public static final int actionbar_background_item_pressed_end=0x7f050005;
         public static final int actionbar_background_item_pressed_start=0x7f050004;
@@ -34,6 +35,7 @@ containing a value of this type.
         public static final int actionbar_title=0x7f050001;
         public static final int gray=0x7f050006;
         public static final int highlight=0x7f050008;
+        public static final int route_color=0x7f05000a;
         public static final int title=0x7f050007;
     }
     public static final class dimen {
@@ -49,10 +51,12 @@ containing a value of this type.
         public static final int actionbar_btn_pressed=0x7f020004;
         public static final int ic_launcher=0x7f020005;
         public static final int icon=0x7f020006;
+        public static final int mark=0x7f020007;
+        public static final int tray=0x7f020008;
     }
     public static final class id {
-        public static final int about=0x7f0b0027;
-        public static final int accuracy=0x7f0b001e;
+        public static final int about=0x7f0b002a;
+        public static final int accuracy=0x7f0b0021;
         public static final int action_bar=0x7f0b0000;
         public static final int actionbar_actions=0x7f0b0007;
         public static final int actionbar_home=0x7f0b0002;
@@ -63,38 +67,41 @@ containing a value of this type.
         public static final int actionbar_item=0x7f0b000a;
         public static final int actionbar_progress=0x7f0b0008;
         public static final int actionbar_title=0x7f0b0009;
-        public static final int altitude=0x7f0b001d;
-        public static final int archive_name=0x7f0b000c;
-        public static final int bearing=0x7f0b001c;
-        public static final int between=0x7f0b0023;
-        public static final int bmapsView=0x7f0b000b;
-        public static final int calendar=0x7f0b0028;
-        public static final int configure=0x7f0b0026;
-        public static final int db_name=0x7f0b0021;
-        public static final int db_records_num=0x7f0b0022;
-        public static final int delete=0x7f0b002b;
-        public static final int description=0x7f0b0013;
-        public static final int distance=0x7f0b000f;
-        public static final int end_time=0x7f0b000e;
-        public static final int export=0x7f0b0029;
-        public static final int google_mapview=0x7f0b0015;
-        public static final int img=0x7f0b001f;
-        public static final int info=0x7f0b002a;
-        public static final int latitude=0x7f0b001a;
-        public static final int longitude=0x7f0b001b;
-        public static final int max_speed=0x7f0b0012;
-        public static final int pause=0x7f0b0025;
-        public static final int records=0x7f0b0010;
-        public static final int records_list=0x7f0b0020;
-        public static final int root=0x7f0b0016;
+        public static final int altitude=0x7f0b0020;
+        public static final int archive_name=0x7f0b000f;
+        public static final int bearing=0x7f0b001f;
+        public static final int between=0x7f0b0026;
+        public static final int bmapsView=0x7f0b000e;
+        public static final int calendar=0x7f0b002b;
+        public static final int configure=0x7f0b0029;
+        public static final int db_name=0x7f0b0024;
+        public static final int db_records_num=0x7f0b0025;
+        public static final int delete=0x7f0b002e;
+        public static final int description=0x7f0b0016;
+        public static final int distance=0x7f0b0012;
+        public static final int end_time=0x7f0b0011;
+        public static final int export=0x7f0b002c;
+        public static final int google_mapview=0x7f0b0018;
+        public static final int img=0x7f0b0022;
+        public static final int info=0x7f0b002d;
+        public static final int latitude=0x7f0b001d;
+        public static final int longitude=0x7f0b001e;
+        public static final int map_controller=0x7f0b000b;
+        public static final int max_speed=0x7f0b0015;
+        public static final int pause=0x7f0b0028;
+        public static final int records=0x7f0b0013;
+        public static final int records_list=0x7f0b0023;
+        public static final int root=0x7f0b0019;
+        public static final int satellite=0x7f0b000c;
         public static final int screen=0x7f0b0001;
-        public static final int speed=0x7f0b0011;
-        public static final int start=0x7f0b0024;
-        public static final int start_time=0x7f0b000d;
-        public static final int status=0x7f0b0017;
-        public static final int time=0x7f0b0018;
-        public static final int toggleButton=0x7f0b0019;
-        public static final int update=0x7f0b0014;
+        public static final int seek=0x7f0b000d;
+        public static final int speed=0x7f0b0014;
+        public static final int start=0x7f0b0027;
+        public static final int start_time=0x7f0b0010;
+        public static final int status=0x7f0b001a;
+        public static final int time=0x7f0b001b;
+        public static final int toggleButton=0x7f0b001c;
+        public static final int update=0x7f0b0017;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -157,6 +164,7 @@ containing a value of this type.
         public static final int storage_not_presented=0x7f07002a;
         public static final int sure_to_del=0x7f07000f;
         public static final int time_format=0x7f070007;
+        public static final int toggle_satellite=0x7f07002e;
         public static final int update_description=0x7f070026;
         public static final int update_title=0x7f070025;
         public static final int updated=0x7f07002d;
@@ -175,6 +183,7 @@ containing a value of this type.
         public static final int Status_Records=0x7f080009;
         public static final int Status_Status=0x7f08000a;
         public static final int Status_Time=0x7f080008;
+        public static final int TrackerActionBar=0x7f08000c;
         public static final int Window=0x7f080005;
     }
     public static final class xml {

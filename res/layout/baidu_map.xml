@@ -1,20 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <com.baidu.mapapi.MapView
-        android:id="@+id/bmapsView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:clickable="true" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
-        <include layout="@layout/action_bar" />
-    </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/map_controller"
+            android:padding="10dp"
+            android:gravity="center_vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
-</LinearLayout>
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/satellite"
+                android:layout_marginRight="10dp"
+                />
+
+            <SeekBar
+                android:id="@+id/seek"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/satellite"
+
+                />
+        </LinearLayout>
+
+        <com.baidu.mapapi.MapView
+            android:id="@+id/bmapsView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/map_controller"
+            android:clickable="true" />
+
+    </RelativeLayout>
+    
+    <include layout="@layout/action_bar" />
+
+</FrameLayout>

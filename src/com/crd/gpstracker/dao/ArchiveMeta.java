@@ -14,227 +14,225 @@ import android.location.Location;
 import com.crd.gpstracker.util.Logger;
 
 public class ArchiveMeta {
-    public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String END_TIME = "END_TIME";
-    public static final String START_TIME = "START_TIME";
-    public static final String COUNT = "COUNT";
-    public static final String AVERAGE_SPEED = "AVERAGE_SPEED";
-    public static final String DISTANCE = "distance";
-    public static final String TABLE_NAME = "meta";
-    public static final double KM_PER_HOUR_CNT = 3.597;
+	public static final String DESCRIPTION = "DESCRIPTION";
+	public static final String END_TIME = "END_TIME";
+	public static final String START_TIME = "START_TIME";
+	public static final String DISTANCE = "DISTANCE";
+	public static final String TABLE_NAME = "meta";
+	public static final double KM_PER_HOUR_CNT = 3.597;
 
-    protected Archive archive;
-    private Archive.ArchiveDatabaseHelper databaseHelper;
-    private SQLiteDatabase database;
-    private static final int FUNC_AVG = 0x1;
-    private static final int FUNC_MAX = 0x2;
-    
+	protected Archive archive;
+	private Archive.ArchiveDatabaseHelper databaseHelper;
+	private SQLiteDatabase database;
+	private static final int FUNC_AVG = 0x1;
+	private static final int FUNC_MAX = 0x2;
 
-    public ArchiveMeta(Archive archive) {
-        this.archive = archive;
-        this.database = archive.database;
-    }
+	public ArchiveMeta(Archive archive) {
+		this.archive = archive;
+		this.database = archive.database;
+	}
 
+	protected boolean set(String name, String value) {
+		ContentValues values = new ContentValues();
+		values.put(Archive.DATABASE_COLUMN.META_NAME, name);
+		values.put(Archive.DATABASE_COLUMN.META_VALUE, value);
 
-    protected boolean set(String name, String value) {
-        ContentValues values = new ContentValues();
-        values.put(Archive.DATABASE_COLUMN.META_NAME, name);
-        values.put(Archive.DATABASE_COLUMN.META_VALUE, value);
+		long result = 0;
+		try {
+			if (isExists(name)) {
+				result = database.update(TABLE_NAME, values,
+						Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'",
+						null);
+			} else {
+				result = database.insert(TABLE_NAME, null, values);
+			}
+		} catch (SQLiteException e) {
+			Logger.e(e.getMessage());
+		}
 
-        long result = 0;
-        try {
-            if (isExists(name)) {
-                result = database.update(TABLE_NAME, values,
-                    Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'", null);
-            } else {
-                result = database.insert(TABLE_NAME, null, values);
-            }
-        } catch (SQLiteException e) {
-            Logger.e(e.getMessage());
-        }
+		// 自动返回最后更新的数据更新时间
+		// if (result > 0) {
+		// File file = new File(archive.getName());
+		// file.setLastModified(getEndTime().getTime());
+		// }
 
-        return result > 0 ? true : false;
-    }
+		return result > 0 ? true : false;
+	}
 
-    protected String get(String name) {
-        Cursor cursor;
-        String result = "";
-        try {
-            String sql = "SELECT " + Archive.DATABASE_COLUMN.META_VALUE
-                + " FROM " + TABLE_NAME
-                + " WHERE " + Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'"
-                + " LIMIT 1";
+	protected String get(String name) {
+		Cursor cursor;
+		String result = "";
+		try {
+			String sql = "SELECT " + Archive.DATABASE_COLUMN.META_VALUE
+					+ " FROM " + TABLE_NAME + " WHERE "
+					+ Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'"
+					+ " LIMIT 1";
 
-            cursor = database.rawQuery(sql, null);
-            cursor.moveToFirst();
+			cursor = database.rawQuery(sql, null);
+			cursor.moveToFirst();
 
-            result = cursor.getString(cursor.getColumnIndex(Archive.DATABASE_COLUMN.META_VALUE));
-            cursor.close();
-        } catch (SQLiteException e) {
-            Logger.e(e.getMessage());
-        } catch (CursorIndexOutOfBoundsException e) {
-            Logger.e(e.getMessage());
-        }
+			result = cursor.getString(cursor
+					.getColumnIndex(Archive.DATABASE_COLUMN.META_VALUE));
+			cursor.close();
+		} catch (SQLiteException e) {
+			Logger.e(e.getMessage());
+		} catch (CursorIndexOutOfBoundsException e) {
+			Logger.e(e.getMessage());
+		}
 
-        return result;
-    }
-    
-    protected String get(String name, String defaultValue) {
-    	String value = get(name);
-    	if(value.equals("") && defaultValue.length() > 0) {
-    		return defaultValue;
-    	}
-    	return value;
-    }
+		return result;
+	}
 
-    protected boolean isExists(String name) {
-        Cursor cursor;
-        int count = 0;
-        try {
-            cursor = database.rawQuery(
-                "SELECT count(id) AS count"
-                    + " FROM " + TABLE_NAME
-                    + " WHERE " + Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'", null);
-            cursor.moveToFirst();
+	protected String get(String name, String defaultValue) {
+		String value = get(name);
+		if (value.equals("") && defaultValue.length() > 0) {
+			return defaultValue;
+		}
+		return value;
+	}
 
-            count = cursor.getInt(cursor.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
-            cursor.close();
-        } catch (SQLiteException e) {
-            Logger.e(e.getMessage());
-        } catch (CursorIndexOutOfBoundsException e) {
-            Logger.e(e.getMessage());
-        }
+	protected boolean isExists(String name) {
+		Cursor cursor;
+		int count = 0;
+		try {
+			cursor = database.rawQuery("SELECT count(id) AS count" + " FROM "
+					+ TABLE_NAME + " WHERE "
+					+ Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'",
+					null);
+			cursor.moveToFirst();
 
-        return count > 0 ? true : false;
-    }
+			count = cursor.getInt(cursor
+					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
+			cursor.close();
+		} catch (SQLiteException e) {
+			Logger.e(e.getMessage());
+		} catch (CursorIndexOutOfBoundsException e) {
+			Logger.e(e.getMessage());
+		}
 
+		return count > 0 ? true : false;
+	}
 
-    public Date getStartTime() {
-        return new Date(Long.parseLong(get(START_TIME), 10));
-    }
+	public Date getStartTime() {
+		return new Date(Long.parseLong(get(START_TIME), 10));
+	}
 
-    public Date getEndTime() {
-    	try {
-    		long endTime = Long.parseLong(get(END_TIME), 10);
-    		return new Date(endTime);
+	public Date getEndTime() {
+		try {
+			long endTime = Long.parseLong(get(END_TIME), 10);
+			return new Date(endTime);
 		} catch (NumberFormatException e) {
 			return null;
 		}
-        
-    }
 
-    public boolean setStartTime(Date date) {
-        long time = date.getTime();
-        return set(START_TIME, String.valueOf(time));
-    }
+	}
 
-    public boolean setEndTime(Date date) {
-        long time = date.getTime();
-        return set(END_TIME, String.valueOf(time));
-    }
+	public boolean setStartTime(Date date) {
+		long time = date.getTime();
+		return set(START_TIME, String.valueOf(time));
+	}
 
-    public String getDescription() {
-        return get(DESCRIPTION);
-    }
+	public boolean setEndTime(Date date) {
+		long time = date.getTime();
+		return set(END_TIME, String.valueOf(time));
+	}
 
-    public boolean setDescription(String description) {
-        boolean result = set(DESCRIPTION, description);
-        if (result) {
-            File file = new File(archive.getName());
-            file.setLastModified(getEndTime().getTime());
-        }
-        return result;
-    }
+	public String getDescription() {
+		return get(DESCRIPTION);
+	}
 
-    public long getCount() {
-        Cursor cursor;
-        long count = 0;
-        try {
-            cursor = database.rawQuery(
-                "SELECT count(id) AS count FROM "
-                    + Archive.TABLE_NAME
-                    + " LIMIT 1", null);
-            cursor.moveToFirst();
+	public boolean setDescription(String description) {
+		boolean result = set(DESCRIPTION, description);
+		return result;
+	}
 
-            count = cursor.getLong(cursor.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
-            cursor.close();
-        } catch (SQLiteException e) {
-            Logger.e(e.getMessage());
-        }
+	public long getCount() {
+		Cursor cursor;
+		long count = 0;
+		try {
+			cursor = database.rawQuery("SELECT count(id) AS count FROM "
+					+ Archive.TABLE_NAME + " LIMIT 1", null);
+			cursor.moveToFirst();
 
-        return count;
-    }
-    
-    
+			count = cursor.getLong(cursor
+					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
+			cursor.close();
+		} catch (SQLiteException e) {
+			Logger.e(e.getMessage());
+		}
 
-    /**
-     * 获得当前已经记录的距离
-     *
-     * @return
-     */
-    public float getRawDistance() {
-        ArrayList<Location> locations = archive.fetchAll();
-        Location lastComputedLocation = null;
-        float distance = 0;
-        for (int i = 0; i < locations.size(); i++) {
-            Location location = locations.get(i);
-            if (lastComputedLocation != null) {
-                distance += lastComputedLocation.distanceTo(location);
-            }
+		return count;
+	}
 
-            lastComputedLocation = location;
-        }
+	/**
+	 * 获得当前已经记录的距离
+	 * 
+	 * @return
+	 */
+	public float getRawDistance() {
+		ArrayList<Location> locations = archive.fetchAll();
+		Location lastComputedLocation = null;
+		float distance = 0;
+		for (int i = 0; i < locations.size(); i++) {
+			Location location = locations.get(i);
+			if (lastComputedLocation != null) {
+				distance += lastComputedLocation.distanceTo(location);
+			}
 
-        return distance;
-    }
-    
-    public boolean setRawDistance() {
-        float distance = getRawDistance();
-        return set(DISTANCE, String.valueOf(distance));
-    }
+			lastComputedLocation = location;
+		}
 
+		return distance;
+	}
 
-    public float getDistance() {
-        return Float.parseFloat(get(DISTANCE, "0.0"));
-    }
+	public boolean setRawDistance() {
+		float distance = getRawDistance();
+		return set(DISTANCE, String.valueOf(distance));
+	}
 
-    public float getSpeed(int type) {
-        String func;
-        switch (type) {
+	public float getDistance() {
+		return Float.parseFloat(get(DISTANCE, "0.0"));
+	}
+
+	public float getSpeed(int type) {
+		String func;
+		switch (type) {
 		case FUNC_AVG:
 			func = "avg";
 			break;
 
 		case FUNC_MAX:
 			func = "max";
-			
+
 		default:
 			func = "max";
 			break;
 		}
-        
-        String sql = "SELECT " + func + "(" +Archive.DATABASE_COLUMN.SPEED + ") AS "
-        	+ Archive.DATABASE_COLUMN.SPEED + " FROM " + Archive.TABLE_NAME + " LIMIT 1";
-        
-        Cursor cursor;
-        float speed = 0;
-        try {
+
+		String sql = "SELECT " + func + "(" + Archive.DATABASE_COLUMN.SPEED
+				+ ") AS " + Archive.DATABASE_COLUMN.SPEED + " FROM "
+				+ Archive.TABLE_NAME + " LIMIT 1";
+
+		Cursor cursor;
+		float speed = 0;
+		try {
 			cursor = database.rawQuery(sql, null);
 			cursor.moveToFirst();
-			speed = cursor.getFloat(cursor.getColumnIndex(Archive.DATABASE_COLUMN.SPEED));
+			speed = cursor.getFloat(cursor
+					.getColumnIndex(Archive.DATABASE_COLUMN.SPEED));
 			cursor.close();
 		} catch (SQLiteException e) {
 			Logger.e(e.getMessage());
 		}
-		
+
 		return speed;
-    }
+	}
 
-    public float getAverageSpeed() {
-    	return getSpeed(FUNC_AVG);
-    }
+	public float getAverageSpeed() {
+		return getSpeed(FUNC_AVG);
+	}
 
-    public float getMaxSpeed() {
-    	return getSpeed(FUNC_MAX);
-    }
+	public float getMaxSpeed() {
+		return getSpeed(FUNC_MAX);
+	}
 }

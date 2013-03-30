@@ -65,7 +65,7 @@ public class Detail extends Base implements View.OnClickListener {
         mDistance.setText(String.valueOf(archiveMeta.getDistance()));
         mRecords.setText(String.valueOf(archiveMeta.getCount()));
         mSpeed.setText(String.valueOf(archiveMeta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
-        mSpeed.setText(String.valueOf(archiveMeta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
+        mMaxSpeed.setText(String.valueOf(archiveMeta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
         mDescription.setText(archiveMeta.getDescription());
 
         mButton.setOnClickListener(this);
