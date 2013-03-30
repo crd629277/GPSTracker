@@ -7,10 +7,7 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -25,13 +22,11 @@ import com.baidu.mapapi.GeoPoint;
 import com.baidu.mapapi.ItemizedOverlay;
 import com.baidu.mapapi.MKEvent;
 import com.baidu.mapapi.MKGeneralListener;
-import com.baidu.mapapi.MapActivity;
-import com.baidu.mapapi.MapController;
 import com.baidu.mapapi.MapView;
 import com.baidu.mapapi.MyLocationOverlay;
 import com.baidu.mapapi.OverlayItem;
-import com.baidu.mapapi.Projection;
 import com.crd.gpstracker.R;
+import com.crd.gpstracker.activity.base.MapActivity;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.util.UIHelper;
 import com.markupartist.android.widget.ActionBar;
@@ -39,35 +34,22 @@ import com.markupartist.android.widget.ActionBar;
 
 public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeListener{
     private Archive archive;
-    private MapView mapView;
-    private MapController mapViewController;
     private Context context;
     private ArrayList<Location> locations;
     private BMapManager bMapManager = null;
-    private ActionBar actionBar;
-    private UIHelper uiHelper;
     private String archiveFileName;
     private SeekBar mSeekBar;
     private SimpleDateFormat dateFormat;
     private ToggleButton mSatellite;
 
-    @Override
-    protected boolean isRouteDisplayed() {
-        return false;
-    }
-    
-
-
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -84,23 +66,6 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 	}
 	
 
-    // 常用事件监听，用来处理通常的网络错误，授权验证错误等
-    class MyGeneralListener implements MKGeneralListener {
-        @Override
-        public void onGetNetworkState(int iError) {
-            Toast.makeText(context, "您的网络出错啦！", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onGetPermissionState(int iError) {
-            if (iError == MKEvent.ERROR_PERMISSION_DENIED) {
-                Toast.makeText(context, "请输入正确的授权 KEY！",
-                    Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,16 +73,10 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 
         context = this;
 
-        bMapManager = new BMapManager(getApplication());
-        bMapManager.init("353EEEC233F62E4062BA1E3A87A9468141B21AEE", new MyGeneralListener());
-
-        super.initMapActivity(bMapManager);
-
         mapView = (MapView) findViewById(R.id.bmapsView);
-        actionBar = (ActionBar) findViewById(R.id.action_bar);
 
         mapView.setBuiltInZoomControls(true);
-        mapViewController = mapView.getController();
+        mapView.setSatellite(false);
         
         mSeekBar = (SeekBar) findViewById(R.id.seek);
         mSatellite = (ToggleButton) findViewById(R.id.satellite);
@@ -133,10 +92,6 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 
     @Override
     public void onResume() {
-        if (bMapManager != null) {
-            bMapManager.start();
-        }
-        actionBar.removeAllActions();
         super.onResume();
     }
 
@@ -148,10 +103,6 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
         if (size <= 0) {
             return;
         }
-        
-        MyLocationOverlay myLocationOverlay = new MyLocationOverlay(context, mapView);
-        myLocationOverlay.disableMyLocation();
-        myLocationOverlay.disableCompass();
         
         mSeekBar.setMax(locations.size());
         mSeekBar.setProgress(0);
@@ -183,14 +134,11 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 
         // @todo 自动计算默认缩放的地图界面
         setCenterPoint(firstLocation, false);
-        mapViewController.setZoom(14);
+        mapViewController.setZoom(16);
     }
 
     @Override
     public void onPause() {
-        if (bMapManager != null) {
-            bMapManager.stop();
-        }
         super.onResume();
     }
     
@@ -202,10 +150,6 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 
     @Override
     public void onDestroy() {
-        if (bMapManager != null) {
-            bMapManager.destroy();
-        }
-
         archive.close();
         super.onDestroy();
     }
@@ -222,10 +166,7 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 			
 			for(int i=0; i < locations.size(); i++) {
 				Location x = locations.get(i);
-				
-				GeoPoint geoPoint = new GeoPoint((int) (x.getLatitude() * 1E6), (int) (x.getLongitude() * 1E6));
-				geoPoint = CoordinateConvert.bundleDecode(CoordinateConvert.fromWgs84ToBaidu(geoPoint));
-				
+				GeoPoint geoPoint = getRealGeoPointFromLocation(x);
 				geoPointList.add(new OverlayItem(geoPoint, x.getLatitude() + "", x.getLongitude() + ""));
 			}
 			
@@ -287,29 +228,5 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 		}
     	
     }
-    
-    
-    private void setCenterPoint(Location location, boolean animate) {
-    	GeoPoint geoPoint = new GeoPoint(
-                (int) (location.getLatitude() * 1E6),
-                (int) (location.getLongitude() * 1E6)
-            );
-    	
-    	// 计算地图偏移
-        geoPoint = CoordinateConvert.bundleDecode(CoordinateConvert.fromWgs84ToBaidu(geoPoint));
-
-     // @todo 自动计算默认缩放的地图界面
-        if(animate) {
-        	mapViewController.animateTo(geoPoint);
-        } else {
-        	mapViewController.setCenter(geoPoint);
-        }
-    }
-    
-    private void setCenterPoint(Location location) {
-    	setCenterPoint(location, false);
-    }
-    
-    
 
 }

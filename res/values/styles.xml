@@ -7,7 +7,7 @@
         <item name="android:layout_marginRight">10dip</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">42sp</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
     <style name="Item.Title" parent="@android:style/TextAppearance.Small">
@@ -48,7 +48,7 @@
     <style name="Status.Distance" parent="Status.Status"></style>
 
     <style name="TrackerActionBar" parent="ActionBar">
-        <item name="android:background">@color/actionbar_background</item>
+        <item name="android:background">@drawable/bg_action_bar</item>
     </style>
 
 </resources>

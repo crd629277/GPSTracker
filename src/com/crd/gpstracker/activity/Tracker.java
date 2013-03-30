@@ -10,7 +10,6 @@ import java.util.TimerTask;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -29,15 +28,15 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.crd.gpstracker.R;
+import com.crd.gpstracker.activity.base.Activity;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.service.ArchiveNameHelper;
 import com.crd.gpstracker.service.Recorder.ServiceBinder;
 import com.crd.gpstracker.util.Logger;
-import com.crd.gpstracker.util.Notifier;
 import com.markupartist.android.widget.ActionBar;
 
-public class Tracker extends Base {
+public class Tracker extends Activity {
     private Timer timer = null;
 
     private ArrayList<TextView> textViewsGroup = new ArrayList<TextView>();
@@ -143,23 +142,25 @@ public class Tracker extends Base {
                     count = archiveMeta.getCount();
                     speed = archiveMeta.getAverageSpeed();
                     maxSpeed = archiveMeta.getMaxSpeed();
-                    
+
+
                     GpsStatus gpsStatus = serviceBinder.getGpsStatus();
                     Iterator<GpsSatellite> satellites = (gpsStatus.getSatellites()).iterator();
-                    
+
+
                     int k = 0;
                     int j = 0;
                     while (satellites.hasNext()) {
-						GpsSatellite satellite = satellites.next();
-						if(satellite.hasEphemeris()) {
-							j++;
-						}
-						k++;
-					}
-                    
-                    if(i % 50 == 0) {
-                    	uiHelper.showShortToast("Connected: " + j + " / " + k + " / " + gpsStatus.getMaxSatellites());
+                        GpsSatellite satellite = satellites.next();
+                        if (satellite.hasEphemeris()) {
+                            j++;
+                        }
+                        k++;
                     }
+//
+//                    if (i % 50 == 0) {
+//                        uiHelper.showShortToast("Connected: " + j + " / " + k + " / " + gpsStatus.getMaxSatellites());
+//                    }
                 }
 
                 switch (textView.getId()) {
@@ -192,8 +193,8 @@ public class Tracker extends Base {
                         break;
                     case R.id.speed:
                         if (speed > 0) {
-                            stringValue = String.format("%.2f(%.2f)", 
-                            		speed * ArchiveMeta.KM_PER_HOUR_CNT, maxSpeed * ArchiveMeta.KM_PER_HOUR_CNT);
+                            stringValue = String.format("%.2f(%.2f)",
+                                speed * ArchiveMeta.KM_PER_HOUR_CNT, maxSpeed * ArchiveMeta.KM_PER_HOUR_CNT);
                         } else {
                             throw new NullPointerException();
                         }
@@ -299,8 +300,10 @@ public class Tracker extends Base {
         if (actionBar != null) {
             actionBar.setTitle(getString(R.string.app_name));
             actionBar.removeAllActions();
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.clearHomeAction();
             actionBar.addAction(new ActionBar.IntentAction(this,
-                new Intent(this, Records.class), android.R.drawable.ic_menu_send));
+                new Intent(this, Records.class), R.drawable.ic_menu_friendslist));
         }
     }
 

@@ -1,23 +1,28 @@
 package com.crd.gpstracker.activity;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.baidu.mapapi.MapView;
 import com.crd.gpstracker.R;
+import com.crd.gpstracker.activity.base.MapActivity;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
+import com.crd.gpstracker.util.UIHelper;
 import com.markupartist.android.widget.ActionBar;
 
-public class Detail extends Base implements View.OnClickListener {
+public class Detail extends MapActivity implements View.OnClickListener {
     private String archiveFileName;
+    private ActionBar actionBar;
     private Archive archive;
     private ArchiveMeta archiveMeta;
     private TextView mStartTime;
@@ -30,17 +35,24 @@ public class Detail extends Base implements View.OnClickListener {
     private SimpleDateFormat formatter;
     private TextView mArchiveName;
     private TextView mMaxSpeed;
+    private Context context;
+    private UIHelper uiHelper;
+    
+    private TextView mapMask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.detail);
+        context = this;
+        mapView = (MapView) findViewById(R.id.bmapsView);
 
         archiveFileName = getIntent().getStringExtra(Records.INTENT_ARCHIVE_FILE_NAME);
         archive = new Archive(context, archiveFileName, Archive.MODE_READ_WRITE);
         archiveMeta = archive.getMeta();
 
-        setContentView(R.layout.detail);
-
+        
+        actionBar =  (ActionBar) findViewById(R.id.action_bar);
         mArchiveName = (TextView) findViewById(R.id.archive_name);
         mStartTime = (TextView) findViewById(R.id.start_time);
         mEndTime = (TextView) findViewById(R.id.end_time);
@@ -51,12 +63,29 @@ public class Detail extends Base implements View.OnClickListener {
         mDescription = (EditText) findViewById(R.id.description);
         mButton = (Button) findViewById(R.id.update);
 
+        mapMask = (TextView) findViewById(R.id.map_mask);
         formatter = new SimpleDateFormat(getString(R.string.time_format));
+        uiHelper = new UIHelper(context);
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        
+        setCenterPoint(archive.getLastRecord(), false);
+        mapViewController.setZoom(14);
+        
+        mapMask.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_UP) {
+					Intent intent = new Intent(context, BaiduMap.class);
+					intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archive.getName());
+					startActivity(intent);
+				}
+				return true;
+			}
+		});
 
         mArchiveName.setText(archive.getName());
         mStartTime.setText(formatter.format(archiveMeta.getStartTime()));
@@ -74,14 +103,30 @@ public class Detail extends Base implements View.OnClickListener {
         actionBar.addAction(new ActionBar.Action() {
             @Override
             public int getDrawable() {
-                return android.R.drawable.ic_input_get;
+                return android.R.drawable.ic_menu_delete;
             }
 
             @Override
             public void performAction(View view) {
-                Intent intent = new Intent(context, BaiduMap.class);
-                intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archive.getName());
-                startActivity(intent);
+            	uiHelper.showConfirmDialog(getString(R.string.delete),
+                        String.format(getString(R.string.sure_to_del), archiveFileName),
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                if (archive.delete()) {
+                                    uiHelper.showShortToast(String.format(getString(R.string.has_deleted), archiveFileName));
+                                } else {
+                                    uiHelper.showLongToast(getString(R.string.delete_error));
+                                }
+                                finish();
+                            }
+                        }, new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        }
+                    );
             }
         });
     }
@@ -89,19 +134,18 @@ public class Detail extends Base implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        File file = new File(archiveFileName);
-        if (!file.exists()) {
-            finish();
+        if(!archive.exists()) {
+        	finish();
         }
     }
 
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if (archive != null) {
             archive.close();
         }
+        super.onDestroy();
     }
 
     @Override
@@ -111,4 +155,10 @@ public class Detail extends Base implements View.OnClickListener {
             uiHelper.showShortToast(getString(R.string.updated));
         }
     }
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

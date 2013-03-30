@@ -1,6 +1,5 @@
-package com.crd.gpstracker.activity;
+package com.crd.gpstracker.activity.base;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -8,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.view.View;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.service.Recorder;
@@ -15,12 +15,12 @@ import com.crd.gpstracker.util.UIHelper;
 import com.markupartist.android.widget.ActionBar;
 import com.umeng.analytics.MobclickAgent;
 
-public class Base extends Activity {
+public abstract class Activity extends android.app.Activity {
     protected SharedPreferences sharedPreferences;
     protected UIHelper uiHelper;
     public Intent recordServerIntent;
     protected ActionBar actionBar;
-    protected Base context;
+    protected Activity context;
     protected Recorder.ServiceBinder serviceBinder = null;
 
     @Override
@@ -29,11 +29,10 @@ public class Base extends Activity {
         context = this;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         uiHelper = new UIHelper(this);
-
+        
         MobclickAgent.onError(this);
     }
 
-    
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -54,6 +53,18 @@ public class Base extends Activity {
         bindService(recordServerIntent, serviceConnection, BIND_AUTO_CREATE);
 
         actionBar = (ActionBar) findViewById(R.id.action_bar);
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setHomeAction(new ActionBar.Action() {
+//            @Override
+//            public int getDrawable() {
+//                return R.drawable.ic_menu_home;
+//            }
+//
+//            @Override
+//            public void performAction(View view) {
+//                finish();
+//            }
+//        });
     }
 
     @Override
@@ -73,7 +84,6 @@ public class Base extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-
         MobclickAgent.onPause(this);
     }
 

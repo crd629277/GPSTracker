@@ -151,6 +151,11 @@ public class Archive {
         return (new File(name)).delete();
     }
     
+    
+    public boolean exists() {
+    	return (new File(name)).exists();
+    }
+    
 
     public ArchiveMeta getMeta() {
         return meta;

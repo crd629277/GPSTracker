@@ -18,11 +18,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.crd.gpstracker.R;
+import com.crd.gpstracker.activity.base.Activity;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.service.ArchiveNameHelper;
 
-public class Records extends Base implements AdapterView.OnItemClickListener {
+public class Records extends Activity implements AdapterView.OnItemClickListener {
     private Context context;
     public static final String INTENT_ARCHIVE_FILE_NAME = "name";
 
