@@ -96,13 +96,18 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
         setCenterPoint(location, false);
     }
     
-    protected GeoPoint getRealGeoPointFromLocation(Location location) {
+    protected GeoPoint getGeoPoint(Location location) {
     	GeoPoint geoPoint = new GeoPoint(
                 (int) (location.getLatitude() * 1E6),
                 (int) (location.getLongitude() * 1E6)
             );
-    	return CoordinateConvert.bundleDecode(CoordinateConvert.fromWgs84ToBaidu(geoPoint));
+    	return geoPoint;
 	}
+    
+    protected GeoPoint getRealGeoPointFromLocation(Location location) {
+        GeoPoint geoPoint = getGeoPoint(location);
+        return CoordinateConvert.bundleDecode(CoordinateConvert.fromWgs84ToBaidu(geoPoint));
+    }
 
     @Override
     public void onDestroy() {

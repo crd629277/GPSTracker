@@ -12,6 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.baidu.mapapi.MKAddrInfo;
+import com.baidu.mapapi.MKDrivingRouteResult;
+import com.baidu.mapapi.MKPoiResult;
+import com.baidu.mapapi.MKSearch;
+import com.baidu.mapapi.MKSearchListener;
+import com.baidu.mapapi.MKTransitRouteResult;
+import com.baidu.mapapi.MKWalkingRouteResult;
 import com.baidu.mapapi.MapView;
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.base.MapActivity;
@@ -20,7 +27,7 @@ import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.util.UIHelper;
 import com.markupartist.android.widget.ActionBar;
 
-public class Detail extends MapActivity implements View.OnClickListener {
+public class Detail extends MapActivity implements View.OnClickListener, MKSearchListener {
     private String archiveFileName;
     private ActionBar actionBar;
     private Archive archive;
@@ -62,8 +69,9 @@ public class Detail extends MapActivity implements View.OnClickListener {
         mMaxSpeed = (TextView) findViewById(R.id.max_speed);
         mDescription = (EditText) findViewById(R.id.description);
         mButton = (Button) findViewById(R.id.update);
-
         mapMask = (TextView) findViewById(R.id.map_mask);
+        
+        
         formatter = new SimpleDateFormat(getString(R.string.time_format));
         uiHelper = new UIHelper(context);
     }
@@ -86,6 +94,17 @@ public class Detail extends MapActivity implements View.OnClickListener {
 				return true;
 			}
 		});
+        
+        String description = archiveMeta.getDescription().trim();
+        if(description.length() > 0) {
+        	mDescription.setText(description);
+        } else {
+        	MKSearch search = new MKSearch();
+        	search.init(bMapManager, this);
+        	search.reverseGeocode(getRealGeoPointFromLocation(archive.getLastRecord()));
+        }
+        
+        
 
         mArchiveName.setText(archive.getName());
         mStartTime.setText(formatter.format(archiveMeta.getStartTime()));
@@ -95,7 +114,7 @@ public class Detail extends MapActivity implements View.OnClickListener {
         mRecords.setText(String.valueOf(archiveMeta.getCount()));
         mSpeed.setText(String.valueOf(archiveMeta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
         mMaxSpeed.setText(String.valueOf(archiveMeta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
-        mDescription.setText(archiveMeta.getDescription());
+        
 
         mButton.setOnClickListener(this);
 
@@ -160,5 +179,37 @@ public class Detail extends MapActivity implements View.OnClickListener {
 	protected boolean isRouteDisplayed() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void onGetAddrResult(MKAddrInfo mkAddrInfo, int arg1) {
+		String address = mkAddrInfo.strAddr;
+		uiHelper.showLongToast(address);
+		archiveMeta.setDescription(String.format(getString(R.string.nearby), address));
+		
+	}
+
+	@Override
+	public void onGetDrivingRouteResult(MKDrivingRouteResult arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGetPoiResult(MKPoiResult arg0, int arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGetTransitRouteResult(MKTransitRouteResult arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGetWalkingRouteResult(MKWalkingRouteResult arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 }

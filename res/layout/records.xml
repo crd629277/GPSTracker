@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    style="@style/LightBackground"
     >
-    
-    <include layout="@layout/action_bar"/>
-    
+
+    <include layout="@layout/action_bar" />
+
     <ListView
         android:id="@+id/records_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:focusable="false"
+        android:scrollingCache="false" 
+        android:fadingEdge="none"
+        android:divider="@color/divider"
+        android:dividerHeight="1sp"
         />
+
 </LinearLayout>

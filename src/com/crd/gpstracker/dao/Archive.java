@@ -40,7 +40,7 @@ public class Archive {
 
     protected class ArchiveDatabaseHelper extends SQLiteOpenHelper {
 
-        private static final String SQL_CREATE_LOCATION_TABLE =
+        protected static final String SQL_CREATE_LOCATION_TABLE =
             "create table " + TABLE_NAME + " ("
                 + "id integer primary key autoincrement, "
                 + "latitude double not null, "
@@ -52,7 +52,7 @@ public class Archive {
                 + "time long not null"
                 + ");";
 
-        private static final String SQL_CREATE_META_TABLE =
+        protected static final String SQL_CREATE_META_TABLE =
             "create table " + ArchiveMeta.TABLE_NAME + " ("
                 + "id integer primary key autoincrement, "
                 + "meta string not null unique,"
@@ -181,10 +181,31 @@ public class Archive {
         return false;
     }
 
+    /**
+     * 获取最后个已记录的位置
+     * 
+     * @return
+     */
     public Location getLastRecord() {
         try {
         	Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME
                 + " ORDER BY time DESC LIMIT 1", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                return getLocationFromCursor(cursor);
+            }
+            cursor.close();
+        } catch (SQLiteException e) {
+            Logger.e(e.getMessage());
+        }
+
+        return null;
+    }
+    
+    public Location getFirstRecord() {
+        try {
+        	Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME
+                + " ORDER BY time ASC LIMIT 1", null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 return getLocationFromCursor(cursor);

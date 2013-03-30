@@ -112,10 +112,18 @@ public class ArchiveMeta {
 
 		return count > 0 ? true : false;
 	}
-
+	
+	
 	public Date getStartTime() {
-		return new Date(Long.parseLong(get(START_TIME), 10));
+		try {
+			long startTime = Long.parseLong(get(START_TIME), 10);
+			return new Date(startTime);
+		} catch (Exception e) {
+			return null;
+		}
 	}
+
+	
 
 	public Date getEndTime() {
 		try {
@@ -235,4 +243,21 @@ public class ArchiveMeta {
 	public float getMaxSpeed() {
 		return getSpeed(FUNC_MAX);
 	}
+	
+	
+	public boolean rebuild() {
+		try {
+			database.execSQL("DROP TABLE " + TABLE_NAME);
+			database.execSQL(Archive.ArchiveDatabaseHelper.SQL_CREATE_META_TABLE);
+			
+			setRawDistance();
+			setStartTime(new Date(archive.getFirstRecord().getTime()));
+			setEndTime(new Date(archive.getLastRecord().getTime()));
+		} catch (Exception e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 }

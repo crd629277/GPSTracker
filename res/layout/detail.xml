@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="top"
                 android:minLines="3"
-                android:text="de" />
+                android:text="" />
 
             <Button
                 android:id="@+id/update"

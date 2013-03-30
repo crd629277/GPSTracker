@@ -26,7 +26,6 @@ containing a value of this type.
         public static final int title=0x7f010000;
     }
     public static final class color {
-        public static final int actionbar_background=0x7f050009;
         public static final int actionbar_background_end=0x7f050003;
         public static final int actionbar_background_item_pressed_end=0x7f050005;
         public static final int actionbar_background_item_pressed_start=0x7f050004;
@@ -35,10 +34,14 @@ containing a value of this type.
          */
         public static final int actionbar_separator=0x7f050000;
         public static final int actionbar_title=0x7f050001;
+        public static final int divider=0x7f05000c;
         public static final int gray=0x7f050006;
-        public static final int highlight=0x7f050008;
-        public static final int route_color=0x7f05000a;
+        public static final int highlight=0x7f050009;
+        public static final int highlight_border=0x7f05000a;
+        public static final int mils=0x7f05000b;
+        public static final int snowwhite=0x7f05000d;
         public static final int title=0x7f050007;
+        public static final int title_second=0x7f050008;
     }
     public static final class dimen {
         public static final int actionbar_height=0x7f060000;
@@ -51,28 +54,43 @@ containing a value of this type.
         public static final int actionbar_btn=0x7f020002;
         public static final int actionbar_btn_normal=0x7f020003;
         public static final int actionbar_btn_pressed=0x7f020004;
-        public static final int bg_action_bar=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int ic_menu_delete=0x7f020007;
-        public static final int ic_menu_friendslist=0x7f020008;
-        public static final int ic_menu_help=0x7f020009;
-        public static final int ic_menu_home=0x7f02000a;
-        public static final int ic_menu_info_details=0x7f02000b;
-        public static final int ic_menu_manage=0x7f02000c;
-        public static final int ic_menu_mapmode=0x7f02000d;
-        public static final int ic_menu_moreoverflow_normal_holo_light=0x7f02000e;
-        public static final int ic_menu_mylocation=0x7f02000f;
-        public static final int ic_menu_refresh=0x7f020010;
-        public static final int ic_menu_share=0x7f020011;
-        public static final int ic_menu_sort_by_size=0x7f020012;
-        public static final int ic_menu_today=0x7f020013;
-        public static final int ic_menu_view=0x7f020014;
-        public static final int icon=0x7f020015;
-        public static final int mark=0x7f020016;
-        public static final int tray=0x7f020017;
+        public static final int background=0x7f020005;
+        public static final int bg=0x7f020006;
+        public static final int bg_action_bar=0x7f020007;
+        public static final int btn_end=0x7f020008;
+        public static final int btn_end_normal=0x7f020009;
+        public static final int btn_end_press=0x7f02000a;
+        public static final int btn_start=0x7f02000b;
+        public static final int btn_start_normal=0x7f02000c;
+        public static final int btn_start_press=0x7f02000d;
+        public static final int cell_border_horizontal=0x7f02000e;
+        public static final int cell_border_vertical=0x7f02000f;
+        public static final int ic_launcher=0x7f020010;
+        public static final int ic_menu_delete=0x7f020011;
+        public static final int ic_menu_friendslist=0x7f020012;
+        public static final int ic_menu_help=0x7f020013;
+        public static final int ic_menu_home=0x7f020014;
+        public static final int ic_menu_info_details=0x7f020015;
+        public static final int ic_menu_manage=0x7f020016;
+        public static final int ic_menu_mapmode=0x7f020017;
+        public static final int ic_menu_moreoverflow_normal_holo_light=0x7f020018;
+        public static final int ic_menu_mylocation=0x7f020019;
+        public static final int ic_menu_refresh=0x7f02001a;
+        public static final int ic_menu_share=0x7f02001b;
+        public static final int ic_menu_sort_by_size=0x7f02001c;
+        public static final int ic_menu_today=0x7f02001d;
+        public static final int ic_menu_view=0x7f02001e;
+        public static final int icon=0x7f02001f;
+        public static final int mark=0x7f020020;
+        public static final int time=0x7f020021;
+        public static final int time_background=0x7f020022;
+        public static final int time_background_border_bottom=0x7f020023;
+        public static final int time_background_item=0x7f020024;
+        public static final int time_border_bottom_item=0x7f020025;
+        public static final int to=0x7f020026;
     }
     public static final class id {
-        public static final int about=0x7f0b002b;
+        public static final int about=0x7f0b002c;
         public static final int accuracy=0x7f0b0022;
         public static final int action_bar=0x7f0b0000;
         public static final int actionbar_actions=0x7f0b0007;
@@ -87,26 +105,26 @@ containing a value of this type.
         public static final int altitude=0x7f0b0021;
         public static final int archive_name=0x7f0b0010;
         public static final int bearing=0x7f0b0020;
-        public static final int between=0x7f0b0027;
         public static final int bmapsView=0x7f0b000e;
-        public static final int calendar=0x7f0b002c;
-        public static final int configure=0x7f0b002a;
-        public static final int db_name=0x7f0b0025;
-        public static final int db_records_num=0x7f0b0026;
-        public static final int delete=0x7f0b002f;
+        public static final int calendar=0x7f0b002d;
+        public static final int configure=0x7f0b002b;
+        public static final int cost_time=0x7f0b0027;
+        public static final int cost_time_layout=0x7f0b0026;
+        public static final int delete=0x7f0b0030;
         public static final int description=0x7f0b0017;
         public static final int distance=0x7f0b0013;
+        public static final int distance_layout=0x7f0b0025;
         public static final int end_time=0x7f0b0012;
-        public static final int export=0x7f0b002d;
+        public static final int export=0x7f0b002e;
         public static final int google_mapview=0x7f0b0019;
         public static final int img=0x7f0b0023;
-        public static final int info=0x7f0b002e;
+        public static final int info=0x7f0b002f;
         public static final int latitude=0x7f0b001e;
         public static final int longitude=0x7f0b001f;
         public static final int map_controller=0x7f0b000b;
         public static final int map_mask=0x7f0b000f;
         public static final int max_speed=0x7f0b0016;
-        public static final int pause=0x7f0b0029;
+        public static final int pause=0x7f0b002a;
         public static final int records=0x7f0b0014;
         public static final int records_list=0x7f0b0024;
         public static final int root=0x7f0b001a;
@@ -114,9 +132,10 @@ containing a value of this type.
         public static final int screen=0x7f0b0001;
         public static final int seek=0x7f0b000d;
         public static final int speed=0x7f0b0015;
-        public static final int start=0x7f0b0028;
+        public static final int start=0x7f0b0029;
         public static final int start_time=0x7f0b0011;
         public static final int status=0x7f0b001b;
+        public static final int status_layout=0x7f0b0028;
         public static final int time=0x7f0b001c;
         public static final int toggleButton=0x7f0b001d;
         public static final int update=0x7f0b0018;
@@ -129,11 +148,12 @@ containing a value of this type.
         public static final int baidu_map=0x7f030004;
         public static final int detail=0x7f030005;
         public static final int google_map=0x7f030006;
-        public static final int main=0x7f030007;
-        public static final int notifier=0x7f030008;
-        public static final int records=0x7f030009;
-        public static final int records_row=0x7f03000a;
-        public static final int tracker=0x7f03000b;
+        public static final int item_distance=0x7f030007;
+        public static final int main=0x7f030008;
+        public static final int notifier=0x7f030009;
+        public static final int records=0x7f03000a;
+        public static final int records_row=0x7f03000b;
+        public static final int tracker=0x7f03000c;
     }
     public static final class menu {
         public static final int main=0x7f0a0000;
@@ -165,6 +185,7 @@ containing a value of this type.
         public static final int menu_records=0x7f07001f;
         public static final int menu_start=0x7f070021;
         public static final int merge=0x7f070027;
+        public static final int nearby=0x7f07002f;
         public static final int no_description=0x7f070008;
         public static final int norecords=0x7f07001a;
         public static final int not_record_anything=0x7f070022;
@@ -195,13 +216,24 @@ containing a value of this type.
         public static final int ActionBarHomeLogo=0x7f080003;
         public static final int ActionBarItem=0x7f080001;
         public static final int ActionBarProgressBar=0x7f080004;
-        public static final int Item_Content=0x7f080006;
-        public static final int Item_Title=0x7f080007;
-        public static final int Status_Distance=0x7f08000b;
-        public static final int Status_Records=0x7f080009;
-        public static final int Status_Status=0x7f08000a;
-        public static final int Status_Time=0x7f080008;
-        public static final int TrackerActionBar=0x7f08000c;
+        public static final int BigButton=0x7f080012;
+        public static final int BigEndButton=0x7f080013;
+        public static final int BigStartButton=0x7f080014;
+        public static final int BigTitle=0x7f08000f;
+        public static final int BitCounter=0x7f080010;
+        public static final int Cell=0x7f080015;
+        public static final int Cell_Horizontal=0x7f080017;
+        public static final int Cell_Vertical=0x7f080016;
+        public static final int Item_Content=0x7f080007;
+        public static final int Item_Title=0x7f080008;
+        public static final int Item_TitleSecond=0x7f080009;
+        public static final int LightBackground=0x7f080006;
+        public static final int SecondTitle=0x7f080011;
+        public static final int Status_Distance=0x7f08000d;
+        public static final int Status_Records=0x7f08000b;
+        public static final int Status_Status=0x7f08000c;
+        public static final int Status_Time=0x7f08000a;
+        public static final int TrackerActionBar=0x7f08000e;
         public static final int Window=0x7f080005;
     }
     public static final class xml {
