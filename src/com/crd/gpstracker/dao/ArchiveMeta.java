@@ -1,6 +1,5 @@
 package com.crd.gpstracker.dao;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -24,7 +23,6 @@ public class ArchiveMeta {
 	private static final String COST_TIME_FORMAT = "%02d:%02d:%02d";
 
 	protected Archive archive;
-	private Archive.ArchiveDatabaseHelper databaseHelper;
 	private SQLiteDatabase database;
 	private static final int FUNC_AVG = 0x1;
 	private static final int FUNC_MAX = 0x2;
@@ -80,6 +78,8 @@ public class ArchiveMeta {
 			Logger.e(e.getMessage());
 		} catch (CursorIndexOutOfBoundsException e) {
 			Logger.e(e.getMessage());
+		} catch (IllegalStateException e) {
+			Logger.e(e.getMessage());
 		}
 
 		return result;
@@ -131,7 +131,7 @@ public class ArchiveMeta {
 		try {
 			long endTime = Long.parseLong(get(END_TIME), 10);
 			return new Date(endTime);
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -257,7 +257,7 @@ public class ArchiveMeta {
 			speed = cursor.getFloat(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.SPEED));
 			cursor.close();
-		} catch (SQLiteException e) {
+		} catch (Exception e) {
 			Logger.e(e.getMessage());
 		}
 

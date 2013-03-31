@@ -8,10 +8,10 @@ import android.widget.Toast;
 
 import com.crd.gpstracker.R;
 
-public class UIHelper {
+public class Helper {
 	private Context context;
 
-	public UIHelper(Context context) {
+	public Helper(Context context) {
 		this.context = context;
 	}
 

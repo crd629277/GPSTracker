@@ -22,7 +22,8 @@ import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.util.Logger;
 import com.crd.gpstracker.util.Notifier;
-import com.crd.gpstracker.util.UIHelper;
+import com.crd.gpstracker.util.Helper;
+import com.umeng.analytics.MobclickAgent;
 
 interface Binder {
     public static final int STATUS_RECORDING = 0x0000;
@@ -42,7 +43,7 @@ interface Binder {
 }
 
 public class Recorder extends Service {
-    protected Recorder.ServiceBinder serviceBinder;
+    protected static Recorder.ServiceBinder serviceBinder;
     private SharedPreferences sharedPreferences;
     private Archive archive;
 
@@ -52,9 +53,10 @@ public class Recorder extends Service {
 
     private ArchiveNameHelper nameHelper;
     private String archivName;
-    private UIHelper uiHelper;
+    private Helper helper;
     private Context context;
     private Notifier notifier;
+    private static final String RECORDER_SERVER_ID = "Tracker Service";
 
     public class ServiceBinder extends android.os.Binder implements Binder {
         private int status = ServiceBinder.STATUS_STOPPED;
@@ -81,7 +83,7 @@ public class Recorder extends Service {
                 boolean hasResumeName = nameHelper.hasResumeName();
                 if (hasResumeName) {
                     archivName = nameHelper.getResumeName();
-                    uiHelper.showLongToast(
+                    helper.showLongToast(
                         String.format(
                             getString(R.string.use_resume_archive_file, archivName)
                         ));
@@ -114,20 +116,31 @@ public class Recorder extends Service {
                 notifierTask = new TimerTask() {
                     @Override
                     public void run() {
-                        float distance = getMeta().getDistance() / ArchiveMeta.TO_KILOMETRE;
-                        double avgSpeed = getMeta().getAverageSpeed() * ArchiveMeta.TO_KILOMETRE;
-                        double maxSpeed = getMeta().getMaxSpeed() * ArchiveMeta.TO_KILOMETRE;
+                    	switch (serviceBinder.getStatus()) {
+						case ServiceBinder.STATUS_RECORDING:
+							float distance = getMeta().getDistance() / ArchiveMeta.TO_KILOMETRE;
+	                        double avgSpeed = getMeta().getAverageSpeed() * ArchiveMeta.TO_KILOMETRE;
+	                        double maxSpeed = getMeta().getMaxSpeed() * ArchiveMeta.TO_KILOMETRE;
+	                        
+	                        notifier.setStatusString(String.format(getString(R.string.status_format), distance, avgSpeed, maxSpeed));
+	                        notifier.setCostTimeString(getMeta().getCostTimeStringByNow());
+	                        
+	                        notifier.publish();
+	                        
+							break;
+
+						case ServiceBinder.STATUS_STOPPED:
+							notifier.cancel();
+							break;
+						}
                         
-                        notifier.setStatusString(String.format(getString(R.string.status_format), distance, avgSpeed, maxSpeed));
-                        notifier.setCostTimeString(getMeta().getCostTimeStringByNow());
-                        
-                        notifier.publish();
                     }
                 };
 
                 timer = new Timer();
                 timer.schedule(notifierTask, 0, 5000);
                 status = ServiceBinder.STATUS_RECORDING;
+                MobclickAgent.onEvent(context, RECORDER_SERVER_ID);
             }
         }
         
@@ -144,12 +157,12 @@ public class Recorder extends Service {
                 long totalCount = getMeta().getCount();
                 if (totalCount <= 0) {
                     (new File(archivName)).delete();
-                    uiHelper.showLongToast(getString(R.string.not_record_anything));
+                    helper.showLongToast(getString(R.string.not_record_anything));
                 } else {
                     // 设置结束记录时间
                     getMeta().setEndTime(new Date());
 
-                    uiHelper.showLongToast(String.format(
+                    helper.showLongToast(String.format(
                         getString(R.string.result_report), String.valueOf(totalCount)
                     ));
                 }
@@ -161,6 +174,7 @@ public class Recorder extends Service {
                 nameHelper.clearLastOpenedName();
 
                 status = ServiceBinder.STATUS_STOPPED;
+                MobclickAgent.onEvent(context, RECORDER_SERVER_ID);
             }
         }
 
@@ -195,8 +209,10 @@ public class Recorder extends Service {
         this.notifier = new Notifier(context);
 
         this.nameHelper = new ArchiveNameHelper(context);
-        this.uiHelper = new UIHelper(context);
-        this.serviceBinder = new ServiceBinder();
+        this.helper = new Helper(context);
+        if(this.serviceBinder == null) {
+        	this.serviceBinder = new ServiceBinder();
+        }
 
         boolean autoStart = sharedPreferences.getBoolean(Preference.AUTO_START, false);
         if (autoStart) {
@@ -208,6 +224,12 @@ public class Recorder extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
+    }
+    
+    @Override
+    public void onDestroy() {
+    	serviceBinder.stopRecord();
+    	super.onDestroy();
     }
 
 

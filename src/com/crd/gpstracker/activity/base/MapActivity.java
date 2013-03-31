@@ -12,7 +12,7 @@ import com.baidu.mapapi.MKGeneralListener;
 import com.baidu.mapapi.MapController;
 import com.baidu.mapapi.MapView;
 import com.crd.gpstracker.R;
-import com.crd.gpstracker.util.UIHelper;
+import com.crd.gpstracker.util.Helper;
 import com.markupartist.android.widget.ActionBar;
 import com.umeng.analytics.MobclickAgent;
 
@@ -21,7 +21,7 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
     protected MapController mapViewController;
     static protected BMapManager bMapManager;
     private static final String BAIDU_MAP_KEY = "353EEEC233F62E4062BA1E3A87A9468141B21AEE";
-    protected UIHelper uiHelper;
+    protected Helper helper;
     protected Context context;
     protected ActionBar actionBar;
 
@@ -34,7 +34,7 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
         bMapManager.init(BAIDU_MAP_KEY, this);
 
         actionBar = (ActionBar) findViewById(R.id.action_bar);
-        uiHelper = new UIHelper(context);
+        helper = new Helper(context);
         MobclickAgent.onError(this);
     }
 

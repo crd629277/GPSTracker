@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group>
+        <item
+            android:id="@+id/menu_records"
+            android:icon="@drawable/ic_menu_friendslist"
+            android:title="@string/menu_records"/>
+        <item
+            android:id="@+id/menu_configure"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/menu_configure"/>
+        <item
+            android:id="@+id/menu_feedback"
+            android:enabled="false"
+            android:icon="@drawable/ic_menu_cc"
+            android:title="@string/menu_feedback"/>
+        <item
+            android:id="@+id/menu_help"
+            android:enabled="false"
+            android:icon="@drawable/ic_menu_help"
+            android:title="@string/menu_help"/>
+    </group>
+
+</menu>

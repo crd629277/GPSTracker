@@ -1,6 +1,7 @@
 package com.crd.gpstracker.fragment;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import android.content.Context;
@@ -42,7 +43,10 @@ public class ArchiveMetaTimeFragment extends Fragment {
     }
 
     protected void updateView() {
-        mStartTime.setText(dateFormat.format(meta.getStartTime()));
-        mEndTime.setText(dateFormat.format(meta.getEndTime()));
+    	Date startTime = meta.getStartTime();
+    	Date endTime = meta.getEndTime();
+        mStartTime.setText(startTime != null ? dateFormat.format(startTime) : getString(R.string.not_available));
+        mEndTime.setText(endTime != null ? dateFormat.format(endTime) : getString(R.string.not_available));
+        
     }
 }

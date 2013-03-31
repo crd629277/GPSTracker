@@ -55,7 +55,7 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		try {
 			Location location = locations.get(seekBar.getProgress() - 1);
-			uiHelper.showShortToast(dateFormat.format(location.getTime()));
+			helper.showShortToast(dateFormat.format(location.getTime()));
 			setCenterPoint(location, true);
 		} catch (Exception e) {
 			return;
@@ -221,7 +221,7 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 		@Override
 		protected boolean onTap(int i) {
 			Location location = locations.get(i);
-			uiHelper.showShortToast(dateFormat.format(location.getTime()));
+			helper.showShortToast(dateFormat.format(location.getTime()));
 			mSeekBar.setProgress(i);
 			setCenterPoint(location, true);
 			return true;
