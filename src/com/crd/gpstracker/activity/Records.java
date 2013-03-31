@@ -38,7 +38,7 @@ public class Records extends Activity implements AdapterView.OnItemClickListener
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Archive archive = archives.get(i);
         Intent intent = new Intent(this, Detail.class);
-//        Intent intent = new Intent(this, GoogleMap.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_ARCHIVE_FILE_NAME, archive.getName());
 
         startActivity(intent);
@@ -55,41 +55,6 @@ public class Records extends Activity implements AdapterView.OnItemClickListener
             super(context, R.layout.records_row, archives);
         }
         
-        
-        protected String countTime(Date start, Date end) {
-			try {
-				long startTimeStamp = start.getTime();
-				long endTimeStap = end.getTime();
-				long between = endTimeStap - startTimeStamp;
-				
-				long day = between / (24 * 60 * 60 * 1000);
-				long hour = (between / (60 * 60 * 1000) - day * 24);
-				long minute = ((between / (60 * 1000) - day * 24 * 60 - hour * 60));
-				long second = ((between / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - minute * 60));
-				
-				String result = "";
-				if(day > 0) {
-					result += day + "d";
-				}
-				
-				if(hour > 0) {
-					result += (result.length() > 0 ? ", " : "") + hour + "h";
-				}
-				
-				if(minute > 0) {
-					result += (result.length() > 0 ? ", " : "") + minute + "min";
-				}
-				
-				if(day <= 0 && second > 0) {
-					result += (result.length() > 0 ? ", " : "") + second + "sec";
-				}
-				
-				return result;
-			} catch (Exception e) {
-				return "";
-			}
-		}
-
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -103,13 +68,9 @@ public class Records extends Activity implements AdapterView.OnItemClickListener
             TextView mCostTime = (TextView) rowView.findViewById(R.id.cost_time);
             TextView mDistance = (TextView) rowView.findViewById(R.id.distance);
             
-            mDistance.setText(String.format("%02.2f", archiveMeta.getDistance() / 1000));
+            mDistance.setText(String.format(getString(R.string.records_formatter), archiveMeta.getDistance() / archiveMeta.TO_KILOMETRE));
             
-            Date startTime = archiveMeta.getStartTime();
-            Date endTime = archiveMeta.getEndTime();
-            
-            String costTime = countTime(startTime, endTime);
-            mCostTime.setText(costTime);
+            mCostTime.setText(archiveMeta.getRawCostTimeString());
             
             String description = archiveMeta.getDescription();
             if (description.length() <= 0) {

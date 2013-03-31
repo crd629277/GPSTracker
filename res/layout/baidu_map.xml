@@ -42,6 +42,6 @@
 
     </RelativeLayout>
     
-    <include layout="@layout/action_bar" />
+<!--     <include layout="@layout/action_bar" /> -->
 
 </FrameLayout>

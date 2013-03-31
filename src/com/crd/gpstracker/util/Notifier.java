@@ -1,7 +1,6 @@
 package com.crd.gpstracker.util;
 
 import com.crd.gpstracker.R;
-import com.crd.gpstracker.activity.Main;
 import com.crd.gpstracker.activity.Tracker;
 
 import android.app.Notification;
@@ -20,7 +19,7 @@ public class Notifier extends Notification{
     private Intent intent;
 
     public Notifier(Context context) {
-    	super(R.drawable.ic_menu_mapmode, context.getString(R.string.running), System.currentTimeMillis());
+    	super(R.drawable.ic_notification, context.getString(R.string.running), System.currentTimeMillis());
     	
     	this.flags |= Notification.FLAG_ONGOING_EVENT;
     	this.flags |= Notification.DEFAULT_LIGHTS;
@@ -35,12 +34,12 @@ public class Notifier extends Notification{
     }
 
     
-    public void setDistance(float distance) {
-		contentView.setTextViewText(R.id.records, String.valueOf(distance));
+    public void setStatusString(String statusString) {
+		contentView.setTextViewText(R.id.status, statusString);
 	}
     
-    public void setRecords(long records) {
-        contentView.setTextViewText(R.id.records, String.valueOf(records));
+    public void setCostTimeString(String costTimeString) {
+        contentView.setTextViewText(R.id.status_cost_time, costTimeString);
     }
     
     public void setNumber(int number) {

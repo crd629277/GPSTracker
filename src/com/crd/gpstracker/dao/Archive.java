@@ -135,7 +135,6 @@ public class Archive {
                 database = databaseHelper.getReadableDatabase();
                 break;
             case MODE_READ_WRITE:
-            default:
                 database = databaseHelper.getWritableDatabase();
                 break;
         }

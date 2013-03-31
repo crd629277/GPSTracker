@@ -21,10 +21,9 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
     protected MapController mapViewController;
     static protected BMapManager bMapManager;
     private static final String BAIDU_MAP_KEY = "353EEEC233F62E4062BA1E3A87A9468141B21AEE";
-    private static boolean running = false;
     protected UIHelper uiHelper;
     protected Context context;
-    private ActionBar actionBar;
+    protected ActionBar actionBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,19 +50,13 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
         super.initMapActivity(bMapManager);
 
         mapViewController = mapView.getController();
-        if(!running) {
-        	bMapManager.start();
-        	running = true;
-        }
+        bMapManager.start();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if(running) {
-        	bMapManager.stop();
-        	running = false;
-        }
+        bMapManager.stop();
     }
 
     @Override

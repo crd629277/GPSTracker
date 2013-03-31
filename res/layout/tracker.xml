@@ -11,89 +11,57 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/status_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:padding="15dp" >
+            android:padding="10dp" />
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <include layout="@layout/item_distance" />
-
-                <ImageView style="@style/Cell.Vertical" />
-
-                <include layout="@layout/item_distance" />
-            </LinearLayout>
-
-            <ImageView style="@style/Cell.Horizontal" />
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal" >
-
-                <include layout="@layout/item_distance" />
-
-                <ImageView style="@style/Cell.Vertical" />
-
-                <include layout="@layout/item_distance" />
-            </LinearLayout>
-        </LinearLayout>
-        
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_above="@id/status_layout"
-            android:background="@drawable/time_background"
-            >
+            android:background="@drawable/time_background" >
+
             <LinearLayout
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_centerInParent="true"
                 android:gravity="center"
-                >
+                android:orientation="vertical" >
 
                 <TextView
+                    android:id="@+id/item_cost_time"
                     style="@style/BitCounter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="00:32:33"
-                    />
+                    android:text="@string/none_cost_time" />
 
                 <Button
-
+                    android:id="@+id/btn_start"
                     style="@style/BigStartButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="START"
                     android:layout_marginTop="25dp"
-                    />
+                    android:text="START" />
 
                 <Button
-                    android:visibility="gone"
+                    android:id="@+id/btn_end"
                     style="@style/BigEndButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="END"
                     android:layout_marginTop="25dp"
-                    />
+                    android:text="END"
+                    android:visibility="gone" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="3dp"
-                android:background="@drawable/time_background_border_bottom"
                 android:layout_alignParentBottom="true"
-                />
+                android:background="@drawable/time_background_border_bottom" />
         </RelativeLayout>
-        
     </RelativeLayout>
 
 </LinearLayout>

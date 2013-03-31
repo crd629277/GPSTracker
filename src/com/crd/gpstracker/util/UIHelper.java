@@ -9,54 +9,53 @@ import android.widget.Toast;
 import com.crd.gpstracker.R;
 
 public class UIHelper {
-    private Context context;
+	private Context context;
 
-    public UIHelper(Context context) {
-        this.context = context;
-    }
+	public UIHelper(Context context) {
+		this.context = context;
+	}
 
-    public void showLongToast(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-    }
+	public void showLongToast(String message) {
+		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+	}
 
-    public void showShortToast(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
+	public void showShortToast(String message) {
+		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+	}
 
-    public void showModalDialog(String title, String message, View view,
-                                final Runnable runOnPositiveButtonSelected,
-                                final Runnable runOnNegativeButtonSelected) {
+	public void showModalDialog(String title, String message, View view,
+			final Runnable runOnPositiveButtonSelected,
+			final Runnable runOnNegativeButtonSelected) {
 
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        dialog.setTitle(title)
-            .setMessage(message)
-            .setIcon(android.R.drawable.ic_dialog_alert);
+		AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+		dialog.setTitle(title).setMessage(message)
+				.setIcon(android.R.drawable.ic_dialog_alert);
 
-        if (view != null) {
-            dialog.setView(view);
-        }
+		if (view != null) {
+			dialog.setView(view);
+		}
 
-        dialog.setPositiveButton(context.getString(R.string.btn_ok),
-            new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    runOnPositiveButtonSelected.run();
-                }
-            });
+		dialog.setPositiveButton(context.getString(R.string.btn_ok),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						runOnPositiveButtonSelected.run();
+					}
+				});
 
-        dialog.setNegativeButton(context.getString(R.string.btn_cancel),
-            new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    runOnNegativeButtonSelected.run();
-                }
-            });
+		dialog.setNegativeButton(context.getString(R.string.btn_cancel),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						runOnNegativeButtonSelected.run();
+					}
+				});
 
-        dialog.show();
-    }
+		dialog.show();
+	}
 
-
-    public void showConfirmDialog(String title, String message,
-                                  final Runnable runOnPositiveButtonSelected,
-                                  final Runnable runOnNegativeButtonSelected) {
-        showModalDialog(title, message, null, runOnPositiveButtonSelected, runOnNegativeButtonSelected);
-    }
+	public void showConfirmDialog(String title, String message,
+			final Runnable runOnPositiveButtonSelected,
+			final Runnable runOnNegativeButtonSelected) {
+		showModalDialog(title, message, null, runOnPositiveButtonSelected,
+				runOnNegativeButtonSelected);
+	}
 }

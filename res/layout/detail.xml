@@ -2,133 +2,81 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/bg"
     android:orientation="vertical" >
 
     <include layout="@layout/action_bar" />
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="200dp" >
-
-        <com.baidu.mapapi.MapView
-            android:id="@+id/bmapsView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:clickable="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false" />
-
-        <TextView
-            android:id="@+id/map_mask"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-    </FrameLayout>
-
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/status_layout"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:orientation="vertical" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="archive" />
-
-            <TextView
-                android:id="@+id/archive_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="start time" />
-
-            <TextView
-                android:id="@+id/start_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="end time" />
-
-            <TextView
-                android:id="@+id/end_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="distance" />
-
-            <TextView
-                android:id="@+id/distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="records" />
-
-            <TextView
-                android:id="@+id/records"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="average_speed" />
-
-            <TextView
-                android:id="@+id/speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="max speed" />
-
-            <TextView
-                android:id="@+id/max_speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="description" />
-
-            <EditText
-                android:id="@+id/description"
+            <FrameLayout
+                android:id="@+id/archive_meta_time_layout"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:minLines="3"
-                android:text="" />
+                android:layout_height="wrap_content" />
 
-            <Button
-                android:id="@+id/update"
+            <FrameLayout
+                android:id="@+id/archive_meta_layout"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Update" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
-    </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/description_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/status_layout"
+            android:orientation="vertical" >
+
+            <HorizontalScrollView
+                style="@style/Detail.Description">
+                <TextView
+                    style="@style/Detail.Description.Text"
+                    android:id="@+id/item_description"
+                    android:layout_alignParentLeft="true"
+                    />
+            </HorizontalScrollView>
+
+            <LinearLayout style="@style/Detail.Description.Cell" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/description_layout"
+            android:layout_alignParentTop="true" >
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <!-- MapView From TabHost -->
+
+            <include layout="@layout/tab_container" />
+
+            <RelativeLayout
+                android:id="@+id/map_mask"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="10dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/cell_description_horizontal" />
+            </RelativeLayout>
+        </FrameLayout>
+    </RelativeLayout>
 
 </LinearLayout>
