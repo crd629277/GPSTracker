@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
-import com.crd.gpstracker.util.Logger;
+import com.crd.gpstracker.util.Helper.Logger;
 
 /**
  * 绑定 LocationListener 回调并记录到数据库

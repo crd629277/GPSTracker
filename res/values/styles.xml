@@ -1,14 +1,14 @@
 <resources>
 
     <style name="Window" parent="@android:style/Theme.NoTitleBar"></style>
-    
+
     <style name="Shadow">
         <item name="android:shadowColor">@color/snowhite</item>
         <item name="android:shadowDx">0.5</item>
         <item name="android:shadowDy">0.5</item>
         <item name="android:shadowRadius">0.5</item>
     </style>
-    
+
     <style name="LightBackground">
         <item name="android:background">@drawable/background</item>
     </style>
@@ -28,7 +28,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">14sp</item>
     </style>
-    
+
     <style name="Item.TitleSecond" parent="Item.Title">
         <item name="android:textColor">@color/title_second</item>
     </style>
@@ -79,33 +79,44 @@
         <item name="android:textColor">@color/snowhite</item>
         <item name="android:textSize">48sp</item>
     </style>
-    
+
     <style name="SecondTitle">
         <item name="android:textColor">@color/title_second</item>
         <item name="android:textSize">14sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-    
-     <style name="BigButton" parent="Shadow">
+
+    <style name="BigButton" parent="Shadow">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/snowhite</item>
         <item name="android:background">@drawable/btn_start</item>
         <item name="android:textSize">18dp</item>
+        <item name="android:layout_height">50dip</item>
+        <item name="android:layout_width">100dip</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">0dip</item>
     </style>
+
     <style name="BigEndButton" parent="BigButton">
         <item name="android:background">@drawable/btn_end</item>
         <item name="android:shadowColor">@color/highlight_border</item>
-
     </style>
+
     <style name="BigStartButton" parent="BigButton">
         <item name="android:background">@drawable/btn_start</item>
         <item name="android:shadowColor">@color/mils</item>
     </style>
 
+    <style name="BigGrayButton" parent="BigButton">
+        <item name="android:background">@drawable/btn_gray</item>
+        <item name="android:shadowColor">@color/title_second</item>
+    </style>
+
     <style name="Cell">
         <item name="android:layout_gravity">center</item>
     </style>
+
     <style name="Cell.Vertical" parent="Cell">
         <item name="android:background">@drawable/cell_border_vertical</item>
         <item name="android:layout_width">wrap_content</item>
@@ -120,9 +131,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">10dp</item>
     </style>
-    
-    <style name="Detail">
-    </style>
+
+    <style name="Detail"></style>
 
     <style name="Detail.Description">
         <item name="android:layout_width">fill_parent</item>
@@ -135,7 +145,7 @@
         <item name="android:paddingTop">5dp</item>
         <item name="android:paddingBottom">5dp</item>
     </style>
-    
+
     <style name="Detail.Description.Cell">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">3px</item>
@@ -143,7 +153,7 @@
         <item name="android:background">@color/highlight_border</item>
         <item name="android:gravity">center_vertical</item>
     </style>
-    
+
     <style name="Detail.Description.Text">
         <item name="android:text">Hello, world!</item>
         <item name="android:singleLine">true</item>
@@ -151,16 +161,19 @@
         <item name="android:textColor">@color/snowhite</item>
         <item name="android:textSize">18sp</item>
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
-    
+
     <style name="Item.TitleSecond.Gray" parent="Item.TitleSecond">
         <item name="android:textColor">@color/gray</item>
     </style>
+
     <style name="Item.Content.Small" parent="Item.Content">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/title</item>
     </style>
+
     <style name="Cell.Vertical.Time" parent="Cell">
         <item name="android:layout_weight">2</item>
         <item name="android:src">@drawable/to</item>
@@ -168,5 +181,5 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">10dp</item>
     </style>
-    
+
 </resources>

@@ -60,7 +60,7 @@
             android:summary="Switch AirPlane Mode while recording"
             android:title="AirPlane Mode" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="lightLed"
             android:summary="Turn on Lightning LED(if have) while recording"
             android:title="Lightning LED" />

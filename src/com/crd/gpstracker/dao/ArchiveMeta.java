@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.location.Location;
 
-import com.crd.gpstracker.util.Logger;
+import com.crd.gpstracker.util.Helper.Logger;
 
 public class ArchiveMeta {
 	public static final String DESCRIPTION = "DESCRIPTION";
@@ -46,7 +46,7 @@ public class ArchiveMeta {
 			} else {
 				result = database.insert(TABLE_NAME, null, values);
 			}
-		} catch (SQLiteException e) {
+		} catch (Exception e) {
 			Logger.e(e.getMessage());
 		}
 
@@ -106,11 +106,9 @@ public class ArchiveMeta {
 			count = cursor.getInt(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
 			cursor.close();
-		} catch (SQLiteException e) {
+		} catch (Exception e) {
 			Logger.e(e.getMessage());
-		} catch (CursorIndexOutOfBoundsException e) {
-			Logger.e(e.getMessage());
-		}
+		} 
 
 		return count > 0 ? true : false;
 	}
@@ -193,7 +191,7 @@ public class ArchiveMeta {
 			count = cursor.getLong(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
 			cursor.close();
-		} catch (SQLiteException e) {
+		} catch (Exception e) {
 			Logger.e(e.getMessage());
 		}
 

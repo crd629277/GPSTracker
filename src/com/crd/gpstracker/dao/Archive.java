@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 
-import com.crd.gpstracker.util.Logger;
+import com.crd.gpstracker.util.Helper.Logger;
 
 public class Archive {
 	public static final int MODE_READ_ONLY = 0x001;
@@ -147,12 +147,14 @@ public class Archive {
         if (databaseHelper != null) {
             close();
         }
-        return (new File(name)).delete();
+        File file = new File(name);
+        return (file == null) ? false : file.delete();
     }
     
     
     public boolean exists() {
-    	return (new File(name)).exists();
+    	File file = new File(name);
+    	return (file == null) ? false : file.exists();
     }
     
 
@@ -160,7 +162,7 @@ public class Archive {
         return meta;
     }
 
-    public boolean add(Location point) {
+    synchronized public boolean add(Location point) {
         ContentValues values = new ContentValues();
 
         values.put(DATABASE_COLUMN.LATITUDE, point.getLatitude());

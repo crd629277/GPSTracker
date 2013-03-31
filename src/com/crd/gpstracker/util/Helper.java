@@ -3,6 +3,8 @@ package com.crd.gpstracker.util;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.LocationManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -14,6 +16,12 @@ public class Helper {
 	public Helper(Context context) {
 		this.context = context;
 	}
+	
+	public boolean isGPSProvided() {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ? true : false;
+    }
+	
 
 	public void showLongToast(String message) {
 		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -58,4 +66,18 @@ public class Helper {
 		showModalDialog(title, message, null, runOnPositiveButtonSelected,
 				runOnNegativeButtonSelected);
 	}
+	
+	
+	public static class Logger {
+        protected static final String TAG = "Tracker";
+
+        public static void i(String message) {
+            Log.i(TAG, message);
+        }
+
+        public static void e(String message) {
+            Log.e(TAG, message);
+        }
+    }
+	
 }

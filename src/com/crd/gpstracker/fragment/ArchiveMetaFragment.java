@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.ArchiveMeta;
-import com.crd.gpstracker.util.Logger;
+import com.crd.gpstracker.util.Helper.Logger;
 
 public class ArchiveMetaFragment extends Fragment {
     public ArchiveMeta meta;

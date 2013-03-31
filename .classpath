@@ -7,8 +7,8 @@
 	<classpathentry kind="lib" path="libs/annotations.jar"/>
 	<classpathentry kind="lib" path="libs/armeabi/libBMapApiEngine_v1_3_0.so"/>
 	<classpathentry kind="lib" path="libs/baidumapapi.jar"/>
-	<classpathentry kind="lib" path="libs/umeng_sdk.jar"/>
 	<classpathentry kind="lib" path="libs/android-support-v4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/android-actionbar-library"/>
+	<classpathentry kind="lib" path="libs/umeng_sdk.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

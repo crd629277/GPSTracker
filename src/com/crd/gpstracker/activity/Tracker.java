@@ -19,9 +19,11 @@ import com.crd.gpstracker.activity.base.Activity;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.fragment.ArchiveMetaFragment;
 import com.crd.gpstracker.service.Recorder;
-import com.crd.gpstracker.util.Logger;
+import com.crd.gpstracker.util.Helper.Logger;
 import com.markupartist.android.widget.ActionBar;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
 
 public class Tracker extends Activity implements View.OnClickListener,
 		View.OnLongClickListener {
@@ -41,6 +43,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 	private Timer updateViewTimer;
 	private static final long TIMER_PERIOD = 1000;
 	private TextView mCoseTime;
+	private Button mDisabledButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,9 +53,11 @@ public class Tracker extends Activity implements View.OnClickListener,
 		mStartButton = (Button) findViewById(R.id.btn_start);
 		mEndButton = (Button) findViewById(R.id.btn_end);
 		mCoseTime = (TextView) findViewById(R.id.item_cost_time);
+		mDisabledButton = (Button) findViewById(R.id.btn_disabled);
 
 		// Check update from umeng
 		MobclickAgent.updateOnlineConfig(context);
+		UMFeedbackService.enableNewReplyNotification(context, NotificationType.AlertDialog);
 	}
 
 	private void notifyUpdateView() {
@@ -65,19 +70,23 @@ public class Tracker extends Activity implements View.OnClickListener,
 	public void onResume() {
 		super.onResume();
 
-		updateViewTimer = new Timer();
-		updateViewTimer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				notifyUpdateView();
-			}
-		}, 0, TIMER_PERIOD);
+		if(helper.isGPSProvided()) {
+			updateViewTimer = new Timer();
+			updateViewTimer.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					notifyUpdateView();
+				}
+			}, 0, TIMER_PERIOD);
+		}
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		updateViewTimer.cancel();
+		if(updateViewTimer != null) {
+			updateViewTimer.cancel();
+		}
 	}
 
 	@Override
@@ -93,8 +102,20 @@ public class Tracker extends Activity implements View.OnClickListener,
 		super.onStart();
 		mStartButton.setOnClickListener(this);
 		mEndButton.setOnClickListener(this);
+		mDisabledButton.setOnClickListener(this);
 		mEndButton.setOnLongClickListener(this);
+		
+		if (!helper.isGPSProvided()) {
+            mStartButton.setVisibility(View.GONE);
+            mEndButton.setVisibility(View.GONE);
+            helper.showLongToast(getString(R.string.gps_not_presented));
 
+            mDisabledButton.setVisibility(View.VISIBLE);
+        } else {
+            mDisabledButton.setVisibility(View.GONE);
+        }
+		
+		
 		// 设置 ActionBar 样式
 		actionBar.setTitle(getString(R.string.app_name));
 		actionBar.removeAllActions();
@@ -133,6 +154,12 @@ public class Tracker extends Activity implements View.OnClickListener,
 		case R.id.btn_end:
 			helper.showShortToast(getString(R.string.long_press_to_stop));
 			break;
+			
+		case R.id.btn_disabled:
+            Intent intent = new Intent(
+                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+            break;
 		}
 	}
 
@@ -227,6 +254,10 @@ public class Tracker extends Activity implements View.OnClickListener,
 			
 		case R.id.menu_configure:
 			gotoActivity(Preference.class);
+			break;
+			
+		case R.id.menu_feedback:
+			UMFeedbackService.openUmengFeedbackSDK(this);
 			break;
 
 		default:

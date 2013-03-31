@@ -20,9 +20,9 @@ import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.Preference;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
-import com.crd.gpstracker.util.Logger;
-import com.crd.gpstracker.util.Notifier;
 import com.crd.gpstracker.util.Helper;
+import com.crd.gpstracker.util.Helper.Logger;
+import com.crd.gpstracker.util.Notifier;
 import com.umeng.analytics.MobclickAgent;
 
 interface Binder {
@@ -43,7 +43,7 @@ interface Binder {
 }
 
 public class Recorder extends Service {
-    protected static Recorder.ServiceBinder serviceBinder;
+    protected Recorder.ServiceBinder serviceBinder;
     private SharedPreferences sharedPreferences;
     private Archive archive;
 
@@ -56,12 +56,13 @@ public class Recorder extends Service {
     private Helper helper;
     private Context context;
     private Notifier notifier;
+    
     private static final String RECORDER_SERVER_ID = "Tracker Service";
+    private TimerTask notifierTask;
+    private Timer timer;
 
     public class ServiceBinder extends android.os.Binder implements Binder {
         private int status = ServiceBinder.STATUS_STOPPED;
-        private TimerTask notifierTask;
-        private Timer timer = null;
 
         ServiceBinder() {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -73,6 +74,16 @@ public class Recorder extends Service {
         @Override
         public void startRecord() {
             if (status != ServiceBinder.STATUS_RECORDING) {
+            	
+            	// 设置启动时更新配置
+                notifier = new Notifier(context);
+            	
+            	// 如果没有外置存储卡
+                if (!nameHelper.isExternalStoragePresent()) {
+                    helper.showLongToast(getString(R.string.external_storage_not_present));
+                    return;
+                }
+            	
                 // 从配置文件获取距离和精度选项
                 long minTime = Long.parseLong(sharedPreferences.getString(Preference.GPS_MINTIME,
                     Preference.DEFAULT_GPS_MINTIME));
@@ -206,7 +217,6 @@ public class Recorder extends Service {
 
         this.context = getApplicationContext();
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.notifier = new Notifier(context);
 
         this.nameHelper = new ArchiveNameHelper(context);
         this.helper = new Helper(context);

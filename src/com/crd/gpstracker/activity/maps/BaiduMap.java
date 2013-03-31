@@ -1,4 +1,4 @@
-package com.crd.gpstracker.activity;
+package com.crd.gpstracker.activity.maps;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,7 +8,6 @@ import java.util.Locale;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -18,14 +17,13 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
-import com.baidu.mapapi.BMapManager;
-import com.baidu.mapapi.CoordinateConvert;
 import com.baidu.mapapi.GeoPoint;
 import com.baidu.mapapi.ItemizedOverlay;
 import com.baidu.mapapi.MapView;
 import com.baidu.mapapi.OverlayItem;
 import com.baidu.mapapi.Projection;
 import com.crd.gpstracker.R;
+import com.crd.gpstracker.activity.Records;
 import com.crd.gpstracker.activity.base.MapActivity;
 import com.crd.gpstracker.dao.Archive;
 
@@ -170,8 +168,12 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 			
 			paint = new Paint();
 			paint.setAntiAlias(true);
+			paint.setDither(true);
+			
 			paint.setColor(getResources().getColor(R.color.highlight));
-			paint.setStyle(Paint.Style.STROKE);
+			paint.setStyle(Paint.Style.FILL_AND_STROKE);
+			paint.setStrokeJoin(Paint.Join.ROUND);
+			paint.setStrokeCap(Paint.Cap.ROUND);
 			paint.setAlpha(220);
 			paint.setStrokeWidth(5);
 			
@@ -204,8 +206,13 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
                 
                 lastGeoPoint = geoPoint;
             }
-
-            canvas.drawBitmap(bitmap, 0, 0, null);
+            
+            if(shadow == false) {
+            	canvas.drawBitmap(bitmap, 0, 0, null);
+            }
+            
+            super.draw(canvas, mapView, shadow);
+            
         }
 
 		@Override

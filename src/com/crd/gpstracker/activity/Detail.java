@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TabHost;
@@ -12,13 +13,14 @@ import android.widget.TextView;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.base.Activity;
+import com.crd.gpstracker.activity.maps.BaiduMap;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.fragment.ArchiveMetaFragment;
 import com.crd.gpstracker.fragment.ArchiveMetaTimeFragment;
 import com.markupartist.android.widget.ActionBar;
 
-public class Detail extends Activity implements View.OnTouchListener{
+public class Detail extends Activity implements View.OnTouchListener, View.OnClickListener{
     private String archiveFileName;
 
     private Archive archive;
@@ -47,8 +49,6 @@ public class Detail extends Activity implements View.OnTouchListener{
         mMapMask = findViewById(R.id.map_mask);
         mDescription = (TextView) findViewById(R.id.item_description);
         mTabHost = (TabHost) findViewById(R.id.tabhost);
-        mTabHost.setup(localActivityManager);
-        
 
         archiveMetaFragment = new ArchiveMetaFragment(context, archiveMeta);
         archiveMetaTimeFragment = new ArchiveMetaTimeFragment(context, archiveMeta);
@@ -57,7 +57,11 @@ public class Detail extends Activity implements View.OnTouchListener{
     @Override
     public void onStart() {
         super.onStart();
-        mDescription.setText(archiveMeta.getDescription());
+        
+        String description = archiveMeta.getDescription();
+        mDescription.setText(description.length() > 0 ? description : getString(R.string.no_description));
+        mDescription.setOnClickListener(this);
+        
         addArchiveMetaTimeFragment();
         addArchiveMetaFragment();
         
@@ -66,6 +70,7 @@ public class Detail extends Activity implements View.OnTouchListener{
         mapIntent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, name);
         
         TabHost.TabSpec tabSpec = mTabHost.newTabSpec("").setIndicator("").setContent(mapIntent);
+        mTabHost.setup(localActivityManager);
         mTabHost.addTab(tabSpec);
         mMapMask.setOnTouchListener(this);
         
@@ -117,6 +122,7 @@ public class Detail extends Activity implements View.OnTouchListener{
         super.onPause();
 
         mTabHost.clearAllTabs();
+        localActivityManager.removeAllActivities();
         localActivityManager.dispatchPause(isFinishing());
     }
     
@@ -139,5 +145,13 @@ public class Detail extends Activity implements View.OnTouchListener{
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		return false;
+	}
+
+	@Override
+	public void onClick(View v) {
+		Intent intent = new Intent(this, Modify.class);
+		intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveFileName);
+		startActivity(intent);
+		
 	}
 }

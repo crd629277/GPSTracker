@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        android:background="@color/snowhite"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/umeng_feedback_new_reply_alert_title"
+            style="@style/TrackerActionBar"
+            android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:text="您的反馈收到了回复"
+            android:textColor="@color/snowhite"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/umeng_feedback_new_dev_reply_box"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dip"
+            android:layout_marginRight="15dip"
+            android:layout_marginTop="10dip"
+            android:gravity="center"
+            android:minHeight="100dp"
+            android:text="This is the reply from dev"
+            android:textColor="@color/highlight"
+            android:textSize="18dip" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="3dip"
+            android:layout_marginTop="3dip"
+            android:background="@drawable/time_background_border_bottom" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/time_background"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/umeng_feedback_exitBtn"
+                style="@style/BigStartButton"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:text="@string/UMFeedbackGotIt"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/umeng_feedback_see_detail_btn"
+                style="@style/BigEndButton"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dip"
+                android:layout_weight="1"
+                android:text="@string/UMFeedbackSeeDetail" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

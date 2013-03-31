@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">GPSTracker</string>
     <string name="service_name">GPS Tracker Service</string>
-    <string name="default_font">digital.ttf</string>
     <string name="pls_wait">Loading, please wait</string>
     <string name="time_format">MM/dd HH:mm:ss</string>
     <string name="month_format">%1$d / %2$d</string>
@@ -44,6 +43,7 @@
     <string name="menu_modify">Modify</string>
     <string name="merge">Merge</string>
     <string name="gps_not_presented">GPS Not Presented</string>
+    <string name="only_agps_presented">Only AGPS Presented, Pls Turn On</string>
     <string name="use_resume_archive_file">Resume from existed file</string>
     <string name="storage_not_presented">Storage Not Presented</string>
     <string name="menu_calendar">Select Month</string>
@@ -61,4 +61,12 @@
     <string name="item_end_time">END TIME</string>
     <string name="item_start_time">START TIME</string>
     <string name="menu_feedback">Feedback</string>
+    <string name="submit">Submit</string>
+    <string name="ok">OKay</string>
+    <string name="shit_happens">Oh~ Shit Happens!</string>
+    <string name="has_benn_saved">Has been saved</string>
+    <string name="external_storage_not_present">External storage does\'t present</string>
+    <string name="btn_start">START</string>
+    <string name="btn_end">END</string>
+    <string name="btn_disabled">DISABLED</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.crd.gpstracker.util;
+package com.crd.gpstracker.dao;
 
 import android.database.Cursor;
 

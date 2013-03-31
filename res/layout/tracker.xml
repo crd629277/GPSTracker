@@ -41,18 +41,23 @@
                 <Button
                     android:id="@+id/btn_start"
                     style="@style/BigStartButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
-                    android:text="START" />
+                    android:text="@string/btn_start" 
+                    />
+                
+                <Button
+                    android:id="@+id/btn_disabled"
+                    android:visibility="gone"
+                    style="@style/BigGrayButton"
+                    android:text="@string/btn_disabled"
+                    android:layout_marginTop="25dp"
+                    />
 
                 <Button
                     android:id="@+id/btn_end"
                     style="@style/BigEndButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
-                    android:text="END"
+                    android:text="@string/btn_end"
                     android:visibility="gone" />
             </LinearLayout>
 

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 
+import com.crd.gpstracker.util.Helper.Logger;
+
 public class AirPlaneMode {
     public static final int AIRPLANE_MODE_ON = 0x010;
     public static final int AIRPLANE_MODE_OFF = 0x000;
