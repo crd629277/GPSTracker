@@ -1,5 +1,7 @@
 package com.crd.gpstracker.activity.base;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
@@ -24,6 +26,18 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
     protected Helper helper;
     protected Context context;
     protected ActionBar actionBar;
+    
+    protected ArrayList<Location> locations;
+
+    protected double topBoundary;
+    protected double leftBoundary;
+    protected double rightBoundary;
+    protected double bottomBoundary;
+
+    protected Location locationTopLeft;
+    protected Location locationBottomRight;
+    protected float maxDistance;
+    protected GeoPoint mapCenterPoint;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,6 +115,11 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
         GeoPoint geoPoint = getGeoPoint(location);
         return CoordinateConvert.bundleDecode(CoordinateConvert.fromWgs84ToBaidu(geoPoint));
     }
+    
+    
+    protected GeoPoint getRealGeoPointFromGeo(GeoPoint geoPoint) {
+        return CoordinateConvert.bundleDecode(CoordinateConvert.fromWgs84ToBaidu(geoPoint));
+    }
 
     @Override
     public void onDestroy() {
@@ -119,4 +138,63 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
     		
     	}
     }
+    
+    
+    protected void getBoundary() {
+        leftBoundary = locations.get(0).getLatitude();
+        bottomBoundary = locations.get(0).getLongitude();
+
+        rightBoundary = locations.get(0).getLatitude();
+        topBoundary = locations.get(0).getLongitude();
+
+        for (Location location : locations) {
+            if (leftBoundary > location.getLatitude()) {
+                leftBoundary = location.getLatitude();
+            }
+
+            if (rightBoundary < location.getLatitude()) {
+                rightBoundary = location.getLatitude();
+            }
+
+            if (topBoundary < location.getLongitude()) {
+                topBoundary = location.getLongitude();
+            }
+
+            if (bottomBoundary > location.getLongitude()) {
+                bottomBoundary = location.getLongitude();
+            }
+        }
+
+        locationTopLeft = new Location("");
+        locationTopLeft.setLongitude(topBoundary);
+        locationTopLeft.setLatitude(leftBoundary);
+
+        locationBottomRight = new Location("");
+        locationBottomRight.setLongitude(bottomBoundary);
+        locationBottomRight.setLatitude(rightBoundary);
+
+        maxDistance = locationTopLeft.distanceTo(locationBottomRight);
+        mapCenterPoint = getRealGeoPointFromGeo(new GeoPoint(
+            (int) ((leftBoundary + (rightBoundary - leftBoundary) / 2) * 1e6),
+            (int) ((bottomBoundary + (topBoundary - bottomBoundary) / 2) * 1e6)
+        ));
+    }
+
+    protected int getFixedZoomLevel() {
+        int fixedLatitudeSpan = (int) ((rightBoundary - leftBoundary) * 1e6);
+        int fixedLongitudeSpan = (int) ((topBoundary - bottomBoundary) * 1e6);
+
+        for (int i = mapView.getMaxZoomLevel(); i > 0; i--) {
+            mapViewController.setZoom(i);
+            int latSpan = mapView.getLatitudeSpan();
+            int longSpan = mapView.getLongitudeSpan();
+
+            if (latSpan > fixedLatitudeSpan && longSpan > fixedLongitudeSpan) {
+                return i;
+            }
+        }
+
+        return mapView.getMaxZoomLevel();
+    }
+    
 }

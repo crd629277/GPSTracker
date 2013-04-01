@@ -20,7 +20,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
 
     <supports-screens
         android:largeScreens="true"
@@ -42,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.map.BaiduMap"
+            android:name=".activity.maps.BaiduMap"
             android:theme="@style/Window" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

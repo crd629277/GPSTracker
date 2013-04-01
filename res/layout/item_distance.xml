@@ -23,7 +23,7 @@
 
         <TextView
             style="@style/Item.TitleSecond"
-            android:text="km" />
+            android:text="@string/km" />
     </LinearLayout>
 
 </LinearLayout>

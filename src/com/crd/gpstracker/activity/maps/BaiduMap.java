@@ -9,6 +9,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -20,18 +21,21 @@ import android.widget.ToggleButton;
 import com.baidu.mapapi.GeoPoint;
 import com.baidu.mapapi.ItemizedOverlay;
 import com.baidu.mapapi.MapView;
+import com.baidu.mapapi.Overlay;
 import com.baidu.mapapi.OverlayItem;
 import com.baidu.mapapi.Projection;
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.Records;
 import com.crd.gpstracker.activity.base.MapActivity;
 import com.crd.gpstracker.dao.Archive;
+import com.crd.gpstracker.util.Helper.Logger;
 
 
 public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeListener{
     private Archive archive;
+    
     private Context context;
-    private ArrayList<Location> locations;
+    
     private String archiveFileName;
     private SeekBar mSeekBar;
     private SimpleDateFormat dateFormat;
@@ -83,6 +87,9 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
         
         archive = new Archive(getApplicationContext(), archiveFileName);
         locations = archive.fetchAll();
+        
+        // 计算边界
+        getBoundary();
     }
 
     @Override
@@ -120,17 +127,13 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
 //			}
 //		});
         
-        Location firstLocation = locations.get(0);
-
-        Drawable marker = getResources().getDrawable(R.drawable.mark);
-        mapView.getOverlays().add(new RouteItemizedOverlay(marker, context));
+        mapView.getOverlays().add(new PathOverlay());
         
 
-        //float distance = firstLocation.distanceTo(lastLocation);
 
         // @todo 自动计算默认缩放的地图界面
-        setCenterPoint(firstLocation, false);
-        mapViewController.setZoom(14);
+        mapViewController.setCenter(mapCenterPoint);
+        mapViewController.setZoom(getFixedZoomLevel() - 1);
     }
 
     @Override
@@ -151,89 +154,62 @@ public class BaiduMap extends MapActivity implements SeekBar.OnSeekBarChangeList
     }
     
     
-    class RouteItemizedOverlay extends ItemizedOverlay<OverlayItem> {
-    	Bitmap bitmap;
-    	
-    	private List<OverlayItem> geoPointList = new ArrayList<OverlayItem>();
+    class PathOverlay extends Overlay {
     	private Paint paint;
+    	private Projection projection;
+    	private static final int MIN_POINT_SPAN = 3;
+    	
+    	public PathOverlay() {
+    		setPaint();
+    	}
+			
+    	private void setPaint() {
+            paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setDither(true);
 
-		public RouteItemizedOverlay(Drawable marker, Context context) {
-			super(boundCenterBottom(marker));
-			
-//			for(int i=0; i < locations.size(); i++) {
-//				Location x = locations.get(i);
-//				GeoPoint geoPoint = getRealGeoPointFromLocation(x);
-//				geoPointList.add(new OverlayItem(geoPoint, x.getLatitude() + "", x.getLongitude() + ""));
-//			}
-			
-			paint = new Paint();
-			paint.setAntiAlias(true);
-			paint.setDither(true);
-			
-			paint.setColor(getResources().getColor(R.color.highlight));
-			paint.setStyle(Paint.Style.FILL_AND_STROKE);
-			paint.setStrokeJoin(Paint.Join.ROUND);
-			paint.setStrokeCap(Paint.Cap.ROUND);
-			paint.setAlpha(220);
-			paint.setStrokeWidth(5);
-			
-			populate();
-		}
+            paint.setColor(getResources().getColor(R.color.highlight));
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeJoin(Paint.Join.ROUND);
+            paint.setStrokeCap(Paint.Cap.ROUND);
+            paint.setStrokeWidth(7);
+            paint.setAlpha(188);
+        }
 		
 		@Override
-        public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-            Projection projection = mapView.getProjection();
-
-            GeoPoint lastGeoPoint = null;
-            int maxWidth = mapView.getWidth();
-            int maxHeight = mapView.getHeight();
-            bitmap = Bitmap.createBitmap(maxWidth, maxHeight, Bitmap.Config.ARGB_8888);
-
-            Canvas tmpCanvas = new Canvas(bitmap);
-            for (int i = 0; i < locations.size(); i++) {
-            	GeoPoint geoPoint = getRealGeoPointFromLocation(locations.get(i));
-            	Point current  = projection.toPixels(geoPoint, null);
-            	
-                if(lastGeoPoint != null) {
-                	Point last = projection.toPixels(lastGeoPoint, null);
-                	
-                	if(last.y < maxHeight && last.x < maxWidth) {
-                		tmpCanvas.drawLine(last.x, last.y, current.x, current.y, paint);
-                	}
-                } else {
-					tmpCanvas.drawPoint(current.x, current.y, paint);
+        public void draw(final Canvas canvas, final MapView mapView, boolean shadow) {
+             this.projection = mapView.getProjection();
+             
+             if(!shadow) {
+            	 synchronized (canvas) {
+            		 final Path path = new Path();
+            		 final int maxWidth = mapView.getWidth();
+                     final int maxHeight = mapView.getHeight();
+                     
+                     Point lastGeoPoint = null;
+                     for(Location location : locations) {
+                    	 Point current = projection.toPixels(getRealGeoPointFromLocation(location), null);
+                    	 
+                    	 if (lastGeoPoint != null && (lastGeoPoint.y < maxHeight && lastGeoPoint.x < maxWidth)) {
+                             if(Math.abs(current.x - lastGeoPoint.x) < MIN_POINT_SPAN
+                            		 || Math.abs(current.y - lastGeoPoint.y) < MIN_POINT_SPAN ) {
+                            	 continue;
+                             } else {
+                            	 path.lineTo(current.x, current.y);
+							}
+                    		 
+                         } else {
+                             path.moveTo(current.x, current.y);
+                         }
+                         lastGeoPoint = current;
+                     }
+                     
+                     canvas.drawPath(path, paint);
 				}
-                
-                lastGeoPoint = geoPoint;
-            }
-            
-            if(shadow == false) {
-            	canvas.drawBitmap(bitmap, 0, 0, null);
-            }
-            
-            super.draw(canvas, mapView, shadow);
-            
+             }
+
         }
 
-		@Override
-		protected OverlayItem createItem(int i) {
-			return geoPointList.get(i);
-		}
-
-		@Override
-		public int size() {
-			return geoPointList.size();
-		}
-		
-		@Override
-		protected boolean onTap(int i) {
-			Location location = locations.get(i);
-			helper.showShortToast(dateFormat.format(location.getTime()));
-			mSeekBar.setProgress(i);
-			setCenterPoint(location, true);
-			return true;
-		}
-    	
     }
 
 }

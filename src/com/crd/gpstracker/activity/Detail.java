@@ -59,7 +59,13 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         super.onStart();
         
         String description = archiveMeta.getDescription();
-        mDescription.setText(description.length() > 0 ? description : getString(R.string.no_description));
+        if(description.length() > 0) {
+        	mDescription.setTextColor(getResources().getColor(R.color.snowhite));
+        	mDescription.setText(description);
+        } else {
+        	mDescription.setTextColor(getResources().getColor(R.color.gray));
+        	mDescription.setText(getString(R.string.no_description));
+        }
         mDescription.setOnClickListener(this);
         
         addArchiveMetaTimeFragment();
@@ -74,6 +80,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         mTabHost.addTab(tabSpec);
         mMapMask.setOnTouchListener(this);
         
+        actionBar.setTitle(getString(R.string.title_detail));
         actionBar.removeAllActions();
         actionBar.addAction(new ActionBar.Action() {
             @Override
@@ -144,7 +151,13 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		return false;
+		if (event.getAction() == MotionEvent.ACTION_UP) {
+            Intent intent = new Intent(this, BaiduMap.class);
+            intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveFileName);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+		return true;
 	}
 
 	@Override

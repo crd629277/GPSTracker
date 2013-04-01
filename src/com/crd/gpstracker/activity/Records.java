@@ -1,6 +1,7 @@
 package com.crd.gpstracker.activity;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -101,6 +102,7 @@ public class Records extends Activity implements
 			String description = archiveMeta.getDescription();
 			if (description.length() <= 0) {
 				description = getString(R.string.no_description);
+				mDescription.setTextColor(getResources().getColor(R.color.gray));
 			}
 			mDescription.setText(description);
 
@@ -142,6 +144,14 @@ public class Records extends Activity implements
 		});
 
 		selectedTime = getIntent().getLongExtra(INTENT_SELECT_BY_MONTH, System.currentTimeMillis());
+		
+		// setAction title as month string if there is not current month
+		actionBar.setTitle(R.string.title_records);
+		SimpleDateFormat formatter = new SimpleDateFormat(getString(R.string.time_month_format));
+		String selectedTitle = formatter.format(new Date(selectedTime));
+		if(!selectedTitle.equals(formatter.format(new Date()))) {
+			actionBar.setTitle(selectedTitle);
+		}
 		getArchiveFilesByMonth(new Date(selectedTime));
 	}
 
