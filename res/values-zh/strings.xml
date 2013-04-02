@@ -56,8 +56,9 @@
     <string name="external_storage_not_present">没有找到外置存储设备</string>
     <string name="btn_start">开始</string>
     <string name="btn_end">停止</string>
-    <string name="btn_disabled">禁用</string>
+    <string name="btn_disabled">打开GPS</string>
     <string name="title_detail">详情</string>
     <string name="title_modify">修改</string>
     <string name="title_records">记录</string>
+    <string name="share_report_formatter" formatted="false">完成了段旅程%s，总计 %s 公里（从 %s 出发到 %s 结束，历时 %s），最高时速 %s 平均时速 %s  </string>
 </resources>

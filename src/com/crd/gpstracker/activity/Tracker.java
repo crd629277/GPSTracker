@@ -21,9 +21,9 @@ import com.crd.gpstracker.fragment.ArchiveMetaFragment;
 import com.crd.gpstracker.service.Recorder;
 import com.crd.gpstracker.util.Helper.Logger;
 import com.markupartist.android.widget.ActionBar;
-import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.NotificationType;
 import com.umeng.fb.UMFeedbackService;
+import com.umeng.update.UmengUpdateAgent;
 
 public class Tracker extends Activity implements View.OnClickListener,
 		View.OnLongClickListener {
@@ -56,7 +56,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 		mDisabledButton = (Button) findViewById(R.id.btn_disabled);
 
 		// Check update from umeng
-		MobclickAgent.updateOnlineConfig(context);
+		UmengUpdateAgent.update(context);
 		UMFeedbackService.enableNewReplyNotification(context, NotificationType.AlertDialog);
 	}
 
@@ -257,7 +257,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 			break;
 			
 		case R.id.menu_feedback:
-			UMFeedbackService.openUmengFeedbackSDK(this);
+			UMFeedbackService.openUmengFeedbackSDK(context);
 			break;
 
 		default:
