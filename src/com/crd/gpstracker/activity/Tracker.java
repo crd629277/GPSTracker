@@ -52,8 +52,9 @@ public class Tracker extends Activity implements View.OnClickListener,
 
 		mStartButton = (Button) findViewById(R.id.btn_start);
 		mEndButton = (Button) findViewById(R.id.btn_end);
-		mCoseTime = (TextView) findViewById(R.id.item_cost_time);
 		mDisabledButton = (Button) findViewById(R.id.btn_disabled);
+		
+		mCoseTime = (TextView) findViewById(R.id.item_cost_time);
 
 		// Check update from umeng
 		UmengUpdateAgent.update(context);
@@ -103,6 +104,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 		mStartButton.setOnClickListener(this);
 		mEndButton.setOnClickListener(this);
 		mDisabledButton.setOnClickListener(this);
+		
 		mEndButton.setOnLongClickListener(this);
 		
 		if (!helper.isGPSProvided()) {

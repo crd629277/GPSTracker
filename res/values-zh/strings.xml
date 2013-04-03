@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Tracker</string>
-    <string name="service_name">Track 后台进程</string>
+    <string name="app_name">运动追踪</string>
+    <string name="service_name">RunTracker 后台进程</string>
     <string name="pls_wait">载入中，请稍后</string>
     <string name="no_description">描述为空</string>
     <string name="export_kml">导出</string>
@@ -18,7 +18,7 @@
     <string name="still_running">保持在后台运行</string>
     <string name="initialing">初始化中</string>
     <string name="recording">记录中</string>
-    <string name="running">Tracker 正在运行</string>
+    <string name="running">运动追踪 正在运行</string>
     <string name="menu_help">帮助</string>
     <string name="menu_configure">配置</string>
     <string name="menu_records">记录</string>

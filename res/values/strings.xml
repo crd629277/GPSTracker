@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GPSTracker</string>
+    <string name="app_name">RunTracker</string>
     <string name="service_name">GPS Tracker Service</string>
     <string name="pls_wait">Loading, Please wait</string>
     <string name="time_format">MM/dd HH:mm</string>
@@ -28,7 +28,7 @@
     <string name="no_records">00.00</string>
     <string name="no_dot_records">0</string>
     <string name="records_formatter">%02.2f</string>
-    <string name="running">Tracker Is Running</string>
+    <string name="running">RunTracker Is Running</string>
     <string name="menu_help">Help</string>
     <string name="menu_configure">Preference</string>
     <string name="menu_records">Records</string>

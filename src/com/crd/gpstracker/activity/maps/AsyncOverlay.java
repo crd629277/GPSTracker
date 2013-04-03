@@ -73,7 +73,7 @@ public abstract class AsyncOverlay extends Overlay {
         paint.setAntiAlias(true);
         paint.setDither(true);
 
-        paint.setColor(context.getResources().getColor(R.color.highlight));
+        paint.setColor(context.getResources().getColor(R.color.red));
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);

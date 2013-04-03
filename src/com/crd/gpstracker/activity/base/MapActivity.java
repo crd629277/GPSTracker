@@ -90,8 +90,6 @@ public abstract class MapActivity extends com.baidu.mapapi.MapActivity implement
         }
 
         GeoPoint geoPoint = getRealGeoPointFromLocation(location);
-
-        // @todo 自动计算默认缩放的地图界面
         if (animate) {
             mapViewController.animateTo(geoPoint);
         } else {

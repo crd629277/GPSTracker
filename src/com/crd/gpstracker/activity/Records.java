@@ -80,24 +80,18 @@ public class Records extends Activity implements
 			Archive archive = archives.get(position);
 			ArchiveMeta archiveMeta = archive.getMeta();
 
-			LayoutInflater inflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View rowView = inflater
-					.inflate(R.layout.records_row, parent, false);
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View rowView = inflater.inflate(R.layout.records_row, parent, false);
 
-			TextView mDescription = (TextView) rowView
-					.findViewById(R.id.description);
-			TextView mCostTime = (TextView) rowView
-					.findViewById(R.id.cost_time);
+			TextView mDescription = (TextView) rowView.findViewById(R.id.description);
+			TextView mCostTime = (TextView) rowView.findViewById(R.id.cost_time);
 			TextView mDistance = (TextView) rowView.findViewById(R.id.distance);
 
 			mDistance.setText(String.format(
-					getString(R.string.records_formatter),
-					archiveMeta.getDistance() / archiveMeta.TO_KILOMETRE));
+					getString(R.string.records_formatter), archiveMeta.getDistance() / archiveMeta.TO_KILOMETRE));
 
 			String costTime = archiveMeta.getRawCostTimeString();
-			mCostTime.setText(costTime.length() > 0 ? costTime
-					: getString(R.string.not_available));
+			mCostTime.setText(costTime.length() > 0 ? costTime : getString(R.string.not_available));
 
 			String description = archiveMeta.getDescription();
 			if (description.length() <= 0) {
