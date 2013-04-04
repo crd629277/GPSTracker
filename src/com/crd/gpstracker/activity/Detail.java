@@ -40,6 +40,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
     private LocalActivityManager localActivityManager;
     private TabHost mTabHost;
     private View mMapMask;
+    public static final String INSIDE_TABHOST = "inside_tabhost";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -176,7 +177,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
      * @return
      */
     private Bitmap getRouteBitmap() {
-    	View view = mTabHost.getCurrentView();
+    	View view = findViewById(R.id.detail_layout);
     	view.setDrawingCacheEnabled(true);
     	view.buildDrawingCache();
     	view.destroyDrawingCache();
@@ -198,6 +199,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         Intent mapIntent = new Intent(this, BaiduMap.class);
         String name = getIntent().getStringExtra(Records.INTENT_ARCHIVE_FILE_NAME);
         mapIntent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, name);
+        mapIntent.putExtra(INSIDE_TABHOST, true);
 
         TabHost.TabSpec tabSpec =
             mTabHost.newTabSpec("").setIndicator("").setContent(mapIntent);

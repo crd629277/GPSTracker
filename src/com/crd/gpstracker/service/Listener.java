@@ -1,6 +1,7 @@
 package com.crd.gpstracker.service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -19,15 +20,17 @@ import com.crd.gpstracker.util.Helper.Logger;
  */
 public class Listener implements LocationListener {
 	private final static int ACCURACY = 3;
+//	private final static int CACHE_SIZE = 10;
 	
     private Archive archive;
     private ArchiveMeta meta = null;
     private BigDecimal lastLatitude;
     private BigDecimal lastLongitude;
-    
+//    private HashMap<Long, Location> locationCache;
 
     public Listener(Archive archive) {
         this.archive = archive;
+//        this.locationCache = new HashMap<Long, Location>();
     }
 
     private boolean filter(Location location) {
@@ -70,24 +73,25 @@ public class Listener implements LocationListener {
     public void onStatusChanged(String provider, int status, Bundle extras) {
         switch (status) {
             case LocationProvider.AVAILABLE:
-
+            	Logger.i("Location provider is available.");
                 break;
             case LocationProvider.OUT_OF_SERVICE:
-
+            	Logger.w("Location provider is out of service.");
                 break;
             case LocationProvider.TEMPORARILY_UNAVAILABLE:
+            	Logger.w("Location provider is temporarily unavailable.");
                 break;
         }
     }
 
     @Override
     public void onProviderEnabled(String s) {
-
+    	Logger.i("Location provider is enabled.");
     }
 
     @Override
     public void onProviderDisabled(String s) {
-
+    	Logger.w("Location provider is disabled.");
     }
 }
 

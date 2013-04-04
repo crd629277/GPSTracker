@@ -57,7 +57,7 @@ public class Records extends Activity implements
 
 	@Override
 	public void onDateSet(DatePicker view, int year, int month, int day) {
-		Calendar calendar = Calendar.getInstance(Locale.CHINA);
+		Calendar calendar = Calendar.getInstance(Locale.getDefault());
 		calendar.set(year, month, day);
 
 		Date selectDate = new Date(selectedTime);

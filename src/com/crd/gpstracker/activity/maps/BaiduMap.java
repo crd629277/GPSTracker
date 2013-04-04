@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -20,9 +21,11 @@ import com.baidu.mapapi.MapView;
 import com.baidu.mapapi.Overlay;
 import com.baidu.mapapi.Projection;
 import com.crd.gpstracker.R;
+import com.crd.gpstracker.activity.Detail;
 import com.crd.gpstracker.activity.Records;
 import com.crd.gpstracker.activity.base.MapActivity;
 import com.crd.gpstracker.dao.Archive;
+import com.crd.gpstracker.dao.ArchiveMeta;
 
 public class BaiduMap extends MapActivity implements
 		SeekBar.OnSeekBarChangeListener {
@@ -35,6 +38,8 @@ public class BaiduMap extends MapActivity implements
 	private SimpleDateFormat dateFormat;
 	private ToggleButton mSatellite;
 	private View mapController;
+	private PathOverlay pathOverlay;
+	private PointMarkLayout currentMarkLayout;
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
@@ -51,7 +56,17 @@ public class BaiduMap extends MapActivity implements
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		try {
 			Location location = locations.get(seekBar.getProgress() - 1);
-			helper.showShortToast(dateFormat.format(location.getTime()));
+			String recordsFormatter = getString(R.string.records_formatter);
+			
+			helper.showShortToast(dateFormat.format(location.getTime()) + "\n" + 
+					String.format(recordsFormatter, location.getSpeed() *  ArchiveMeta.KM_PER_HOUR_CNT) + "km/h");
+			
+			if(currentMarkLayout != null) {
+				mapView.getOverlays().remove(currentMarkLayout);
+			}
+			currentMarkLayout = new PointMarkLayout(location, R.drawable.point);
+			mapView.getOverlays().add(currentMarkLayout);
+			
 			setCenterPoint(location, true);
 		} catch (Exception e) {
 			return;
@@ -68,17 +83,10 @@ public class BaiduMap extends MapActivity implements
 
 		mapView = (MapView) findViewById(R.id.bmapsView);
 		mapController = findViewById(R.id.map_controller);
-		archiveFileName = getIntent().getStringExtra(
-				Records.INTENT_ARCHIVE_FILE_NAME);
-
-		// mapView.setBuiltInZoomControls(true);
-		// mapView.setSatellite(false);
-
+		archiveFileName = getIntent().getStringExtra(Records.INTENT_ARCHIVE_FILE_NAME);
 		mSeekBar = (SeekBar) findViewById(R.id.seek);
-		mSatellite = (ToggleButton) findViewById(R.id.satellite);
 
-		dateFormat = new SimpleDateFormat(getString(R.string.time_format),
-				Locale.CHINA);
+		dateFormat = new SimpleDateFormat(getString(R.string.time_format), Locale.getDefault());
 
 		archive = new Archive(getApplicationContext(), archiveFileName);
 		locations = archive.fetchAll();
@@ -95,16 +103,18 @@ public class BaiduMap extends MapActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
-
-		int size = locations.size();
-		if (actionBar != null) {
-			actionBar.setVisibility(View.GONE);
+		
+		Intent intent = getIntent();
+		if(intent.getBooleanExtra(Detail.INSIDE_TABHOST, false)) {
+			if(actionBar != null) {
+				actionBar.setVisibility(View.GONE);
+			}
+			mapController.setVisibility(View.GONE);
 		}
-		mapController.setVisibility(View.GONE);
 
-		// mSeekBar.setMax(locations.size());
-		// mSeekBar.setProgress(0);
-		// mSeekBar.setOnSeekBarChangeListener(this);
+		 mSeekBar.setMax(locations.size());
+		 mSeekBar.setProgress(0);
+		 mSeekBar.setOnSeekBarChangeListener(this);
 		//
 		// mSatellite.setOnClickListener(new View.OnClickListener() {
 		//
@@ -123,16 +133,12 @@ public class BaiduMap extends MapActivity implements
 		// });
 
 		mapView.getOverlays().add(new PathOverlay());
-		mapView.getOverlays().add(
-				new PointMarkLayout(archive.getFirstRecord(),
-						R.drawable.point_start));
-		mapView.getOverlays().add(
-				new PointMarkLayout(archive.getLastRecord(),
-						R.drawable.point_end));
+		mapView.getOverlays().add(new PointMarkLayout(archive.getFirstRecord(), R.drawable.point_start));
+		mapView.getOverlays().add(new PointMarkLayout(archive.getLastRecord(), R.drawable.point_end));
 
 		// @todo 自动计算默认缩放的地图界面
 		mapViewController.setCenter(mapCenterPoint);
-		mapViewController.setZoom(getFixedZoomLevel() - 1);
+		mapViewController.setZoom(getFixedZoomLevel());
 	}
 
 	@Override

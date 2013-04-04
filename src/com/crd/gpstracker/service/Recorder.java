@@ -43,7 +43,7 @@ interface Binder {
 }
 
 public class Recorder extends Service {
-    protected Recorder.ServiceBinder serviceBinder;
+    protected static Recorder.ServiceBinder serviceBinder = null;
     private SharedPreferences sharedPreferences;
     private Archive archive;
 
@@ -239,6 +239,7 @@ public class Recorder extends Service {
     @Override
     public void onDestroy() {
     	serviceBinder.stopRecord();
+    	serviceBinder = null;
     	super.onDestroy();
     }
 

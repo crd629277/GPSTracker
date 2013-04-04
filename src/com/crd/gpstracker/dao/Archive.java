@@ -21,7 +21,7 @@ public class Archive {
     public static final String TABLE_NAME = "records";
     
     private static final String NEVER_USED_LOCATION_PROVIDER = "";
-    protected String archiveName;
+//    protected String archiveName;
 
     public final static class DATABASE_COLUMN {
     	static final String ID = "id";
@@ -162,7 +162,7 @@ public class Archive {
         return meta;
     }
 
-    synchronized public boolean add(Location point) {
+    public boolean add(Location point, long timeMillis) {
         ContentValues values = new ContentValues();
 
         values.put(DATABASE_COLUMN.LATITUDE, point.getLatitude());
@@ -171,7 +171,7 @@ public class Archive {
         values.put(DATABASE_COLUMN.BEARING, point.getBearing());
         values.put(DATABASE_COLUMN.ALTITUDE, point.getAltitude());
         values.put(DATABASE_COLUMN.ACCURACY, point.getAccuracy());
-        values.put(DATABASE_COLUMN.TIME, System.currentTimeMillis());
+        values.put(DATABASE_COLUMN.TIME, timeMillis);
 
         try {
             return database.insert(TABLE_NAME, null, values) > 0 ? true : false;
@@ -181,6 +181,10 @@ public class Archive {
 
         return false;
     }
+    
+    public boolean add(Location point) {
+    	return add(point, System.currentTimeMillis());
+    } 
 
     /**
      * 获取最后个已记录的位置
@@ -235,7 +239,7 @@ public class Archive {
 
     public ArrayList<Location> fetchAll() {
         try {
-        	Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY time DESC", null);
+        	Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY time ASC", null);
 
             locations.clear();
             for (int i = 0; i < cursor.getCount(); i++) {
