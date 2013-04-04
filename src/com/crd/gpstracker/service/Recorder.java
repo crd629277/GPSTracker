@@ -43,7 +43,7 @@ interface Binder {
 }
 
 public class Recorder extends Service {
-    protected static Recorder.ServiceBinder serviceBinder = null;
+    protected Recorder.ServiceBinder serviceBinder = null;
     private SharedPreferences sharedPreferences;
     private Archive archive;
 

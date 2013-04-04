@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.crd.gpstracker.R;
@@ -26,6 +28,13 @@ public abstract class Activity extends FragmentActivity {
     protected Recorder.ServiceBinder serviceBinder = null;
     protected FragmentManager fragmentManager;
 
+    public void addFragment(int layout, Fragment fragment) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(layout, fragment);
+        fragmentTransaction.commit();
+    }
+    
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -80,19 +80,24 @@ public class ArchiveNameHelper {
 			// 根据最后修改时间排序
 			Arrays.sort(archiveFiles, new Comparator<File>() {
 				public int compare(File f1, File f2) {
-					Archive archive1 = new Archive(context, f1.getAbsolutePath(), Archive.MODE_READ_ONLY);
-					Archive archive2 = new Archive(context, f2.getAbsolutePath(), Archive.MODE_READ_ONLY);
+					try {
+						Archive archive1 = new Archive(context, f1.getAbsolutePath(), Archive.MODE_READ_ONLY);
+						Archive archive2 = new Archive(context, f2.getAbsolutePath(), Archive.MODE_READ_ONLY);
+						
+						Location location1 = archive1.getFirstRecord();
+						Location location2 = archive2.getFirstRecord();
+						
+						Long time1 = location1.getTime();
+						Long time2 = location2.getTime();
+						
+						archive1.close();
+						archive2.close();
+						
+						return Long.valueOf(time2).compareTo(time1);
+					} catch (NullPointerException e) {
+						return 0;
+					}
 					
-					Location location1 = archive1.getFirstRecord();
-					Location location2 = archive2.getFirstRecord();
-					
-					Long time1 = location1.getTime();
-					Long time2 = location2.getTime();
-					
-					archive1.close();
-					archive2.close();
-					
-					return Long.valueOf(time2).compareTo(time1);
 				}
 			});
 

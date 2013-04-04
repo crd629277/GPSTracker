@@ -26,7 +26,7 @@
         android:resizeable="true" />
 
     <application
-        android:icon="@drawable/icon"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity
             android:name=".activity.Tracker"
@@ -66,6 +66,14 @@
         <activity
             android:name=".activity.Info"
             android:screenOrientation="behind"
+            android:theme="@style/Window" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.SpeedCharts"
+             android:screenOrientation="landscape"
             android:theme="@style/Window" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

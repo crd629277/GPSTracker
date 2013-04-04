@@ -1,14 +1,18 @@
 package com.crd.gpstracker.util;
 
+import java.io.ByteArrayOutputStream;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.crd.gpstracker.R;
+import com.umeng.api.sns.UMSnsService;
 
 public class Helper {
 	private Context context;
@@ -16,6 +20,22 @@ public class Helper {
 	public Helper(Context context) {
 		this.context = context;
 	}
+	
+	
+	public byte[] convertBitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
+    }
+
+    public void shareToSina(Context context, String message, byte[] bitmap) {
+        UMSnsService.shareToSina(context, bitmap, message, null);
+    }
+
+    public void shareToSina(Context context, String message) {
+        UMSnsService.shareToSina(context, message, null);
+    }
+	
 	
 	public boolean isGPSProvided() {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);

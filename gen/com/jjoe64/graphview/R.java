@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.markupartist.android.widget.actionbar;
+package com.jjoe64.graphview;
 
 public final class R {
     public static final class array {

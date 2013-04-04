@@ -34,6 +34,7 @@ public class ArchiveMetaTimeFragment extends Fragment {
         metaLayout = inflater.inflate(R.layout.archive_meta_time, container, false);
         mStartTime = (TextView) metaLayout.findViewById(R.id.meta_start_time);
         mEndTime = (TextView) metaLayout.findViewById(R.id.meta_end_time);
+		setRetainInstance(true);
         return metaLayout;
     }
 
