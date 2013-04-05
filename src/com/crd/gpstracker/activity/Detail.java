@@ -59,6 +59,9 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
 
         addArchiveMetaTimeFragment();
         addArchiveMetaFragment();
+        
+        mDescription.setOnClickListener(this);
+        mMapMask.setOnTouchListener(this);
     }
 
     @Override
@@ -73,7 +76,6 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         	mDescription.setTextColor(getResources().getColor(R.color.gray));
         	mDescription.setText(getString(R.string.no_description));
         }
-        mDescription.setOnClickListener(this);
         
         actionBar.setTitle(getString(R.string.title_detail));
         actionBar.removeAllActions();
@@ -88,6 +90,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
             public void performAction(View view) {
             	Intent intent = new Intent(context, SpeedCharts.class);
             	intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveFileName);
+            	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             	startActivity(intent);
             }
         });
@@ -183,6 +186,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
     	view.setDrawingCacheEnabled(true);
     	view.buildDrawingCache();
     	view.destroyDrawingCache();
+    	view.setDrawingCacheQuality(100);
     	return Bitmap.createBitmap(view.getDrawingCache());
     }
     
@@ -195,12 +199,13 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         String name = getIntent().getStringExtra(Records.INTENT_ARCHIVE_FILE_NAME);
         mapIntent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, name);
         mapIntent.putExtra(INSIDE_TABHOST, true);
+        
+        mTabHost.setup(localActivityManager);
+        mTabHost.clearAllTabs();
 
         TabHost.TabSpec tabSpec =
             mTabHost.newTabSpec("").setIndicator("").setContent(mapIntent);
-        mTabHost.setup(localActivityManager);
         mTabHost.addTab(tabSpec);
-        mMapMask.setOnTouchListener(this);
 
         localActivityManager.dispatchResume();
         if (!archive.exists()) {
@@ -215,6 +220,11 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         mTabHost.clearAllTabs();
         localActivityManager.removeAllActivities();
         localActivityManager.dispatchPause(isFinishing());
+    }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
     
 

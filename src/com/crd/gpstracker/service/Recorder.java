@@ -58,11 +58,12 @@ public class Recorder extends Service {
     private Notifier notifier;
     
     private static final String RECORDER_SERVER_ID = "Tracker Service";
+    private static final String PREF_STATUS_FLAG = "Tracker Service Status";
     private TimerTask notifierTask;
-    private Timer timer;
+    private Timer timer = null;
 
     public class ServiceBinder extends android.os.Binder implements Binder {
-        private int status = ServiceBinder.STATUS_STOPPED;
+//        private int status = ServiceBinder.STATUS_STOPPED;
 
         ServiceBinder() {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -73,7 +74,7 @@ public class Recorder extends Service {
 
         @Override
         public void startRecord() {
-            if (status != ServiceBinder.STATUS_RECORDING) {
+            if (getStatus() != ServiceBinder.STATUS_RECORDING) {
             	
             	// 设置启动时更新配置
                 notifier = new Notifier(context);
@@ -129,12 +130,13 @@ public class Recorder extends Service {
                     public void run() {
                     	switch (serviceBinder.getStatus()) {
 						case ServiceBinder.STATUS_RECORDING:
-							float distance = getMeta().getDistance() / ArchiveMeta.TO_KILOMETRE;
-	                        double avgSpeed = getMeta().getAverageSpeed() * ArchiveMeta.TO_KILOMETRE;
-	                        double maxSpeed = getMeta().getMaxSpeed() * ArchiveMeta.TO_KILOMETRE;
+							ArchiveMeta meta = getMeta();
+							float distance = meta.getDistance() / ArchiveMeta.TO_KILOMETRE;
+	                        double avgSpeed = meta.getAverageSpeed() * ArchiveMeta.TO_KILOMETRE;
+	                        double maxSpeed = meta.getMaxSpeed() * ArchiveMeta.TO_KILOMETRE;
 	                        
 	                        notifier.setStatusString(String.format(getString(R.string.status_format), distance, avgSpeed, maxSpeed));
-	                        notifier.setCostTimeString(getMeta().getCostTimeStringByNow());
+	                        notifier.setCostTimeString(meta.getCostTimeStringByNow());
 	                        
 	                        notifier.publish();
 	                        
@@ -150,7 +152,13 @@ public class Recorder extends Service {
 
                 timer = new Timer();
                 timer.schedule(notifierTask, 0, 5000);
-                status = ServiceBinder.STATUS_RECORDING;
+//                status = ServiceBinder.STATUS_RECORDING;
+                
+                // Set status from shared preferences, default is stopped.
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(PREF_STATUS_FLAG, ServiceBinder.STATUS_RECORDING);
+                editor.commit();
+                
                 MobclickAgent.onEvent(context, RECORDER_SERVER_ID);
             }
         }
@@ -158,20 +166,27 @@ public class Recorder extends Service {
         public GpsStatus getGpsStatus() {
         	return locationManager.getGpsStatus(null);
         }
+        
+        public void resetStatus() {
+        	SharedPreferences.Editor editor = sharedPreferences.edit();
+        	editor.putInt(PREF_STATUS_FLAG, ServiceBinder.STATUS_STOPPED);
+        	editor.commit();
+        }
 
         @Override
         public void stopRecord() {
-            if (status == ServiceBinder.STATUS_RECORDING) {
+            if (getStatus() == ServiceBinder.STATUS_RECORDING) {
                 locationManager.removeUpdates(listener);
                 locationManager.removeGpsStatusListener(statusListener);
 
-                long totalCount = getMeta().getCount();
+                ArchiveMeta meta = getMeta();
+                long totalCount = meta.getCount();
                 if (totalCount <= 0) {
                     (new File(archivName)).delete();
                     helper.showLongToast(getString(R.string.not_record_anything));
                 } else {
                     // 设置结束记录时间
-                    getMeta().setEndTime(new Date());
+                	meta.setEndTime(new Date());
 
                     helper.showLongToast(String.format(
                         getString(R.string.result_report), String.valueOf(totalCount)
@@ -181,17 +196,21 @@ public class Recorder extends Service {
                 // 清除操作
                 archive.close();
                 notifier.cancel();
-                timer.cancel();
+                if(timer != null) {
+                	timer.cancel();
+                	timer = null;
+                }
+                
                 nameHelper.clearLastOpenedName();
 
-                status = ServiceBinder.STATUS_STOPPED;
+                resetStatus();
                 MobclickAgent.onEvent(context, RECORDER_SERVER_ID);
             }
         }
 
         @Override
         public int getStatus() {
-            return status;
+            return sharedPreferences.getInt(PREF_STATUS_FLAG, ServiceBinder.STATUS_STOPPED);
         }
 
         @Override
@@ -225,7 +244,12 @@ public class Recorder extends Service {
         }
 
         boolean autoStart = sharedPreferences.getBoolean(Preference.AUTO_START, false);
-        if (autoStart) {
+        boolean alreadyStarted = (serviceBinder.getStatus() == ServiceBinder.STATUS_RECORDING);
+        
+        if (autoStart || alreadyStarted) {
+        	if(alreadyStarted) {
+        		serviceBinder.resetStatus();
+        	}
             serviceBinder.startRecord();
         }
     }
@@ -239,7 +263,6 @@ public class Recorder extends Service {
     @Override
     public void onDestroy() {
     	serviceBinder.stopRecord();
-    	serviceBinder = null;
     	super.onDestroy();
     }
 

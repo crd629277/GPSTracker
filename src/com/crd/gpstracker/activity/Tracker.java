@@ -54,6 +54,11 @@ public class Tracker extends Activity implements View.OnClickListener,
 		mEndButton = (Button) findViewById(R.id.btn_end);
 		mDisabledButton = (Button) findViewById(R.id.btn_disabled);
 		
+		mStartButton.setOnClickListener(this);
+        mEndButton.setOnClickListener(this);
+        mDisabledButton.setOnClickListener(this);
+        mEndButton.setOnLongClickListener(this);
+		
 		mCoseTime = (TextView) findViewById(R.id.item_cost_time);
 
 		// Check update from umeng
@@ -82,30 +87,11 @@ public class Tracker extends Activity implements View.OnClickListener,
 		}
 	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		if(updateViewTimer != null) {
-			updateViewTimer.cancel();
-		}
-	}
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (isRecording) {
-			helper.showLongToast(getString(R.string.still_running));
-		}
-	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		mStartButton.setOnClickListener(this);
-		mEndButton.setOnClickListener(this);
-		mDisabledButton.setOnClickListener(this);
-		
-		mEndButton.setOnLongClickListener(this);
 		
 		if (!helper.isGPSProvided()) {
             mStartButton.setVisibility(View.GONE);
@@ -168,17 +154,21 @@ public class Tracker extends Activity implements View.OnClickListener,
 	@Override
 	public boolean onLongClick(View view) {
 		if (isRecording && serviceBinder != null) {
-			long count = archiveMeta.getCount();
+			
 
 			serviceBinder.stopRecord();
 			notifyUpdateView();
 
-			if (count > MINI_RECORDS) {
-				Intent intent = new Intent(context, Detail.class);
-				intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME,
-						archiveMeta.getName());
-				startActivity(intent);
+			if(archiveMeta != null) {
+				long count = archiveMeta.getCount();
+				if (count > MINI_RECORDS) {
+					Intent intent = new Intent(context, Detail.class);
+					intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME,
+							archiveMeta.getName());
+					startActivity(intent);
+				}
 			}
+			
 		}
 		setViewStatus(FLAG_ENDED);
 		return true;
@@ -268,6 +258,23 @@ public class Tracker extends Activity implements View.OnClickListener,
 		
 		return true;
 	} 
+	
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if(updateViewTimer != null) {
+			updateViewTimer.cancel();
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (isRecording) {
+			helper.showLongToast(getString(R.string.still_running));
+		}
+	}
 	
 	
 	

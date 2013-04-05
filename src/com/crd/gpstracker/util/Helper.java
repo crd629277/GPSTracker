@@ -12,7 +12,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.crd.gpstracker.R;
-import com.umeng.api.sns.UMSnsService;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.bean.ShareImage;
+import com.umeng.socialize.controller.RequestType;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
 
 public class Helper {
 	private Context context;
@@ -29,11 +33,18 @@ public class Helper {
     }
 
     public void shareToSina(Context context, String message, byte[] bitmap) {
-        UMSnsService.shareToSina(context, bitmap, message, null);
+        UMSocialService controller = UMServiceFactory.getUMSocialService("UMENG_SHARE", RequestType.SOCIAL);
+        
+        controller.setShareContent(message);
+        if(bitmap != null) {
+        	controller.setShareImage(new ShareImage(context, bitmap));
+        }
+        controller.directShare(context, SHARE_MEDIA.SINA, null);
+        
     }
 
     public void shareToSina(Context context, String message) {
-        UMSnsService.shareToSina(context, message, null);
+        shareToSina(context, message, null);
     }
 	
 	

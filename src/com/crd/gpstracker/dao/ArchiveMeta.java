@@ -60,7 +60,7 @@ public class ArchiveMeta {
 	}
 
 	protected String get(String name) {
-		Cursor cursor;
+		Cursor cursor = null;
 		String result = "";
 		try {
 			String sql = "SELECT " + Archive.DATABASE_COLUMN.META_VALUE
@@ -73,14 +73,19 @@ public class ArchiveMeta {
 
 			result = cursor.getString(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.META_VALUE));
-			cursor.close();
+//			cursor.close();
 		} catch (SQLiteException e) {
 			Logger.e(e.getMessage());
 		} catch (CursorIndexOutOfBoundsException e) {
 			Logger.e(e.getMessage());
 		} catch (IllegalStateException e) {
 			Logger.e(e.getMessage());
-		}
+		} finally {
+        	if(cursor != null) {
+        		cursor.close();
+        		cursor = null;
+        	}
+        }
 
 		return result;
 	}
@@ -94,7 +99,7 @@ public class ArchiveMeta {
 	}
 
 	protected boolean isExists(String name) {
-		Cursor cursor;
+		Cursor cursor = null;
 		int count = 0;
 		try {
 			cursor = database.rawQuery("SELECT count(id) AS count" + " FROM "
@@ -105,10 +110,15 @@ public class ArchiveMeta {
 
 			count = cursor.getInt(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
-			cursor.close();
+//			cursor.close();
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
-		} 
+		} finally {
+        	if(cursor != null) {
+        		cursor.close();
+        		cursor = null;
+        	}
+        }
 
 		return count > 0 ? true : false;
 	}
@@ -181,7 +191,7 @@ public class ArchiveMeta {
 	}
 
 	public long getCount() {
-		Cursor cursor;
+		Cursor cursor = null;
 		long count = 0;
 		try {
 			cursor = database.rawQuery("SELECT count(id) AS count FROM "
@@ -190,10 +200,15 @@ public class ArchiveMeta {
 
 			count = cursor.getLong(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
-			cursor.close();
+//			cursor.close();
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
-		}
+		} finally {
+        	if(cursor != null) {
+        		cursor.close();
+        		cursor = null;
+        	}
+        }
 
 		return count;
 	}
@@ -247,17 +262,22 @@ public class ArchiveMeta {
 				+ ") AS " + Archive.DATABASE_COLUMN.SPEED + " FROM "
 				+ Archive.TABLE_NAME + " LIMIT 1";
 
-		Cursor cursor;
+		Cursor cursor = null;
 		float speed = 0;
 		try {
 			cursor = database.rawQuery(sql, null);
 			cursor.moveToFirst();
 			speed = cursor.getFloat(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.SPEED));
-			cursor.close();
+//			cursor.close();
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
-		}
+		} finally {
+        	if(cursor != null) {
+        		cursor.close();
+        		cursor = null;
+        	}
+        }
 
 		return speed;
 	}

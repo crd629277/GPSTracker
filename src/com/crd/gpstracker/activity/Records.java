@@ -205,7 +205,6 @@ public class Records extends Activity implements
 	/**
 	 * 从指定目录读取所有已保存的列表
 	 * 
-	 * @throws IOException
 	 */
 	private void openArchivesFromFileNames() {
 		Iterator<String> iterator = archiveFileNames.iterator();

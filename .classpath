@@ -5,10 +5,13 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="libs/annotations.jar"/>
-	<classpathentry kind="lib" path="libs/baidumapapi.jar"/>
 	<classpathentry kind="lib" path="libs/android-support-v4.jar"/>
 	<classpathentry kind="lib" path="libs/umeng_sdk.jar"/>
-	<classpathentry kind="lib" path="libs/armeabi/libBMapApiEngine_v1_3_3.so"/>
-	<classpathentry kind="lib" path="libs/umeng-sns.jar"/>
+	<classpathentry kind="lib" path="libs/armeabi/libBMapApiEngine_v1_3_5.so"/>
+	<classpathentry kind="lib" path="libs/baidumapapi.jar"/>
+	<classpathentry kind="lib" path="libs/armeabi/liblocSDK3.so"/>
+	<classpathentry kind="lib" path="libs/httpmime-4.1.3.jar"/>
+	<classpathentry kind="lib" path="libs/locSDK_3.1.jar"/>
+	<classpathentry kind="lib" path="libs/umeng_social_sdk.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
