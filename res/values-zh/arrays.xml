@@ -23,10 +23,10 @@
         <item>landscape</item>
     </string-array>
     <string-array name="activityType">
-        <item>Running</item>
-        <item>Cycling</item>
-        <item>Walking</item>
-        <item>Hiking</item>
-        <item>Others</item>
+        <item>跑步</item>
+        <item>骑自行车</item>
+        <item>步行</item>
+        <item>远足</item>
+        <item>其它</item>
     </string-array>
 </resources>

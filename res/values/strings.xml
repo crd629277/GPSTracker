@@ -77,4 +77,9 @@
     <string name="share_report_formatter" formatted="false">Just finished a trip%s which total distance about %s km(from
         %s to %s , during %s), and max speed is %s km/h and average speed is %s km/h
     </string>
+    <string name="activity_type_text">Activity Type</string>
+    <string name="activity_type">Activity Type</string>
+    <string name="no_activity_type">---</string>
+    <string name="item_calories">Calories</string>
+    <string name="no_calories">0</string>
 </resources>

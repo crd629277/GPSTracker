@@ -61,4 +61,9 @@
     <string name="title_modify">修改</string>
     <string name="title_records">记录</string>
     <string name="share_report_formatter" formatted="false">完成了段旅程%s，总计%s公里(从%s出发到%s结束，历时%s)，最快速度%s公里/时、平均速度%s公里/时</string>
+	<string name="activity_type_text">运动类型</string>
+    <string name="activity_type">运动类型</string>
+    <string name="no_activity_type">---</string>
+    <string name="item_calories">卡路里</string>
+    <string name="no_calories">0</string>
 </resources>

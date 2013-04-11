@@ -131,10 +131,6 @@ public class Archive {
     
     
     public SQLiteDatabase reopen(int mode) {
-    	if(database != null) {
-    		database.close();
-    		database = null;
-    	}
 		switch (mode) {
         case MODE_READ_ONLY:
             database = databaseHelper.getReadableDatabase();
@@ -197,45 +193,33 @@ public class Archive {
      * @return
      */
     public Location getLastRecord() {
-    	Cursor cursor = null;
         try {
-        	cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME
+        	Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME
                 + " ORDER BY time DESC LIMIT 1", null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 return getLocationFromCursor(cursor);
             }
-//            cursor.close();
+            cursor.close();
         } catch (SQLiteException e) {
             Logger.e(e.getMessage());
-        } finally {
-        	if(cursor != null) {
-        		cursor.close();
-        		cursor = null;
-        	}
-        }
+        } 
 
         return null;
     }
     
     public Location getFirstRecord() {
-    	Cursor cursor = null;
         try {
-        	cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME
+        	Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME
                 + " ORDER BY time ASC LIMIT 1", null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 return getLocationFromCursor(cursor);
             }
-            
+            cursor.close();
         } catch (SQLiteException e) {
             Logger.e(e.getMessage());
-        } finally {
-        	if(cursor != null) {
-        		cursor.close();
-        		cursor = null;
-        	}
-        }
+        } 
 
         return null;
     }
@@ -255,9 +239,8 @@ public class Archive {
     }
 
     public ArrayList<Location> fetchAll() {
-    	Cursor cursor = null;
         try {
-        	cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY time ASC", null);
+        	Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY time ASC", null);
 
             locations.clear();
             for (int i = 0; i < cursor.getCount(); i++) {
@@ -265,17 +248,12 @@ public class Archive {
                 locations.add(getLocationFromCursor(cursor));
             }
 
-//            cursor.close();
+            cursor.close();
         } catch (SQLiteException e) {
             Logger.e(e.getMessage());
         } catch (IllegalStateException e) {
             Logger.e(e.getMessage());
-        } finally {
-        	if(cursor != null) {
-        		cursor.close();
-        		cursor = null;
-        	}
-        }
+        } 
 
         return locations;
     }

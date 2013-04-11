@@ -27,10 +27,17 @@ public class Listener implements LocationListener {
     private BigDecimal lastLatitude;
     private BigDecimal lastLongitude;
 //    private HashMap<Long, Location> locationCache;
+    private Recorder.ServiceBinder binder = null;
 
     public Listener(Archive archive) {
         this.archive = archive;
 //        this.locationCache = new HashMap<Long, Location>();
+    }
+    
+    
+    public Listener(Archive archiver, Recorder.ServiceBinder binder) {
+        this.archive = archiver;
+        this.binder = binder;
     }
 
     private boolean filter(Location location) {

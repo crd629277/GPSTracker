@@ -25,7 +25,6 @@ public class Helper {
 		this.context = context;
 	}
 	
-	
 	public byte[] convertBitmapToByteArray(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);

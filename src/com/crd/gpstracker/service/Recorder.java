@@ -29,7 +29,7 @@ interface Binder {
     public static final int STATUS_RECORDING = 0x0000;
     public static final int STATUS_STOPPED = 0x1111;
 
-    public void startRecord();
+    public void startRecord(String activityType);
 
     public void stopRecord();
 
@@ -60,20 +60,25 @@ public class Recorder extends Service {
     private static final String RECORDER_SERVER_ID = "Tracker Service";
     private static final String PREF_STATUS_FLAG = "Tracker Service Status";
     private TimerTask notifierTask;
+//    protected TimerTask costTimeTask;
     private Timer timer = null;
+//    private Timer costTimer = null;
+    
+    
 
     public class ServiceBinder extends android.os.Binder implements Binder {
-//        private int status = ServiceBinder.STATUS_STOPPED;
-
+    	
+//    	protected int mCostTime = 0;
+    	
         ServiceBinder() {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             archive = new Archive(getApplicationContext());
-            listener = new Listener(archive);
+            listener = new Listener(archive, this);
             statusListener = new StatusListener();
         }
 
         @Override
-        public void startRecord() {
+        public void startRecord(String activityType) {
             if (getStatus() != ServiceBinder.STATUS_RECORDING) {
             	
             	// 设置启动时更新配置
@@ -105,11 +110,14 @@ public class Recorder extends Service {
 
                 try {
                     archive.open(archivName, Archive.MODE_READ_WRITE);
-                    nameHelper.setLastOpenedName(archivName);
+//                    nameHelper.setLastOpenedName(archivName);
 
                     // 设置开始时间，如果是恢复文件，则就不设置
                     if(!hasResumeName) {
                     	getMeta().setStartTime(new Date());
+                    }
+                    if(activityType != null) {
+                    	getMeta().setActivityType(activityType);
                     }
                     
 
@@ -123,6 +131,27 @@ public class Recorder extends Service {
                 } catch (SQLiteException e) {
                     Logger.e(e.getMessage());
                 }
+                
+              //开个线程计算当前运动的时间
+//                costTimeTask = new TimerTask() {
+//					@Override
+//					public void run() {
+//						switch (serviceBinder.getStatus()) {
+//						case ServiceBinder.STATUS_RECORDING:
+//							mCostTime++;
+//							break;
+//
+//						case ServiceBinder.STATUS_STOPPED:
+//							mCostTime = 0;
+//							break;
+//						}
+//						
+//					}
+//				};
+//				
+//				timer = new Timer();
+//                timer.schedule(costTimeTask, 0, 1000);
+                
 
                 // 另开个线程展示通知信息
                 notifierTask = new TimerTask() {
@@ -149,10 +178,8 @@ public class Recorder extends Service {
                         
                     }
                 };
-
                 timer = new Timer();
                 timer.schedule(notifierTask, 0, 5000);
-//                status = ServiceBinder.STATUS_RECORDING;
                 
                 // Set status from shared preferences, default is stopped.
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -162,6 +189,11 @@ public class Recorder extends Service {
                 MobclickAgent.onEvent(context, RECORDER_SERVER_ID);
             }
         }
+        
+//        public String getCostTime() {
+//        	return getMeta().converTimeToString(mCostTime);
+//        }
+        
         
         public GpsStatus getGpsStatus() {
         	return locationManager.getGpsStatus(null);
@@ -185,9 +217,10 @@ public class Recorder extends Service {
                     (new File(archivName)).delete();
                     helper.showLongToast(getString(R.string.not_record_anything));
                 } else {
-                    // 设置结束记录时间
+                    // 设置结束记录时间和所花时间
                 	meta.setEndTime(new Date());
-
+//                	meta.setCostTime(mCostTime);
+                	
                     helper.showLongToast(String.format(
                         getString(R.string.result_report), String.valueOf(totalCount)
                     ));
@@ -200,6 +233,13 @@ public class Recorder extends Service {
                 	timer.cancel();
                 	timer = null;
                 }
+                
+//                mCostTime = 0;
+//                costTimeTask.cancel();
+//                if(costTimer != null) {
+//                	costTimer.cancel();
+//                	costTimer = null;
+//                }
                 
                 nameHelper.clearLastOpenedName();
 
@@ -250,7 +290,7 @@ public class Recorder extends Service {
         	if(alreadyStarted) {
         		serviceBinder.resetStatus();
         	}
-            serviceBinder.startRecord();
+            serviceBinder.startRecord(null);
         }
     }
 

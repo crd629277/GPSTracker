@@ -3,11 +3,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:paddingLeft="10dp"
               android:paddingRight="10dp"
-              android:paddingTop="5dp"
+              android:paddingTop="2dp"
               android:orientation="vertical"
               android:background="@drawable/background"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content">
+              
+    
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+
+        >
+        <include layout="@layout/item_activity_type" />
+        <ImageView style="@style/Cell.Vertical" />
+        <include layout="@layout/item_calories" />
+    </LinearLayout>
+
+    <ImageView style="@style/Cell.Horizontal" />
 
     <LinearLayout
         android:orientation="horizontal"

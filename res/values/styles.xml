@@ -18,7 +18,7 @@
         <item name="android:layout_marginRight">2dip</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">32sp</item>
+        <item name="android:textSize">28sp</item>
     </style>
 
     <style name="Item.Title" parent="@android:style/TextAppearance.Small">
@@ -26,7 +26,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/title</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="Item.TitleSecond" parent="Item.Title">
@@ -76,9 +76,10 @@
     </style>
 
     <style name="BitCounter" parent="BigTitle">
-        <item name="android:textColor">@color/snowhite</item>
+        <item name="android:textColor">@color/mils</item>
         <item name="android:textSize">48sp</item>
     </style>
+    
 
     <style name="SecondTitle">
         <item name="android:textColor">@color/title_second</item>
@@ -97,18 +98,39 @@
         <item name="android:gravity">center</item>
         <item name="android:padding">0dip</item>
     </style>
-
-    <style name="BigEndButton" parent="BigButton">
+    
+    <style name="LongBigButton" parent="Shadow">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/snowhite</item>
+        <item name="android:background">@drawable/btn_start</item>
+        <item name="android:textSize">25dp</item>
+        <item name="android:layout_height">50dip</item>
+        <item name="android:layout_width">220dip</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">0dip</item>
+    </style>
+    
+    <style name="EndButton" parent="BigButton">
         <item name="android:background">@drawable/btn_end</item>
         <item name="android:shadowColor">@color/highlight_border</item>
     </style>
 
-    <style name="BigStartButton" parent="BigButton">
+    <style name="StartButton" parent="BigButton">
         <item name="android:background">@drawable/btn_start</item>
         <item name="android:shadowColor">@color/mils</item>
     </style>
 
-    <style name="BigGrayButton" parent="BigButton">
+    <style name="BigEndButton" parent="LongBigButton">
+        <item name="android:background">@drawable/btn_end</item>
+        <item name="android:shadowColor">@color/highlight_border</item>
+    </style>
+
+    <style name="BigStartButton" parent="LongBigButton">
+        <item name="android:background">@drawable/btn_start</item>
+        <item name="android:shadowColor">@color/mils</item>
+    </style>
+
+    <style name="BigGrayButton" parent="LongBigButton">
         <item name="android:background">@drawable/btn_gray</item>
         <item name="android:shadowColor">@color/title_second</item>
     </style>
@@ -121,15 +143,15 @@
         <item name="android:background">@drawable/cell_border_vertical</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">fill_parent</item>
-        <item name="android:layout_marginBottom">5dp</item>
-        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginRight">18dp</item>
     </style>
 
     <style name="Cell.Horizontal" parent="Cell">
         <item name="android:background">@drawable/cell_border_horizontal</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
     </style>
 
     <style name="Detail"></style>

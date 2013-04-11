@@ -59,7 +59,7 @@
             android:layout_toLeftOf="@+id/umeng_fb_btnSendFb" />
 
         <Button android:id="@+id/umeng_fb_btnSendFb"
-                style="@style/BigEndButton"
+                style="@style/EndButton"
                 android:layout_marginLeft="10dip"
                 android:layout_marginRight="5dip"
                 android:layout_alignParentRight="true"

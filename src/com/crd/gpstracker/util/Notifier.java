@@ -25,7 +25,7 @@ public class Notifier extends Notification{
     private SharedPreferences sharedPreferences;
 
     public Notifier(Context context) {
-    	super(R.drawable.ic_notification, context.getString(R.string.running), System.currentTimeMillis());
+    	super(R.drawable.ic_menu_home, context.getString(R.string.running), System.currentTimeMillis());
     	
     	this.context = context;
     	this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

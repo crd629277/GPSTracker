@@ -17,15 +17,18 @@ public class ArchiveMeta {
 	public static final String END_TIME = "END_TIME";
 	public static final String START_TIME = "START_TIME";
 	public static final String DISTANCE = "DISTANCE";
+	public static final String ACTIVITY_TYPE = "ACTIVITY_TYPE";
+//	public static final String COST_TIME = "COST_TIME";
 	public static final String TABLE_NAME = "meta";
 	public static final double KM_PER_HOUR_CNT = 3.597;
 	public static final int TO_KILOMETRE = 1000;
-	private static final String COST_TIME_FORMAT = "%02d:%02d:%02d";
+	
 
 	protected Archive archive;
 	private SQLiteDatabase database;
 	private static final int FUNC_AVG = 0x1;
 	private static final int FUNC_MAX = 0x2;
+	private static final String COST_TIME_FORMAT = "%02d:%02d:%02d";
 
 	public ArchiveMeta(Archive archive) {
 		this.archive = archive;
@@ -41,7 +44,7 @@ public class ArchiveMeta {
 		try {
 			if (isExists(name)) {
 				result = database.update(TABLE_NAME, values,
-						Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'",
+						Archive.DATABASE_COLUMN.META_NAME + " ='" + name + "'",
 						null);
 			} else {
 				result = database.insert(TABLE_NAME, null, values);
@@ -60,12 +63,12 @@ public class ArchiveMeta {
 	}
 
 	protected String get(String name) {
-		Cursor cursor = null;
+		Cursor cursor;
 		String result = "";
 		try {
 			String sql = "SELECT " + Archive.DATABASE_COLUMN.META_VALUE
 					+ " FROM " + TABLE_NAME + " WHERE "
-					+ Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'"
+					+ Archive.DATABASE_COLUMN.META_NAME + " ='" + name + "'"
 					+ " LIMIT 1";
 
 			cursor = database.rawQuery(sql, null);
@@ -73,19 +76,14 @@ public class ArchiveMeta {
 
 			result = cursor.getString(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.META_VALUE));
-//			cursor.close();
+			cursor.close();
 		} catch (SQLiteException e) {
 			Logger.e(e.getMessage());
 		} catch (CursorIndexOutOfBoundsException e) {
 			Logger.e(e.getMessage());
 		} catch (IllegalStateException e) {
 			Logger.e(e.getMessage());
-		} finally {
-        	if(cursor != null) {
-        		cursor.close();
-        		cursor = null;
-        	}
-        }
+		} 
 
 		return result;
 	}
@@ -99,26 +97,21 @@ public class ArchiveMeta {
 	}
 
 	protected boolean isExists(String name) {
-		Cursor cursor = null;
+		Cursor cursor;
 		int count = 0;
 		try {
 			cursor = database.rawQuery("SELECT count(id) AS count" + " FROM "
 					+ TABLE_NAME + " WHERE "
-					+ Archive.DATABASE_COLUMN.META_NAME + "='" + name + "'",
+					+ Archive.DATABASE_COLUMN.META_NAME + " ='" + name + "'",
 					null);
 			cursor.moveToFirst();
 
 			count = cursor.getInt(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
-//			cursor.close();
+			cursor.close();
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
-		} finally {
-        	if(cursor != null) {
-        		cursor.close();
-        		cursor = null;
-        	}
-        }
+		} 
 
 		return count > 0 ? true : false;
 	}
@@ -126,7 +119,7 @@ public class ArchiveMeta {
 	
 	public Date getStartTime() {
 		try {
-			long startTime = Long.parseLong(get(START_TIME), 10);
+			long startTime = Long.parseLong(get(START_TIME));
 			return new Date(startTime);
 		} catch (Exception e) {
 			return null;
@@ -137,22 +130,29 @@ public class ArchiveMeta {
 
 	public Date getEndTime() {
 		try {
-			long endTime = Long.parseLong(get(END_TIME), 10);
+			long endTime = Long.parseLong(get(END_TIME));
 			return new Date(endTime);
 		} catch (Exception e) {
 			return null;
 		}
 	}
 	
+//	
+//	public long getCostTime() {
+//		return Long.parseLong(get(COST_TIME));
+//
+//	}
 	
 	public String getRawCostTimeString() {
         return getBetweenTimeString(getStartTime(), getEndTime());
     }
-
-    public String getCostTimeStringByNow() {
+	
+	
+	public String getCostTimeStringByNow() {
         return getBetweenTimeString(getStartTime(), new Date(System.currentTimeMillis()));
     }
 
+	
     private String getBetweenTimeString(Date start, Date end) {
         try {
             long startTimeStamp = start.getTime();
@@ -169,6 +169,16 @@ public class ArchiveMeta {
             return "";
         }
     }
+    
+    
+	public String converTimeToString(long time) {
+    	long day = time / (24 * 60 * 60);
+        long hour = (time / (60 * 60) - day * 24);
+        long minute = ((time / 60) - day * 24 * 60 - hour * 60);
+        long second = (time - day * 24 * 60 * 60 - hour * 60 * 60 - minute * 60);
+
+        return String.format(COST_TIME_FORMAT, hour, minute, second);
+    }
 	
 	
 	public boolean setStartTime(Date date) {
@@ -180,18 +190,33 @@ public class ArchiveMeta {
 		long time = date.getTime();
 		return set(END_TIME, String.valueOf(time));
 	}
+	
+//	public boolean setCostTime(long time) {
+//		return set(COST_TIME, String.valueOf(time));
+//	}
 
 	public String getDescription() {
 		return get(DESCRIPTION);
+	}
+	
+	public String getActivityType() {
+		return get(ACTIVITY_TYPE);
 	}
 
 	public boolean setDescription(String description) {
 		boolean result = set(DESCRIPTION, description);
 		return result;
 	}
+	
+	
+	public boolean setActivityType(String activityType) {
+		boolean result = set(ACTIVITY_TYPE, activityType);
+		return result;
+	}
+	
 
 	public long getCount() {
-		Cursor cursor = null;
+		Cursor cursor;
 		long count = 0;
 		try {
 			cursor = database.rawQuery("SELECT count(id) AS count FROM "
@@ -200,15 +225,10 @@ public class ArchiveMeta {
 
 			count = cursor.getLong(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
-//			cursor.close();
+			cursor.close();
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
-		} finally {
-        	if(cursor != null) {
-        		cursor.close();
-        		cursor = null;
-        	}
-        }
+		}
 
 		return count;
 	}
@@ -251,8 +271,6 @@ public class ArchiveMeta {
 			break;
 
 		case FUNC_MAX:
-			func = "max";
-
 		default:
 			func = "max";
 			break;
@@ -262,22 +280,17 @@ public class ArchiveMeta {
 				+ ") AS " + Archive.DATABASE_COLUMN.SPEED + " FROM "
 				+ Archive.TABLE_NAME + " LIMIT 1";
 
-		Cursor cursor = null;
+		Cursor cursor;
 		float speed = 0;
 		try {
 			cursor = database.rawQuery(sql, null);
 			cursor.moveToFirst();
 			speed = cursor.getFloat(cursor
 					.getColumnIndex(Archive.DATABASE_COLUMN.SPEED));
-//			cursor.close();
+			cursor.close();
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
-		} finally {
-        	if(cursor != null) {
-        		cursor.close();
-        		cursor = null;
-        	}
-        }
+		} 
 
 		return speed;
 	}

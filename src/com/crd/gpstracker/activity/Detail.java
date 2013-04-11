@@ -90,7 +90,6 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
             public void performAction(View view) {
             	Intent intent = new Intent(context, SpeedCharts.class);
             	intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveFileName);
-            	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             	startActivity(intent);
             }
         });

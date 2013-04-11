@@ -3,19 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.crd.gpstracker"
     android:id="@+id/action_bar"
-    style="@style/TrackerActionBar"
+    style="@style/ActionBar"
     app:title="@string/app_name" />
 
-
-<!--
-<?xml version="1.0" encoding="utf-8"?>
-
-<com.markupartist.android.widget.ActionBar
-    xmlns:app="http://schemas.android.com/apk/res/com.crd.gpstracker"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    app:title="@string/app_name"
-    android:id="@+id/action_bar"
-    style="@style/TrackerActionBar"
-    
-    />
--->

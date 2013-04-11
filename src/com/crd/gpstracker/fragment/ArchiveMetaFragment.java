@@ -20,6 +20,9 @@ public class ArchiveMetaFragment extends Fragment {
 	private TextView mAvgSpeed;
 	private TextView mMaxSpeed;
 	private TextView mRecords;
+	private TextView mActivityType;
+	private TextView mCalories;
+	
 	private String formatter;
 
 	public ArchiveMetaFragment(Context context, ArchiveMeta meta) {
@@ -37,6 +40,8 @@ public class ArchiveMetaFragment extends Fragment {
 		mAvgSpeed = (TextView) layoutView.findViewById(R.id.item_avg_speed);
 		mMaxSpeed = (TextView) layoutView.findViewById(R.id.item_max_speed);
 		mRecords = (TextView) layoutView.findViewById(R.id.item_records);
+		mActivityType = (TextView) layoutView.findViewById(R.id.item_activity_type);
+		mCalories = (TextView) layoutView.findViewById(R.id.item_calories);
 		setRetainInstance(true);
 		return layoutView;
 	}
@@ -49,12 +54,10 @@ public class ArchiveMetaFragment extends Fragment {
 
 	public void update() {
 		try {
-			mDistance.setText(String.format(formatter, meta.getDistance()
-					/ ArchiveMeta.TO_KILOMETRE));
-			mMaxSpeed.setText(String.format(formatter, meta.getMaxSpeed()
-					* ArchiveMeta.KM_PER_HOUR_CNT));
-			mAvgSpeed.setText(String.format(formatter, meta.getAverageSpeed()
-					* ArchiveMeta.KM_PER_HOUR_CNT));
+			mActivityType.setText(meta.getActivityType());
+			mDistance.setText(String.format(formatter, meta.getDistance() / ArchiveMeta.TO_KILOMETRE));
+			mMaxSpeed.setText(String.format(formatter, meta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
+			mAvgSpeed.setText(String.format(formatter, meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
 			mRecords.setText(String.valueOf(meta.getCount()));
 		} catch (Exception e) {
 			Logger.e(e.getMessage());

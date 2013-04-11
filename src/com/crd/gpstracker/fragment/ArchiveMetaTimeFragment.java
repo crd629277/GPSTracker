@@ -38,6 +38,7 @@ public class ArchiveMetaTimeFragment extends Fragment {
         return metaLayout;
     }
 
+    @Override
     public void onStart() {
         super.onStart();
         updateView();
