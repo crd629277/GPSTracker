@@ -82,4 +82,5 @@
     <string name="no_activity_type">---</string>
     <string name="item_calories">Calories</string>
     <string name="no_calories">0</string>
+    <string name="weight_formatter">%.2f</string>
 </resources>

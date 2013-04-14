@@ -1,7 +1,9 @@
 package com.crd.gpstracker.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +12,12 @@ import android.widget.TextView;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.ArchiveMeta;
+import com.crd.gpstracker.util.Calories;
 import com.crd.gpstracker.util.Helper.Logger;
 
 public class ArchiveMetaFragment extends Fragment {
 	public ArchiveMeta meta;
+	public Calories calories;
 	private Context context;
 	private View layoutView;
 	private TextView mDistance;
@@ -29,6 +33,7 @@ public class ArchiveMetaFragment extends Fragment {
 		this.meta = meta;
 		this.context = context;
 		this.formatter = context.getString(R.string.records_formatter);
+		calories = new Calories(context);
 	}
 
 	@Override
@@ -59,6 +64,8 @@ public class ArchiveMetaFragment extends Fragment {
 			mMaxSpeed.setText(String.format(formatter, meta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
 			mAvgSpeed.setText(String.format(formatter, meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
 			mRecords.setText(String.valueOf(meta.getCount()));
+			mCalories.setText(String.format(formatter, calories.getCaloriesFromActivityType(meta.getActivityType(), 
+					meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT, meta.getDistance() / ArchiveMeta.TO_KILOMETRE)));
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
 		}

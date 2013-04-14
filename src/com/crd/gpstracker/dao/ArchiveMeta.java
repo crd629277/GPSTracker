@@ -169,16 +169,6 @@ public class ArchiveMeta {
             return "";
         }
     }
-    
-    
-	public String converTimeToString(long time) {
-    	long day = time / (24 * 60 * 60);
-        long hour = (time / (60 * 60) - day * 24);
-        long minute = ((time / 60) - day * 24 * 60 - hour * 60);
-        long second = (time - day * 24 * 60 * 60 - hour * 60 * 60 - minute * 60);
-
-        return String.format(COST_TIME_FORMAT, hour, minute, second);
-    }
 	
 	
 	public boolean setStartTime(Date date) {

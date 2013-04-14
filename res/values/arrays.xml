@@ -26,7 +26,10 @@
         <item>Running</item>
         <item>Cycling</item>
         <item>Walking</item>
-        <item>Hiking</item>
         <item>Others</item>
+    </string-array>
+    <string-array name="genderValues">
+        <item>Male</item>
+        <item>Female</item>
     </string-array>
 </resources>

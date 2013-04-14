@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen android:background="#ffffff"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
 <!--     <PreferenceCategory android:title="User Interface" >
         <ListPreference
@@ -10,6 +11,32 @@
             android:summary="The Screen Orientation"
             android:title="Orientation" />
     </PreferenceCategory> -->
+    
+    
+    <PreferenceCategory android:title="Profile Settings">
+        <EditTextPreference 
+            android:key="fullName"
+           	android:singleLine="true"
+           	android:title="Full Name" />    
+        <ListPreference
+            android:key="gender"
+            android:defaultValue="Male"
+            android:entries="@array/genderValues"
+            android:entryValues="@array/genderValues"
+            android:title="Gender"
+            android:dialogTitle="Select Gender"
+        />
+        <EditTextPreference
+            android:key="weight"
+            android:defaultValue="60.00"
+           	android:singleLine="true"
+           	android:title="Weight" 
+           	android:dialogTitle="Weight (Kg)"
+           	android:inputType="numberDecimal"
+           	/> 
+    </PreferenceCategory>
+    
+    
     
     <PreferenceCategory android:title="GPS Listener" >
         <ListPreference

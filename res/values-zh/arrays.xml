@@ -24,9 +24,8 @@
     </string-array>
     <string-array name="activityType">
         <item>跑步</item>
-        <item>骑自行车</item>
+        <item>骑车</item>
         <item>步行</item>
-        <item>远足</item>
         <item>其它</item>
     </string-array>
 </resources>

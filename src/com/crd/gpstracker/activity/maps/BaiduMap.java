@@ -193,8 +193,7 @@ public class BaiduMap extends MapActivity implements
 
 					Point lastGeoPoint = null;
 					for (Location location : locations) {
-						Point current = projection.toPixels(
-								getRealGeoPointFromLocation(location), null);
+						Point current = projection.toPixels(getRealGeoPointFromLocation(location), null);
 
 						if (lastGeoPoint != null
 								&& (lastGeoPoint.y < maxHeight && lastGeoPoint.x < maxWidth)) {
