@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.base.Activity;
@@ -52,14 +53,14 @@ public class Tracker extends Activity implements View.OnClickListener,
 	private Spinner mSpinner;
 	private ArrayAdapter<CharSequence> activityTypeAdapter;
 	private TextView mActivityTypeView;
-	private String mActivityType;
+	private int mActivityTypePosition;
 	
 	class SpinnerSelectedListener implements OnItemSelectedListener {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view,
 				int position, long id) {
-				mActivityType = activityTypeAdapter.getItem(position).toString();
-//			helper.showLongToast(activityTypeAdapter.getItem(position).toString());
+			mActivityTypePosition = position;
+//			helper.showLongToast("position: " + position);
 		}
 
 		@Override
@@ -89,8 +90,10 @@ public class Tracker extends Activity implements View.OnClickListener,
 		mActivityTypeView = (TextView) findViewById(R.id.activity_type_text);
 		
 		mSpinner = (Spinner) findViewById(R.id.activity_type_spinner);
-		activityTypeAdapter = ArrayAdapter.createFromResource(this, R.array.activityType, android.R.layout.simple_spinner_item);
-		activityTypeAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+//		activityTypeAdapter = ArrayAdapter.createFromResource(this, R.array.activityType, android.R.layout.simple_spinner_item);
+		activityTypeAdapter = ArrayAdapter.createFromResource(this, R.array.activityType, R.layout.activity_type_spinner);
+//		activityTypeAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+		activityTypeAdapter.setDropDownViewResource(R.layout.activity_type_dropdown_item);
 		mSpinner.setAdapter(activityTypeAdapter);
 		mSpinner.setOnItemSelectedListener(new SpinnerSelectedListener());
 		mSpinner.setVisibility(View.VISIBLE);
@@ -169,7 +172,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 		switch (view.getId()) {
 		case R.id.btn_start:
 			if (serviceBinder != null && !isRecording) {
-				serviceBinder.startRecord(mActivityType);
+				serviceBinder.startRecord(mActivityTypePosition);
 				notifyUpdateView();
 			}
 			break;
@@ -194,14 +197,14 @@ public class Tracker extends Activity implements View.OnClickListener,
 
 			if(archiveMeta != null) {
 				long count = archiveMeta.getCount();
-				if (count > MINI_RECORDS) {
-					Intent intent = new Intent(context, Detail.class);
-					intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME,
-							archiveMeta.getName());
+				if (count >= MINI_RECORDS) {
+					Intent intent = new Intent(context, Modify.class);
+					intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveMeta.getName());
 					startActivity(intent);
 				}
 			}
 			
+			serviceBinder.closeDB();
 		}
 		setViewStatus(FLAG_ENDED);
 		return true;

@@ -1,5 +1,6 @@
 package com.crd.gpstracker.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -62,7 +63,10 @@ public class Modify extends Activity implements View.OnClickListener{
         String description = mDescription.getText().toString().trim();
         try {
             if (description.length() > 0 && archiveMeta.setDescription(description)) {
-                helper.showLongToast(getString(R.string.has_benn_saved));
+//                helper.showLongToast(getString(R.string.has_benn_saved));
+                Intent intent = new Intent(context, Detail.class);
+				intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveFileName);
+				startActivity(intent);
                 finish();
             }
         } catch (Exception e) {

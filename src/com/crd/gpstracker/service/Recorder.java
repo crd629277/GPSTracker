@@ -20,6 +20,7 @@ import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.Preference;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
+import com.crd.gpstracker.util.ActivityTypeUtil;
 import com.crd.gpstracker.util.Helper;
 import com.crd.gpstracker.util.Helper.Logger;
 import com.crd.gpstracker.util.Notifier;
@@ -29,7 +30,7 @@ interface Binder {
     public static final int STATUS_RECORDING = 0x0000;
     public static final int STATUS_STOPPED = 0x1111;
 
-    public void startRecord(String activityType);
+    public void startRecord(int activityTypePosition);
 
     public void stopRecord();
 
@@ -40,6 +41,8 @@ interface Binder {
     public Archive getArchive();
 
     public Location getLastRecord();
+    
+    public void closeDB();
 }
 
 public class Recorder extends Service {
@@ -56,6 +59,7 @@ public class Recorder extends Service {
     private Helper helper;
     private Context context;
     private Notifier notifier;
+    private ActivityTypeUtil calories;
     
     private static final String RECORDER_SERVER_ID = "Tracker Service";
     private static final String PREF_STATUS_FLAG = "Tracker Service Status";
@@ -75,10 +79,11 @@ public class Recorder extends Service {
             archive = new Archive(getApplicationContext());
             listener = new Listener(archive, this);
             statusListener = new StatusListener();
+            calories = new ActivityTypeUtil(context);
         }
 
         @Override
-        public void startRecord(String activityType) {
+        public void startRecord(int activityTypePosition) {
             if (getStatus() != ServiceBinder.STATUS_RECORDING) {
             	
             	// 设置启动时更新配置
@@ -116,11 +121,12 @@ public class Recorder extends Service {
                     if(!hasResumeName) {
                     	getMeta().setStartTime(new Date());
                     }
-                    if(activityType != null) {
-                    	getMeta().setActivityType(activityType);
-                    }
                     
+                    if(activityTypePosition != -1) {
+                    	getMeta().setActivityType(activityTypePosition);
+                    }
 
+                    
                     // 绑定 GPS 回调
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         minTime, minDistance, listener);
@@ -220,26 +226,20 @@ public class Recorder extends Service {
                     // 设置结束记录时间和所花时间
                 	meta.setEndTime(new Date());
 //                	meta.setCostTime(mCostTime);
+                	double totalCalorie = calories.getCaloriesFromActivityType(meta.getActivityType(), 
+        					meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT, meta.getDistance() / ArchiveMeta.TO_KILOMETRE);
                 	
-                    helper.showLongToast(String.format(
-                        getString(R.string.result_report), String.valueOf(totalCount)
-                    ));
+                	meta.setCalories(totalCalorie);
+//                    helper.showLongToast(String.format(getString(R.string.result_report), String.valueOf(totalCount)));
                 }
 
                 // 清除操作
-                archive.close();
+//                archive.close();
                 notifier.cancel();
                 if(timer != null) {
                 	timer.cancel();
                 	timer = null;
                 }
-                
-//                mCostTime = 0;
-//                costTimeTask.cancel();
-//                if(costTimer != null) {
-//                	costTimer.cancel();
-//                	costTimer = null;
-//                }
                 
                 nameHelper.clearLastOpenedName();
 
@@ -267,6 +267,11 @@ public class Recorder extends Service {
         public Location getLastRecord() {
             return archive.getLastRecord();
         }
+
+		@Override
+		public void closeDB() {
+			archive.close();
+		}
     }
 
 
@@ -290,7 +295,7 @@ public class Recorder extends Service {
         	if(alreadyStarted) {
         		serviceBinder.resetStatus();
         	}
-            serviceBinder.startRecord(null);
+            serviceBinder.startRecord(-1);
         }
     }
 

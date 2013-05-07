@@ -96,7 +96,17 @@ public class Helper {
 		showModalDialog(title, message, null, runOnPositiveButtonSelected,
 				runOnNegativeButtonSelected);
 	}
+
 	
+	
+	public double changeSpeedToMinPerHour(double speed) {
+		if(speed > 0) {
+			return 50 / (3 * speed); 
+		} else {
+			return 0;
+		}
+		
+	}
 	
 	public static class Logger {
         protected static final String TAG = "Tracker";

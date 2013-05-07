@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
+import com.crd.gpstracker.util.Helper;
 import com.jjoe64.graphview.BarGraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
@@ -27,19 +28,20 @@ public class SpeedChartsFragment extends Fragment{
     private static int HORIZONTAL_LABELS_ITEM_SIZE = 9;
     private ArrayList<GraphViewData> speedSeries;
     private SimpleDateFormat dateFormatter;
-	
-	
-	
+    private Helper helper;
+
 	
 	public SpeedChartsFragment(Context context, Archive archive) {
 		this.context = context;
 		this.archive = archive;
 		
+		helper = new Helper(context);
 		this.locations = archive.fetchAll();
 		speedSeries = new ArrayList<GraphViewData>();
 		dateFormatter = new SimpleDateFormat(context.getString(R.string.sort_time_format), Locale.getDefault());
 		
 		barGraphView = new BarGraphView(context, "");
+		
 	}
 	
 	@Override
@@ -58,8 +60,9 @@ public class SpeedChartsFragment extends Fragment{
 		//label
 		barGraphView.setHorizontalLabels(getHorizontalLabels());
 		
-		//data
+		//data	
 		barGraphView.addSeries(new GraphViewSeries(getSeriesData()));
+		
 	}
 	
 	
@@ -84,6 +87,7 @@ public class SpeedChartsFragment extends Fragment{
 		Iterator<Location> locationIterator = locations.iterator();
 		while(locationIterator.hasNext()) {
 			Location location = locationIterator.next();
+//			GraphViewData graphViewData = new GraphViewData(location.getTime(), helper.changeSpeedToMinPerHour(location.getSpeed()));
 			GraphViewData graphViewData = new GraphViewData(location.getTime(), location.getSpeed() * ArchiveMeta.KM_PER_HOUR_CNT);
 			speedSeries.add(graphViewData);
 		}

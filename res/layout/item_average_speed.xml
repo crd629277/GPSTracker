@@ -23,7 +23,7 @@
 
         <TextView
             style="@style/Item.TitleSecond"
-            android:text="@string/kmh" />
+            android:text="@string/minkm" />
     </LinearLayout>
 
 </LinearLayout>

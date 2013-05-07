@@ -18,6 +18,7 @@ public class ArchiveMeta {
 	public static final String START_TIME = "START_TIME";
 	public static final String DISTANCE = "DISTANCE";
 	public static final String ACTIVITY_TYPE = "ACTIVITY_TYPE";
+	public static final String CALORIES = "CALORIES";
 //	public static final String COST_TIME = "COST_TIME";
 	public static final String TABLE_NAME = "meta";
 	public static final double KM_PER_HOUR_CNT = 3.597;
@@ -189,8 +190,8 @@ public class ArchiveMeta {
 		return get(DESCRIPTION);
 	}
 	
-	public String getActivityType() {
-		return get(ACTIVITY_TYPE);
+	public int getActivityType() {
+		return Integer.parseInt(get(ACTIVITY_TYPE));
 	}
 
 	public boolean setDescription(String description) {
@@ -199,8 +200,8 @@ public class ArchiveMeta {
 	}
 	
 	
-	public boolean setActivityType(String activityType) {
-		boolean result = set(ACTIVITY_TYPE, activityType);
+	public boolean setActivityType(int activityTypePosition) {
+		boolean result = set(ACTIVITY_TYPE, Integer.toString(activityTypePosition));
 		return result;
 	}
 	
@@ -213,8 +214,7 @@ public class ArchiveMeta {
 					+ Archive.TABLE_NAME + " LIMIT 1", null);
 			cursor.moveToFirst();
 
-			count = cursor.getLong(cursor
-					.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
+			count = cursor.getLong(cursor.getColumnIndex(Archive.DATABASE_COLUMN.COUNT));
 			cursor.close();
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
@@ -251,6 +251,15 @@ public class ArchiveMeta {
 
 	public float getDistance() {
 		return Float.parseFloat(get(DISTANCE, "0.0"));
+	}
+	
+	
+	public boolean setCalories(double totalCalories) {
+		return set(CALORIES, String.valueOf(totalCalories));
+	}
+	
+	public double getCalories() {
+		return Double.parseDouble(get(CALORIES, "0.0"));
 	}
 
 	public float getSpeed(int type) {

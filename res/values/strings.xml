@@ -53,7 +53,7 @@
     <string name="long_press_to_stop">Long Press To Stop</string>
     <string name="item_distance">DISTANCE</string>
     <string name="item_average_speed">AVG. SPEED</string>
-    <string name="kmh">km/h</string>
+    <string name="minkm">min/km</string>
     <string name="item_speed">SPEED</string>
     <string name="item_max_speed">MAX SPEED</string>
     <string name="item_records">RECORDS</string>
@@ -69,7 +69,7 @@
     <string name="btn_end">END</string>
     <string name="btn_disabled">Enable GPS</string>
     <string name="title_detail">Detail</string>
-    <string name="title_modify">Modify</string>
+    <string name="title_modify">Add description</string>
     <string name="title_records">Records</string>
     <string name="km">km</string>
     <string name="menu_delete">Delete</string>

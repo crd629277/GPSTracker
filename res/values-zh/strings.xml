@@ -41,8 +41,8 @@
     <string name="long_press_to_stop">长按停止</string>
     <string name="item_distance">距离</string>
     <string name="item_average_speed">平均时速</string>
-    <string name="kmh">公里/时</string>
-    <string name="km">公里</string>
+    <string name="minkm">分钟/千米</string>
+    <string name="km">千米</string>
     <string name="item_speed">速度</string>
     <string name="item_max_speed">最高时速</string>
     <string name="item_records">记录</string>
@@ -58,9 +58,9 @@
     <string name="btn_end">停止</string>
     <string name="btn_disabled">打开GPS</string>
     <string name="title_detail">详情</string>
-    <string name="title_modify">修改</string>
+    <string name="title_modify">添加描述</string>
     <string name="title_records">记录</string>
-    <string name="share_report_formatter" formatted="false">完成了段旅程%s，总计%s公里(从%s出发到%s结束，历时%s)，最快速度%s公里/时、平均速度%s公里/时</string>
+    <string name="share_report_formatter" formatted="false">完成了段旅程%s，总计%s千米(从%s出发到%s结束，历时%s)，平均速度%s分钟/千米</string>
 	<string name="activity_type_text">运动类型</string>
     <string name="activity_type">运动类型</string>
     <string name="no_activity_type">---</string>

@@ -12,12 +12,13 @@ import android.widget.TextView;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.ArchiveMeta;
-import com.crd.gpstracker.util.Calories;
+import com.crd.gpstracker.util.ActivityTypeUtil;
+import com.crd.gpstracker.util.Helper;
 import com.crd.gpstracker.util.Helper.Logger;
 
 public class ArchiveMetaFragment extends Fragment {
 	public ArchiveMeta meta;
-	public Calories calories;
+	public ActivityTypeUtil calories;
 	private Context context;
 	private View layoutView;
 	private TextView mDistance;
@@ -26,6 +27,7 @@ public class ArchiveMetaFragment extends Fragment {
 	private TextView mRecords;
 	private TextView mActivityType;
 	private TextView mCalories;
+	private Helper helper;
 	
 	private String formatter;
 
@@ -33,7 +35,8 @@ public class ArchiveMetaFragment extends Fragment {
 		this.meta = meta;
 		this.context = context;
 		this.formatter = context.getString(R.string.records_formatter);
-		calories = new Calories(context);
+		calories = new ActivityTypeUtil(context);
+		helper = new Helper(context);
 	}
 
 	@Override
@@ -58,14 +61,22 @@ public class ArchiveMetaFragment extends Fragment {
 	}
 
 	public void update() {
+		String[] activityType = getResources().getStringArray(R.array.activityType);
 		try {
-			mActivityType.setText(meta.getActivityType());
+			mActivityType.setText(activityType[meta.getActivityType()]);
 			mDistance.setText(String.format(formatter, meta.getDistance() / ArchiveMeta.TO_KILOMETRE));
-			mMaxSpeed.setText(String.format(formatter, meta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
-			mAvgSpeed.setText(String.format(formatter, meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
+//			mMaxSpeed.setText(String.format(formatter, meta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
+//			mAvgSpeed.setText(String.format(formatter, meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
+			mMaxSpeed.setText(String.format(formatter, helper.changeSpeedToMinPerHour(meta.getMaxSpeed())));
+			mAvgSpeed.setText(String.format(formatter, helper.changeSpeedToMinPerHour(meta.getAverageSpeed())));
 			mRecords.setText(String.valueOf(meta.getCount()));
-			mCalories.setText(String.format(formatter, calories.getCaloriesFromActivityType(meta.getActivityType(), 
-					meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT, meta.getDistance() / ArchiveMeta.TO_KILOMETRE)));
+			if(meta.getCalories() > 0) {
+				mCalories.setText(String.valueOf(meta.getCalories()));
+			} else {
+				mCalories.setText(String.format(formatter, calories.getCaloriesFromActivityType(meta.getActivityType(), 
+						meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT, meta.getDistance() / ArchiveMeta.TO_KILOMETRE)));
+			}
+			
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
 		}

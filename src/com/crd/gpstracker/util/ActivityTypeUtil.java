@@ -9,16 +9,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 
-public class Calories {
-	private static final String ACTIVITY_TYPE_RUNNING = "Running";
-	private static final String ACTIVITY_TYPE_CYCLING = "Cycling";
-	private static final String ACTIVITY_TYPE_WALKING = "Walking";
-	private static final String ACTIVITY_TYPE_OTHERS = "Others";
-	
-	private static final String ACTIVITY_TYPE_RUNNING_ZH = "跑步";
-	private static final String ACTIVITY_TYPE_CYCLING_ZH = "骑车";
-	private static final String ACTIVITY_TYPE_WALKING_ZH = "步行";
-	private static final String ACTIVITY_TYPE_OTHERS_ZH = "其它";
+public class ActivityTypeUtil {
+	public static final int ACTIVITY_TYPE_RUNNING = 0;
+	public static final int ACTIVITY_TYPE_CYCLING = 1;
+	public static final int ACTIVITY_TYPE_WALKING = 2;
+	public static final int ACTIVITY_TYPE_OTHERS = 3;
 
 	private static final double RUNNING_SLOW_FACTOR = 9.4;
 	private static final double RUNNING_NORMAL_FACTOR = 11.3;
@@ -53,15 +48,15 @@ public class Calories {
 	private static SharedPreferences sharedPreferences;
 	
 	
-	public Calories(Context context) {
+	public ActivityTypeUtil(Context context) {
 		super();
 		this.context = context;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-	public double getCaloriesFromActivityType(String activityType, double speed, float distance) {
+	public double getCaloriesFromActivityType(int activityTypePosition, double speed, float distance) {
 		ArrayList<Double> activityTypeArrayList = new ArrayList<Double>();
-		System.out.println("activityType:" + activityType);
+		System.out.println("activityTypePosition:" + activityTypePosition);
 		System.out.println("speed:" + speed);
 		System.out.println("weight" + sharedPreferences.getString(Preference.WEIGHT, ""));
 		double weight = 60.0;
@@ -69,13 +64,13 @@ public class Calories {
 			weight = Float.parseFloat(sharedPreferences.getString(Preference.WEIGHT, ""));
 		}
 		
-		activityTypeArrayList = getActivityTypeFactorAndSpeed(activityType, speed);
+		activityTypeArrayList = getActivityTypeFactorAndSpeed(activityTypePosition, speed);
 		return weight * activityTypeArrayList.get(0) * distance / activityTypeArrayList.get(1);
 	}
 	
-	private ArrayList<Double> getActivityTypeFactorAndSpeed(String activityType, double speed) {
+	private ArrayList<Double> getActivityTypeFactorAndSpeed(int activityTypePosition, double speed) {
 		ArrayList<Double> arrayList = new ArrayList<Double>();
-		if(activityType.equals(ACTIVITY_TYPE_RUNNING) || activityType.equals(ACTIVITY_TYPE_RUNNING_ZH)) {
+		if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_RUNNING) {
 			if(speed < RUNNING_SLOW_SPEED + (RUNNING_NORMAL_SPEED - RUNNING_SLOW_SPEED) / 2) {
 				arrayList.add(RUNNING_SLOW_FACTOR);
 				arrayList.add(RUNNING_SLOW_SPEED);
@@ -86,7 +81,7 @@ public class Calories {
 				arrayList.add(RUNNING_NORMAL_FACTOR);
 				arrayList.add(RUNNING_NORMAL_SPEED);
 			}
-		} else if(activityType.equals(ACTIVITY_TYPE_CYCLING) || activityType.equals(ACTIVITY_TYPE_CYCLING_ZH)) {
+		} else if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_CYCLING) {
 			if(speed < CYCLING_SLOW_SPEED + (CYCLING_NORMAL_SPEED - CYCLING_SLOW_SPEED) / 2) {
 				arrayList.add(CYCLING_SLOW_FACTOR);
 				arrayList.add(CYCLING_SLOW_SPEED);
@@ -97,7 +92,7 @@ public class Calories {
 				arrayList.add(CYCLING_NORMAL_FACTOR);
 				arrayList.add(CYCLING_NORMAL_SPEED);
 			}
-		} else if(activityType.equals(ACTIVITY_TYPE_WALKING) || activityType.equals(ACTIVITY_TYPE_WALKING_ZH)) {
+		} else if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_WALKING) {
 			if(speed < WALKING_SLOW_SPEED + (WALKING_NORMAL_SPEED - WALKING_SLOW_SPEED) / 2) {
 				arrayList.add(WALKING_SLOW_FACTOR);
 				arrayList.add(WALKING_SLOW_SPEED);

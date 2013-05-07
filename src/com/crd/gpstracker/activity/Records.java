@@ -11,7 +11,11 @@ import java.util.Locale;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,6 +33,7 @@ import com.crd.gpstracker.activity.base.Activity;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
 import com.crd.gpstracker.service.ArchiveNameHelper;
+import com.crd.gpstracker.util.ActivityTypeUtil;
 import com.markupartist.android.widget.ActionBar.Action;
 
 public class Records extends Activity implements
@@ -86,12 +92,16 @@ public class Records extends Activity implements
 			TextView mDescription = (TextView) rowView.findViewById(R.id.description);
 			TextView mCostTime = (TextView) rowView.findViewById(R.id.cost_time);
 			TextView mDistance = (TextView) rowView.findViewById(R.id.distance);
+			TextView mDate = (TextView) rowView.findViewById(R.id.date);
+			ImageView mActivityTypeImage = (ImageView) rowView.findViewById(R.id.activity_type_image);
 
 			mDistance.setText(String.format(
 					getString(R.string.records_formatter), archiveMeta.getDistance() / archiveMeta.TO_KILOMETRE));
 
 			String costTime = archiveMeta.getRawCostTimeString();
 			mCostTime.setText(costTime.length() > 0 ? costTime : getString(R.string.not_available));
+			mDate.setText(dateFormatter(archiveMeta.getStartTime()));
+			mActivityTypeImage.setImageBitmap(getImageFromActivityType(archiveMeta.getActivityType()));
 
 			String description = archiveMeta.getDescription();
 			if (description.length() <= 0) {
@@ -166,6 +176,31 @@ public class Records extends Activity implements
 	public void onPause() {
 		super.onPause();
 	}
+	
+	
+	private String dateFormatter(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+		return formatter.format(date);
+	}
+	
+	
+	private Bitmap getImageFromActivityType(int activityTypePosition) {
+		Resources res = getResources();
+		Integer drawableId;
+		if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_RUNNING) {
+			drawableId = R.drawable.ic_running;
+		} else if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_CYCLING) {
+			drawableId = R.drawable.ic_cycling;
+		} else if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_WALKING) {
+			drawableId = R.drawable.ic_walking;
+		} else {
+			drawableId = R.drawable.ic_other;
+		}
+		
+		Bitmap bitmap = BitmapFactory.decodeResource(res, drawableId);
+		return bitmap;
+	}
+	
 	
 	private DatePicker findDatePicker(ViewGroup group) {
         if (group != null) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen android:background="#ffffff"
+<PreferenceScreen android:background="@drawable/background"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
 <!--     <PreferenceCategory android:title="User Interface" >
