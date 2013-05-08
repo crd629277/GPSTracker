@@ -2,95 +2,44 @@
 <PreferenceScreen android:background="@drawable/background"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-<!--     <PreferenceCategory android:title="User Interface" >
-        <ListPreference
-            android:defaultValue="portrait"
-            android:entries="@array/orientation"
-            android:entryValues="@array/orientation"
-            android:key="orientation"
-            android:summary="The Screen Orientation"
-            android:title="Orientation" />
-    </PreferenceCategory> -->
-    
-    
-    <PreferenceCategory android:title="Profile Settings">
+    <PreferenceCategory android:title="@string/preference_profile_settings">
         <EditTextPreference 
             android:key="fullName"
            	android:singleLine="true"
-           	android:title="Full Name" />    
+           	android:title="@string/preference_full_name" />    
         <ListPreference
             android:key="gender"
             android:defaultValue="Male"
             android:entries="@array/genderValues"
             android:entryValues="@array/genderValues"
-            android:title="Gender"
-            android:dialogTitle="Select Gender"
+            android:title="@string/preference_gender"
+            android:dialogTitle="@string/preference_select_gender"
         />
         <EditTextPreference
             android:key="weight"
             android:defaultValue="60.00"
            	android:singleLine="true"
-           	android:title="Weight" 
-           	android:dialogTitle="Weight (Kg)"
+           	android:title="@string/preference_weight" 
+           	android:dialogTitle="@string/preference_weight"
            	android:inputType="numberDecimal"
            	/> 
     </PreferenceCategory>
     
-    
-    
-    <PreferenceCategory android:title="GPS Listener" >
+    <PreferenceCategory android:title="@string/preference_gps_listener" >
         <ListPreference
             android:defaultValue="2000"
             android:entries="@array/gpsMinTimeValues"
             android:entryValues="@array/gpsMinTimeValues"
             android:key="gpsMinTime"
-            android:summary="The minimum time interval for GPS notifications, in milliseconds."
-            android:title="GPS Time Interval" />
+            android:summary="@string/preference_gps_time_summary"
+            android:title="@string/preference_gps_time_title" />
         <ListPreference
             android:defaultValue="3"
             android:entries="@array/gpsMinDistanceValues"
             android:entryValues="@array/gpsMinDistanceValues"
             android:key="gpsMinDistance"
-            android:summary="The minimum distance interval for notifications, in meters."
-            android:title="GPS Distance Interval" />
-    </PreferenceCategory>
-    
-    <PreferenceCategory android:title="Record Options" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="autoStart"
-            android:summaryOff="Manual start record by user"
-            android:summaryOn="Start record on application launched"
-            android:title="Auto Start Record" />
-
-        <!-- <CheckBoxPreference android:key="autoClean" -->
-        <!-- android:title="Auto Clean" -->
-        <!-- android:defaultValue="true" -->
-        <!-- android:summary="Note! Uncheck this maybe have many empty record database" -->
-        <!-- android:enabled="false" -->
-        <!-- /> -->
-
-        <ListPreference
-            android:defaultValue="RECORD_BY_TIMES"
-            android:entries="@array/recordByItem"
-            android:entryValues="@array/recordByValues"
-            android:key="recordBy"
-            android:summary="How to save points into each database"
-            android:title="Save Record By" />
-    </PreferenceCategory>
-    
-    
-    <PreferenceCategory android:title="Environment" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="switchAirplaneMode"
-            android:summary="Switch AirPlane Mode while recording"
-            android:title="AirPlane Mode" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="lightLed"
-            android:summary="Turn on Lightning LED(if have) while recording"
-            android:title="Lightning LED" />
+            android:summary="@string/preference_gps_distance_summary"
+            android:title="@string/preference_gps_distance_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

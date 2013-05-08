@@ -1,65 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:paddingLeft="15dp"
-              android:paddingRight="15dp"
-              android:paddingTop="10dp"
-              android:gravity="center_vertical"
-              android:background="@drawable/background"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-    >
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="5dp" >
 
     <LinearLayout
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        >
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
 
         <LinearLayout
-            android:layout_weight="4"
-            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            >
+            android:layout_weight="4"
+            android:orientation="vertical" >
+
             <TextView
                 style="@style/Item.TitleSecond.Gray"
-                android:text="@string/item_start_time"
+                android:text="@string/item_start_time" />
 
-                />
             <TextView
                 android:id="@+id/meta_start_time"
                 style="@style/Item.Content.Small"
-                android:text="@string/not_available"
-                />
+                android:text="@string/not_available" />
         </LinearLayout>
 
-        <ImageView style="@style/Cell.Vertical.Time" />
+        <ImageView style="@style/Cell.Vertical" />
 
         <LinearLayout
-            android:layout_weight="4"
-            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            >
+            android:layout_weight="4"
+            android:orientation="vertical" >
+
             <TextView
                 style="@style/Item.TitleSecond.Gray"
-                android:text="@string/item_end_time"
-                />
+                android:text="@string/total_time" />
+
             <TextView
-                android:id="@+id/meta_end_time"
+                android:id="@+id/total_time"
                 style="@style/Item.Content.Small"
-                android:text="@string/not_available"
-                />
+                android:text="@string/not_available" />
         </LinearLayout>
     </LinearLayout>
 
     <ImageView
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        style="@style/Cell.Horizontal"
         android:layout_marginBottom="10dp"
-        style="@style/Cell.Horizontal" />
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp" />
+
 </LinearLayout>

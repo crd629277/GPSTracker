@@ -1,12 +1,4 @@
 <resources>
-    <string-array name="recordByItem">
-        <item>Day</item>
-        <item>Times</item>
-    </string-array>
-    <string-array name="recordByValues">
-        <item>RECORD_BY_DAY</item>
-        <item>RECORD_BY_TIMES</item>
-    </string-array>
     <string-array name="gpsMinTimeValues">
         <item>1000</item>
         <item>2000</item>
@@ -27,5 +19,9 @@
         <item>骑车</item>
         <item>步行</item>
         <item>其它</item>
+    </string-array>
+    <string-array name="genderValues">
+        <item>男</item>
+        <item>女</item>
     </string-array>
 </resources>

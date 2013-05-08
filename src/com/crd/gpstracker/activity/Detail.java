@@ -32,7 +32,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
     private ArchiveMetaFragment archiveMetaFragment;
     private ArchiveMetaTimeFragment archiveMetaTimeFragment;
 
-    private TextView mDescription;
+//    private TextView mDescription;
     private LocalActivityManager localActivityManager;
     private TabHost mTabHost;
     private View mMapMask;
@@ -51,7 +51,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         archiveMeta = archive.getMeta();
 
         mMapMask = findViewById(R.id.map_mask);
-        mDescription = (TextView) findViewById(R.id.item_description);
+//        mDescription = (TextView) findViewById(R.id.item_description);
         mTabHost = (TabHost) findViewById(R.id.tabhost);
 
         archiveMetaFragment = new ArchiveMetaFragment(context, archiveMeta);
@@ -60,7 +60,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         addArchiveMetaTimeFragment();
         addArchiveMetaFragment();
         
-        mDescription.setOnClickListener(this);
+//        mDescription.setOnClickListener(this);
         mMapMask.setOnTouchListener(this);
     }
 
@@ -70,14 +70,10 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
         
         String description = archiveMeta.getDescription();
         if(description.length() > 0) {
-        	mDescription.setTextColor(getResources().getColor(R.color.snowhite));
-        	mDescription.setText(description);
+        	actionBar.setTitle(description);
         } else {
-        	mDescription.setTextColor(getResources().getColor(R.color.gray));
-        	mDescription.setText(getString(R.string.no_description));
+        	actionBar.setTitle(getString(R.string.no_description));
         }
-        
-        actionBar.setTitle(getString(R.string.title_detail));
         actionBar.removeAllActions();
         
         actionBar.addAction(new ActionBar.Action() {
@@ -109,19 +105,21 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
     
     
     public void shareToSina() {
+    	String[] activityType = getResources().getStringArray(R.array.activityType);
     	byte[] bitmap = helper.convertBitmapToByteArray(getRouteBitmap());
     	String recordsFormatter = getString(R.string.records_formatter);
     	SimpleDateFormat dateFormatter = new SimpleDateFormat(getString(R.string.time_format), Locale.CHINA);
     	
     	// Build string for share by microblog etc.
         String message = String.format(getString(R.string.share_report_formatter),
-            archiveMeta.getDescription().length() > 0 ? "(" + archiveMeta.getDescription() + ")" : "",
+        	activityType[archiveMeta.getActivityType()],
+            archiveMeta.getDescription().length() > 0 ? ", " + archiveMeta.getDescription() : "",
             String.format(recordsFormatter, archiveMeta.getDistance() / ArchiveMeta.TO_KILOMETRE),
             dateFormatter.format(archiveMeta.getStartTime()),
             dateFormatter.format(archiveMeta.getEndTime()),
             archiveMeta.getRawCostTimeString(),
-            String.format(recordsFormatter, archiveMeta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT),
-            String.format(recordsFormatter, archiveMeta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT)
+            String.format(recordsFormatter, archiveMeta.getCalories()),
+            String.format(recordsFormatter, helper.changeSpeedToMinPerHour(archiveMeta.getAverageSpeed()))
         );
         helper.shareToSina(context, message, bitmap);
     	

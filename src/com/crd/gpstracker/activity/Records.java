@@ -48,6 +48,7 @@ public class Records extends Activity implements
 
 	private ArchiveNameHelper archiveFileNameHelper;
 	private ArchivesAdapter archivesAdapter;
+	private ActivityTypeUtil activityTypeUtil;
 	private long selectedTime;
 
 	@Override
@@ -101,7 +102,7 @@ public class Records extends Activity implements
 			String costTime = archiveMeta.getRawCostTimeString();
 			mCostTime.setText(costTime.length() > 0 ? costTime : getString(R.string.not_available));
 			mDate.setText(dateFormatter(archiveMeta.getStartTime()));
-			mActivityTypeImage.setImageBitmap(getImageFromActivityType(archiveMeta.getActivityType()));
+			mActivityTypeImage.setImageBitmap(activityTypeUtil.getImageFromActivityType(archiveMeta.getActivityType()));
 
 			String description = archiveMeta.getDescription();
 			if (description.length() <= 0) {
@@ -123,6 +124,7 @@ public class Records extends Activity implements
 		this.listView = (ListView) findViewById(R.id.records_list);
 		this.archiveFileNameHelper = new ArchiveNameHelper(context);
 
+		activityTypeUtil = new ActivityTypeUtil(context);
 		archives = new ArrayList<Archive>();
 		archivesAdapter = new ArchivesAdapter(archives);
 		listView.setAdapter(archivesAdapter);
@@ -179,27 +181,11 @@ public class Records extends Activity implements
 	
 	
 	private String dateFormatter(Date date) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+		String timeFormatter = getString(R.string.time_format);
+		SimpleDateFormat formatter = new SimpleDateFormat(timeFormatter);
 		return formatter.format(date);
 	}
 	
-	
-	private Bitmap getImageFromActivityType(int activityTypePosition) {
-		Resources res = getResources();
-		Integer drawableId;
-		if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_RUNNING) {
-			drawableId = R.drawable.ic_running;
-		} else if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_CYCLING) {
-			drawableId = R.drawable.ic_cycling;
-		} else if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_WALKING) {
-			drawableId = R.drawable.ic_walking;
-		} else {
-			drawableId = R.drawable.ic_other;
-		}
-		
-		Bitmap bitmap = BitmapFactory.decodeResource(res, drawableId);
-		return bitmap;
-	}
 	
 	
 	private DatePicker findDatePicker(ViewGroup group) {

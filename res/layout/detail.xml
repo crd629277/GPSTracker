@@ -36,18 +36,19 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/status_layout"
-            android:orientation="vertical" >
+            >
 
-            <HorizontalScrollView
+<!--             <HorizontalScrollView
                 style="@style/Detail.Description">
                 <TextView
                     style="@style/Detail.Description.Text"
                     android:id="@+id/item_description"
                     android:layout_alignParentLeft="true"
                     />
-            </HorizontalScrollView>
+            </HorizontalScrollView> -->
 
-            <LinearLayout style="@style/Detail.Description.Cell" />
+
+            <LinearLayout style="@style/Cell.Horizontal" />
         </LinearLayout>
 
         <FrameLayout
@@ -73,9 +74,9 @@
 
                 <ImageView
                     android:layout_width="fill_parent"
-                    android:layout_height="10dp"
+                    android:layout_height="3dp"
                     android:layout_alignParentBottom="true"
-                    android:background="@drawable/cell_description_horizontal" />
+                    android:background="@drawable/time_border_bottom_item" />
             </RelativeLayout>
         </FrameLayout>
     </RelativeLayout>

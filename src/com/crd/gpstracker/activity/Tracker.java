@@ -215,6 +215,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 
 		switch (status) {
 		case FLAG_RECORDING:
+			mCoseTime.setVisibility(View.VISIBLE);
 			mActivityTypeView.setVisibility(View.GONE);
 			mSpinner.setVisibility(View.GONE);
 			mStartButton.setVisibility(View.GONE);
@@ -228,6 +229,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 			}
 			break;
 		case FLAG_ENDED:
+			mCoseTime.setVisibility(View.GONE);
 			mActivityTypeView.setVisibility(View.VISIBLE);
 			mSpinner.setVisibility(View.VISIBLE);
 			mStartButton.setVisibility(View.VISIBLE);

@@ -2,11 +2,15 @@ package com.crd.gpstracker.util;
 
 import java.util.ArrayList;
 
-import com.crd.gpstracker.activity.Preference;
-
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
+
+import com.crd.gpstracker.R;
+import com.crd.gpstracker.activity.Preference;
 
 
 public class ActivityTypeUtil {
@@ -112,6 +116,21 @@ public class ActivityTypeUtil {
 	}
 	
 	
-
+	public Bitmap getImageFromActivityType(int activityTypePosition) {
+		Resources res = context.getResources();
+		Integer drawableId;
+		if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_RUNNING) {
+			drawableId = R.drawable.ic_running;
+		} else if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_CYCLING) {
+			drawableId = R.drawable.ic_cycling;
+		} else if(activityTypePosition == ActivityTypeUtil.ACTIVITY_TYPE_WALKING) {
+			drawableId = R.drawable.ic_walking;
+		} else {
+			drawableId = R.drawable.ic_other;
+		}
+		
+		Bitmap bitmap = BitmapFactory.decodeResource(res, drawableId);
+		return bitmap;
+	}
 
 }

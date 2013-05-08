@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.crd.gpstracker.R;
@@ -26,8 +27,10 @@ public class ArchiveMetaFragment extends Fragment {
 	private TextView mMaxSpeed;
 	private TextView mRecords;
 	private TextView mActivityType;
+	private ImageView mActivityTypeImage;
 	private TextView mCalories;
 	private Helper helper;
+	private ActivityTypeUtil activityTypeUtil;
 	
 	private String formatter;
 
@@ -36,6 +39,7 @@ public class ArchiveMetaFragment extends Fragment {
 		this.context = context;
 		this.formatter = context.getString(R.string.records_formatter);
 		calories = new ActivityTypeUtil(context);
+		activityTypeUtil = new ActivityTypeUtil(context);
 		helper = new Helper(context);
 	}
 
@@ -46,8 +50,9 @@ public class ArchiveMetaFragment extends Fragment {
 				false);
 		mDistance = (TextView) layoutView.findViewById(R.id.item_distance);
 		mAvgSpeed = (TextView) layoutView.findViewById(R.id.item_avg_speed);
-		mMaxSpeed = (TextView) layoutView.findViewById(R.id.item_max_speed);
-		mRecords = (TextView) layoutView.findViewById(R.id.item_records);
+		mActivityTypeImage = (ImageView) layoutView.findViewById(R.id.activity_type_image);
+//		mMaxSpeed = (TextView) layoutView.findViewById(R.id.item_max_speed);
+//		mRecords = (TextView) layoutView.findViewById(R.id.item_records);
 		mActivityType = (TextView) layoutView.findViewById(R.id.item_activity_type);
 		mCalories = (TextView) layoutView.findViewById(R.id.item_calories);
 		setRetainInstance(true);
@@ -64,12 +69,13 @@ public class ArchiveMetaFragment extends Fragment {
 		String[] activityType = getResources().getStringArray(R.array.activityType);
 		try {
 			mActivityType.setText(activityType[meta.getActivityType()]);
+			mActivityTypeImage.setImageBitmap(activityTypeUtil.getImageFromActivityType(meta.getActivityType()));
 			mDistance.setText(String.format(formatter, meta.getDistance() / ArchiveMeta.TO_KILOMETRE));
 //			mMaxSpeed.setText(String.format(formatter, meta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
 //			mAvgSpeed.setText(String.format(formatter, meta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT));
-			mMaxSpeed.setText(String.format(formatter, helper.changeSpeedToMinPerHour(meta.getMaxSpeed())));
+//			mMaxSpeed.setText(String.format(formatter, helper.changeSpeedToMinPerHour(meta.getMaxSpeed())));
 			mAvgSpeed.setText(String.format(formatter, helper.changeSpeedToMinPerHour(meta.getAverageSpeed())));
-			mRecords.setText(String.valueOf(meta.getCount()));
+//			mRecords.setText(String.valueOf(meta.getCount()));
 			if(meta.getCalories() > 0) {
 				mCalories.setText(String.valueOf(meta.getCalories()));
 			} else {

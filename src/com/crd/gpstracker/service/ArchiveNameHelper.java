@@ -114,13 +114,8 @@ public class ArchiveNameHelper {
 	}
 
 	public String getNewName() {
-		String RECORD_BY = sharedPreferences.getString(Preference.RECORD_BY,
-				Preference.RECORD_BY_TIMES);
 		String databaseFileName = System.currentTimeMillis()
 				+ SQLITE_DATABASE_FILENAME_EXT;
-		if (RECORD_BY.equals(Preference.RECORD_BY_DAY)) {
-			databaseFileName = (new SimpleDateFormat(GROUP_BY_EACH_DAY).format(new Date())) + SQLITE_DATABASE_FILENAME_EXT;
-		}
 
 		File databaseFile = new File(getCurrentStorageDirectory()
 				.getAbsolutePath() + File.separator + databaseFileName);

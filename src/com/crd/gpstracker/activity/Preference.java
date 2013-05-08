@@ -21,11 +21,6 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
     public static final String LIGHTNING_LED = "lightLed";
     public static final String GPS_MINTIME = "gpsMinTime";
     public static final String GPS_MINDISTANCE = "gpsMinDistance";
-    public static final String AUTO_CLEAN = "autoClean";
-    public static final String SWITCH_AIRPLANE_MODE = "switchAirplaneMode";
-
-    public static final String RECORD_BY_DAY = "RECORD_BY_DAY";
-    public static final String RECORD_BY_TIMES = "RECORD_BY_TIMES";
 
     public static final String DEFAULT_GPS_MINTIME = "2000";
     public static final String DEFAULT_GPS_MINDISTANCE = "10";
@@ -34,7 +29,9 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
     
     private EditTextPreference mFullNameEditTextPreference;
     private ListPreference mGenderListPreference;
-    private EditTextPreference mWeightEditTextPreference;
+    private EditTextPreference mWeightEditTextPreference; 
+    private ListPreference mGPSTimeInterval;
+    private ListPreference mGPSDistanceInterval;
 
 
     @Override
@@ -47,6 +44,9 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
         mFullNameEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(FULL_NAME);
         mGenderListPreference = (ListPreference) getPreferenceScreen().findPreference(GENDER);
         mWeightEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(WEIGHT);
+        
+        mGPSTimeInterval = (ListPreference) getPreferenceScreen().findPreference(GPS_MINTIME);
+        mGPSDistanceInterval = (ListPreference) getPreferenceScreen().findPreference(GPS_MINDISTANCE);
     }
     
     @Override
@@ -55,6 +55,8 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
     	mFullNameEditTextPreference.setSummary(getPreferenceScreen().getSharedPreferences().getString(FULL_NAME, ""));
     	mGenderListPreference.setSummary(getPreferenceScreen().getSharedPreferences().getString(GENDER, ""));
     	mWeightEditTextPreference.setSummary(getPreferenceScreen().getSharedPreferences().getString(WEIGHT, ""));
+    	mGPSTimeInterval.setSummary(getPreferenceScreen().getSharedPreferences().getString(GPS_MINTIME, ""));
+    	mGPSDistanceInterval.setSummary(getPreferenceScreen().getSharedPreferences().getString(GPS_MINDISTANCE, ""));
     	getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
     
@@ -71,7 +73,7 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
         if(key.equals(FULL_NAME)) {
         	mFullNameEditTextPreference.setSummary(sharedPreferences.getString(key, ""));
         } else if(key.equals(GENDER)) {
-        	mGenderListPreference.setSummary(sharedPreferences.getString(key, "Male"));
+        	mGenderListPreference.setSummary(sharedPreferences.getString(key, ""));
         } else if(key.equals(WEIGHT)) {
         	if(sharedPreferences.getString(key, "") != null || !"".equals(sharedPreferences.getString(key, ""))) {
         		String weightFormatter = getString(R.string.weight_formatter);
@@ -82,15 +84,10 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
         		mWeightEditTextPreference.setText("60.00");
         		mWeightEditTextPreference.setSummary("0.00 kg");
         	}
-        	
-        }
-        
-//        if (key.equals(AUTO_CLEAN) && !autoClean) {
-//
-////            SharedPreferences.Editor editor = sharedPreferences.edit();
-////            editor.putBoolean(AUTO_CLEAN, true);
-////            editor.commit();
-//
-//        }
+        } else if(key.equals(GPS_MINTIME)) {
+        	mGPSTimeInterval.setSummary(sharedPreferences.getString(key, ""));
+        } else if(key.equals(GPS_MINDISTANCE)){
+        	mGPSDistanceInterval.setSummary(sharedPreferences.getString(key, ""));
+		}
     }
 }

@@ -40,13 +40,14 @@
     <string name="nearby">在 %s 附近</string>
     <string name="long_press_to_stop">长按停止</string>
     <string name="item_distance">距离</string>
-    <string name="item_average_speed">平均时速</string>
-    <string name="minkm">分钟/千米</string>
-    <string name="km">千米</string>
+    <string name="item_average_speed">均速</string>
+    <string name="minkm">(分钟/千米)</string>
+    <string name="km">(千米)</string>
     <string name="item_speed">速度</string>
     <string name="item_max_speed">最高时速</string>
     <string name="item_records">记录</string>
     <string name="item_end_time">结束时间</string>
+    <string name="total_time">所花时间</string>
     <string name="item_start_time">开始时间</string>
     <string name="menu_feedback">反馈</string>
     <string name="submit">提交</string>
@@ -60,10 +61,21 @@
     <string name="title_detail">详情</string>
     <string name="title_modify">添加描述</string>
     <string name="title_records">记录</string>
-    <string name="share_report_formatter" formatted="false">完成了段旅程%s，总计%s千米(从%s出发到%s结束，历时%s)，平均速度%s分钟/千米</string>
+    <string name="share_report_formatter" formatted="false">完成了项运动(%s %s)，总计%s千米(从%s出发到%s结束，历时%s)，消耗%s卡路里，平均速度%s分钟/千米.</string>
 	<string name="activity_type_text">运动类型</string>
     <string name="activity_type">运动类型</string>
     <string name="no_activity_type">---</string>
     <string name="item_calories">卡路里</string>
     <string name="no_calories">0</string>
+    
+    <string name="preference_profile_settings">个人设置</string>
+    <string name="preference_full_name">名字</string>
+    <string name="preference_gender">性别</string>
+    <string name="preference_select_gender">选择性别</string>
+    <string name="preference_weight">体重 (千克)</string>
+    <string name="preference_gps_listener">GPS 监听</string>
+    <string name="preference_gps_time_summary">GPS记录的最小时间间隔.</string>
+    <string name="preference_gps_time_title">GPS时间间隔 (毫秒)</string>
+    <string name="preference_gps_distance_summary">GPS记录的最小距离间隔.</string>
+	<string name="preference_gps_distance_title">GPS距离间隔 (米)</string>
 </resources>

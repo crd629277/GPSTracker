@@ -20,7 +20,7 @@ public class ArchiveMetaTimeFragment extends Fragment {
     private View metaLayout;
     private SimpleDateFormat dateFormat;
     private TextView mStartTime;
-    private TextView mEndTime;
+    private TextView mTotalTime;
     private Context context;
 
     public ArchiveMetaTimeFragment(Context context, ArchiveMeta meta) {
@@ -33,7 +33,7 @@ public class ArchiveMetaTimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         metaLayout = inflater.inflate(R.layout.archive_meta_time, container, false);
         mStartTime = (TextView) metaLayout.findViewById(R.id.meta_start_time);
-        mEndTime = (TextView) metaLayout.findViewById(R.id.meta_end_time);
+        mTotalTime = (TextView) metaLayout.findViewById(R.id.total_time);
 		setRetainInstance(true);
         return metaLayout;
     }
@@ -47,8 +47,9 @@ public class ArchiveMetaTimeFragment extends Fragment {
     protected void updateView() {
     	Date startTime = meta.getStartTime();
     	Date endTime = meta.getEndTime();
+    	String totalTime = meta.getRawCostTimeString();
         mStartTime.setText(startTime != null ? dateFormat.format(startTime) : getString(R.string.not_available));
-        mEndTime.setText(endTime != null ? dateFormat.format(endTime) : getString(R.string.not_available));
+        mTotalTime.setText(totalTime.length() > 0 ? totalTime : getString(R.string.not_available));
         
     }
 }

@@ -46,43 +46,11 @@ public class SpeedCharts extends Activity {
     public void onStart() {
         super.onStart();
         actionBar.setTitle(description);
-        
         actionBar.removeAllActions();
-        actionBar.addAction(new ActionBar.Action() {
-            @Override
-            public int getDrawable() {
-                return R.drawable.ic_menu_share;
-            }
-
-            @Override
-            public void performAction(View view) {
-                shareToSina();
-            }
-        });
         
         addFragment(R.id.charts, speedChartsFragment);
     }
-	
-	
-	public void shareToSina() {
-        byte[] bitmap = helper.convertBitmapToByteArray(getChartsBitmap());
 
-        String recordsFormatter = getString(R.string.records_formatter);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(getString(R.string.time_format), Locale.getDefault());
-
-        // Build string for share by microblog etc.
-        String message = String.format(getString(R.string.share_report_formatter),
-            archiveMeta.getDescription().length() > 0 ? "(" + archiveMeta.getDescription() + ")" : "",
-            String.format(recordsFormatter, archiveMeta.getDistance() / ArchiveMeta.TO_KILOMETRE),
-            dateFormatter.format(archiveMeta.getStartTime()),
-            dateFormatter.format(archiveMeta.getEndTime()),
-            archiveMeta.getRawCostTimeString(),
-            String.format(recordsFormatter, archiveMeta.getMaxSpeed() * ArchiveMeta.KM_PER_HOUR_CNT),
-            String.format(recordsFormatter, archiveMeta.getAverageSpeed() * ArchiveMeta.KM_PER_HOUR_CNT)
-        );
-
-        helper.shareToSina(context, message, bitmap);
-    }
 
     private Bitmap getChartsBitmap() {
         chartsView.setDrawingCacheEnabled(true);

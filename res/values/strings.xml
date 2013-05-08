@@ -3,7 +3,7 @@
     <string name="app_name">RunTracker</string>
     <string name="service_name">GPS Tracker Service</string>
     <string name="pls_wait">Loading, Please wait</string>
-    <string name="time_format">MM/dd HH:mm</string>
+    <string name="time_format">MM-dd HH:mm</string>
     <string name="sort_time_format">HH:mm</string>
     <string name="time_month_format">yyyy/MM</string>
     <string name="month_format">%1$d / %2$d</string>
@@ -51,14 +51,15 @@
     <string name="toggle_satellite">Toggle Satellite Mode</string>
     <string name="nearby">%s</string>
     <string name="long_press_to_stop">Long Press To Stop</string>
-    <string name="item_distance">DISTANCE</string>
-    <string name="item_average_speed">AVG. SPEED</string>
-    <string name="minkm">min/km</string>
-    <string name="item_speed">SPEED</string>
-    <string name="item_max_speed">MAX SPEED</string>
-    <string name="item_records">RECORDS</string>
-    <string name="item_end_time">END TIME</string>
-    <string name="item_start_time">START TIME</string>
+    <string name="item_distance">Distance</string>
+    <string name="item_average_speed">Avg</string>
+    <string name="minkm">(min/km)</string>
+    <string name="item_speed">Speed</string>
+    <string name="item_max_speed">Max Speed</string>
+    <string name="item_records">Records</string>
+    <string name="item_end_time">End Time</string>
+    <string name="total_time">Total Time</string>
+    <string name="item_start_time">Start Time</string>
     <string name="menu_feedback">Feedback</string>
     <string name="submit">Submit</string>
     <string name="ok">OKay</string>
@@ -71,11 +72,11 @@
     <string name="title_detail">Detail</string>
     <string name="title_modify">Add description</string>
     <string name="title_records">Records</string>
-    <string name="km">km</string>
+    <string name="km">(km)</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_share">Share</string>
-    <string name="share_report_formatter" formatted="false">Just finished a trip%s which total distance about %s km(from
-        %s to %s , during %s), and max speed is %s km/h and average speed is %s km/h
+    <string name="share_report_formatter" formatted="false">Just finished a activity(%s %s) which total distance about %s km(from
+        %s to %s , during %s), %s Calories and average speed is %s min/km.
     </string>
     <string name="activity_type_text">Activity Type</string>
     <string name="activity_type">Activity Type</string>
@@ -83,4 +84,15 @@
     <string name="item_calories">Calories</string>
     <string name="no_calories">0</string>
     <string name="weight_formatter">%.2f</string>
+    
+    <string name="preference_profile_settings">Profile Settings</string>
+    <string name="preference_full_name">Full Name</string>
+    <string name="preference_gender">Gender</string>
+    <string name="preference_select_gender">Select Gender</string>
+    <string name="preference_weight">Weight (Kg)</string>
+    <string name="preference_gps_listener">GPS Listener</string>
+    <string name="preference_gps_time_summary">The minimum time interval for GPS notifications.</string>
+    <string name="preference_gps_time_title">GPS Time Interval (Milliseconds)</string>
+    <string name="preference_gps_distance_summary">The minimum distance interval for notifications.</string>
+	<string name="preference_gps_distance_title">GPS Distance Interval (Meter)</string>
 </resources>

@@ -59,7 +59,7 @@ public class BaiduMap extends MapActivity implements
 			String recordsFormatter = getString(R.string.records_formatter);
 			
 			helper.showShortToast(dateFormat.format(location.getTime()) + "\n" + 
-					String.format(recordsFormatter, location.getSpeed() *  ArchiveMeta.KM_PER_HOUR_CNT) + "km/h");
+					String.format(recordsFormatter, helper.changeSpeedToMinPerHour(location.getSpeed())) + "min/km");
 			
 			if(currentMarkLayout != null) {
 				mapView.getOverlays().remove(currentMarkLayout);
