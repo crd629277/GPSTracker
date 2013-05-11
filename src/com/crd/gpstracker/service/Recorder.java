@@ -166,12 +166,12 @@ public class Recorder extends Service {
                     	switch (serviceBinder.getStatus()) {
 						case ServiceBinder.STATUS_RECORDING:
 							ArchiveMeta meta = getMeta();
-							float distance = meta.getDistance() / ArchiveMeta.TO_KILOMETRE;
-	                        double avgSpeed = meta.getAverageSpeed() * ArchiveMeta.TO_KILOMETRE;
-	                        double maxSpeed = meta.getMaxSpeed() * ArchiveMeta.TO_KILOMETRE;
+//							float distance = meta.getDistance() / ArchiveMeta.TO_KILOMETRE;
+//	                        double avgSpeed = meta.getAverageSpeed() * ArchiveMeta.TO_KILOMETRE;
+//	                        double maxSpeed = meta.getMaxSpeed() * ArchiveMeta.TO_KILOMETRE;
 	                        
-	                        notifier.setStatusString(String.format(getString(R.string.status_format), distance, avgSpeed, maxSpeed));
-	                        notifier.setCostTimeString(meta.getCostTimeStringByNow());
+//	                        notifier.setStatusString(String.format(getString(R.string.status_format), distance, avgSpeed, maxSpeed));
+//	                        notifier.setCostTimeString(meta.getCostTimeStringByNow());
 	                        
 	                        notifier.publish();
 	                        
@@ -219,7 +219,7 @@ public class Recorder extends Service {
 
                 ArchiveMeta meta = getMeta();
                 long totalCount = meta.getCount();
-                if (totalCount <= 0) {
+                if (totalCount < 2) {
                     (new File(archivName)).delete();
                     helper.showLongToast(getString(R.string.not_record_anything));
                 } else {

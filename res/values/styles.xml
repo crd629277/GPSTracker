@@ -217,6 +217,24 @@
         <item name="android:textStyle">normal</item>
         <item name="android:typeface">sans</item>
     </style>
+    
+    <style name="RecordsDistance" parent="Shadow">
+        <item name="android:textColor">@color/mils</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:typeface">sans</item>
+    </style>
+    
+    <style name="RecordsTime" parent="Shadow">
+        <item name="android:textColor">@color/mils</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:typeface">sans</item>
+    </style>
 
     <style name="PerferenceScreen">
         <item name="android:background">@drawable/background</item>

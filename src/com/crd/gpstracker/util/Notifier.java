@@ -53,10 +53,6 @@ public class Notifier extends Notification{
 		contentView.setTextViewText(R.id.status, statusString);
 	}
     
-    public void setCostTimeString(String costTimeString) {
-        contentView.setTextViewText(R.id.status_cost_time, costTimeString);
-    }
-    
     public void setNumber(int number) {
 		this.number = number;
 	}

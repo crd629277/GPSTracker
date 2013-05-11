@@ -41,7 +41,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 
 	private static final int FLAG_RECORDING = 0x001;
 	private static final int FLAG_ENDED = 0x002;
-//	private static final int FLAG_PAUSE = 0x003;
+	// private static final int FLAG_PAUSE = 0x003;
 	private static final long MINI_RECORDS = 2;
 
 	private boolean isRecording = false;
@@ -54,24 +54,23 @@ public class Tracker extends Activity implements View.OnClickListener,
 	private ArrayAdapter<CharSequence> activityTypeAdapter;
 	private TextView mActivityTypeView;
 	private int mActivityTypePosition;
-	
+
 	class SpinnerSelectedListener implements OnItemSelectedListener {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view,
 				int position, long id) {
 			mActivityTypePosition = position;
-//			helper.showLongToast("position: " + position);
+			// helper.showLongToast("position: " + position);
 		}
 
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 	}
-	
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,27 +79,31 @@ public class Tracker extends Activity implements View.OnClickListener,
 		mStartButton = (Button) findViewById(R.id.btn_start);
 		mEndButton = (Button) findViewById(R.id.btn_end);
 		mDisabledButton = (Button) findViewById(R.id.btn_disabled);
-		
+
 		mStartButton.setOnClickListener(this);
-        mEndButton.setOnClickListener(this);
-        mDisabledButton.setOnClickListener(this);
-        mEndButton.setOnLongClickListener(this);
-		
+		mEndButton.setOnClickListener(this);
+		mDisabledButton.setOnClickListener(this);
+		mEndButton.setOnLongClickListener(this);
+
 		mCoseTime = (TextView) findViewById(R.id.item_cost_time);
 		mActivityTypeView = (TextView) findViewById(R.id.activity_type_text);
-		
+
 		mSpinner = (Spinner) findViewById(R.id.activity_type_spinner);
-//		activityTypeAdapter = ArrayAdapter.createFromResource(this, R.array.activityType, android.R.layout.simple_spinner_item);
-		activityTypeAdapter = ArrayAdapter.createFromResource(this, R.array.activityType, R.layout.activity_type_spinner);
-//		activityTypeAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-		activityTypeAdapter.setDropDownViewResource(R.layout.activity_type_dropdown_item);
+		// activityTypeAdapter = ArrayAdapter.createFromResource(this,
+		// R.array.activityType, android.R.layout.simple_spinner_item);
+		activityTypeAdapter = ArrayAdapter.createFromResource(this,
+				R.array.activityType, R.layout.activity_type_spinner);
+		// activityTypeAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+		activityTypeAdapter
+				.setDropDownViewResource(R.layout.activity_type_dropdown_item);
 		mSpinner.setAdapter(activityTypeAdapter);
 		mSpinner.setOnItemSelectedListener(new SpinnerSelectedListener());
 		mSpinner.setVisibility(View.VISIBLE);
-		
+
 		// Check update from umeng
 		UmengUpdateAgent.update(context);
-		UMFeedbackService.enableNewReplyNotification(context, NotificationType.AlertDialog);
+		UMFeedbackService.enableNewReplyNotification(context,
+				NotificationType.AlertDialog);
 	}
 
 	private void notifyUpdateView() {
@@ -113,7 +116,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 	public void onResume() {
 		super.onResume();
 
-		if(helper.isGPSProvided()) {
+		if (helper.isGPSProvided()) {
 			updateViewTimer = new Timer();
 			updateViewTimer.schedule(new TimerTask() {
 				@Override
@@ -124,23 +127,20 @@ public class Tracker extends Activity implements View.OnClickListener,
 		}
 	}
 
-
-
 	@Override
 	public void onStart() {
 		super.onStart();
-		
+
 		if (!helper.isGPSProvided()) {
-            mStartButton.setVisibility(View.GONE);
-            mEndButton.setVisibility(View.GONE);
-            mDisabledButton.setVisibility(View.VISIBLE);
-            
-            helper.showLongToast(getString(R.string.gps_not_presented));
-        } else {
-            mDisabledButton.setVisibility(View.GONE);
-        }
-		
-		
+			mStartButton.setVisibility(View.GONE);
+			mEndButton.setVisibility(View.GONE);
+			mDisabledButton.setVisibility(View.VISIBLE);
+
+			helper.showLongToast(getString(R.string.gps_not_presented));
+		} else {
+			mDisabledButton.setVisibility(View.GONE);
+		}
+
 		// 设置 ActionBar 样式
 		actionBar.setTitle(getString(R.string.app_name));
 		actionBar.removeAllActions();
@@ -160,7 +160,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 			}
 
 		});
-		
+
 		actionBar.addAction(new ActionBar.Action() {
 
 			@Override
@@ -194,31 +194,32 @@ public class Tracker extends Activity implements View.OnClickListener,
 		case R.id.btn_end:
 			helper.showShortToast(getString(R.string.long_press_to_stop));
 			break;
-			
+
 		case R.id.btn_disabled:
-            Intent intent = new Intent(
-                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-            break;
+			Intent intent = new Intent(
+					android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+			startActivity(intent);
+			break;
 		}
 	}
 
 	@Override
 	public boolean onLongClick(View view) {
 		if (isRecording && serviceBinder != null) {
-			
+
 			serviceBinder.stopRecord();
 			notifyUpdateView();
 
-			if(archiveMeta != null) {
+			if (archiveMeta != null) {
 				long count = archiveMeta.getCount();
 				if (count >= MINI_RECORDS) {
 					Intent intent = new Intent(context, Modify.class);
-					intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveMeta.getName());
+					intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME,
+							archiveMeta.getName());
 					startActivity(intent);
 				}
 			}
-			
+
 			serviceBinder.closeDB();
 		}
 		setViewStatus(FLAG_ENDED);
@@ -226,7 +227,8 @@ public class Tracker extends Activity implements View.OnClickListener,
 	}
 
 	private void setViewStatus(int status) {
-		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		FragmentTransaction fragmentTransaction = fragmentManager
+				.beginTransaction();
 
 		switch (status) {
 		case FLAG_RECORDING:
@@ -236,11 +238,13 @@ public class Tracker extends Activity implements View.OnClickListener,
 			mStartButton.setVisibility(View.GONE);
 			mEndButton.setVisibility(View.VISIBLE);
 			if (archiveMeta != null) {
-				archiveMetaFragment = new ArchiveMetaFragment(context, archiveMeta);
-				fragmentTransaction.replace(R.id.status_layout, archiveMetaFragment);
+				archiveMetaFragment = new ArchiveMetaFragment(context,
+						archiveMeta);
+				fragmentTransaction.replace(R.id.status_layout,
+						archiveMetaFragment);
 
 				mCoseTime.setText(archiveMeta.getCostTimeStringByNow());
-//				mCoseTime.setText(serviceBinder.getCostTime());
+				// mCoseTime.setText(serviceBinder.getCostTime());
 			}
 			break;
 		case FLAG_ENDED:
@@ -268,7 +272,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 					Logger.i(getString(R.string.not_available));
 					return;
 				}
-				
+
 				archiveMeta = serviceBinder.getMeta();
 
 				switch (serviceBinder.getStatus()) {
@@ -283,45 +287,62 @@ public class Tracker extends Activity implements View.OnClickListener,
 			}
 		}
 	};
-	
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.tracker, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_records:
 			gotoActivity(Records.class);
 			break;
-			
-		case R.id.menu_configure:
-			gotoActivity(Preference.class);
-			break;
-			
+
 		case R.id.menu_feedback:
 			UMFeedbackService.openUmengFeedbackSDK(context);
 			break;
-			
+
 		case R.id.menu_about:
 			gotoActivity(Info.class);
+			break;
+
+		case R.id.menu_exit:
+			exit();
 			break;
 
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-		
+
 		return true;
-	} 
-	
-	
+	}
+
+	public void exit() {
+		if (isRecording) {
+			helper.showConfirmDialog(getString(R.string.menu_exit),
+					getString(R.string.can_not_exit), new Runnable() {
+						@Override
+						public void run() {
+							
+						}
+					}, new Runnable() {
+						@Override
+						public void run() {
+							// ...
+						}
+					});
+		} else {
+			finish();
+		}
+	}
+
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(updateViewTimer != null) {
+		if (updateViewTimer != null) {
 			updateViewTimer.cancel();
 		}
 	}
@@ -333,7 +354,5 @@ public class Tracker extends Activity implements View.OnClickListener,
 			helper.showLongToast(getString(R.string.still_running));
 		}
 	}
-	
-	
-	
+
 }

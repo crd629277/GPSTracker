@@ -11,8 +11,10 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -259,22 +261,6 @@ public class Records extends Activity implements
 
 		return true;
 	}
-	
-//
-//	// 长按菜单响应函数
-//	@Override
-//	public boolean onContextItemSelected(MenuItem item) {
-//		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-//				.getMenuInfo();
-//		final int position = info.position;
-//
-//		switch (item.getItemId()) {
-//		case R.id.menu_delete:
-//			confirmDeleteDatabaseFile(position);
-//			return true;
-//		}
-//		return false;
-//	}
 
 	/**
 	 * 清除列表

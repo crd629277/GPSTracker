@@ -13,6 +13,7 @@
     <color name="green">#ff57880b</color>
     <color name="red">#ff0000</color>
     <color name="blue">#0000ff</color>
+    <color name="orange">#fffeae03</color>
     
     <!--action bar-->
     <color name="actionbar_separator">#ff57880b</color>

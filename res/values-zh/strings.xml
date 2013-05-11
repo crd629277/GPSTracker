@@ -18,7 +18,7 @@
     <string name="still_running">保持在后台运行</string>
     <string name="initialing">初始化中</string>
     <string name="recording">记录中</string>
-    <string name="running">运动追踪 正在运行</string>
+    <string name="running">正在运行</string>
     <string name="menu_about">关于</string>
     <string name="menu_configure">配置</string>
     <string name="menu_records">历史记录</string>
@@ -50,9 +50,14 @@
     <string name="item_end_time">结束时间</string>
     <string name="total_time">所花时间</string>
     <string name="item_start_time">开始时间</string>
+    <string name="menu_delete">删除</string>
+    <string name="menu_share">分享</string>
+    <string name="menu_edit">修改描述</string>
     <string name="menu_feedback">反馈</string>
     <string name="submit">提交</string>
     <string name="ok">确定</string>
+    <string name="menu_exit">退出</string>
+    <string name="can_not_exit">正在记录，不能退出！</string>
     <string name="shit_happens">该死~有错误！</string>
     <string name="has_been_saved">已经保存</string>
     <string name="external_storage_not_present">没有找到外置存储设备</string>
@@ -60,7 +65,7 @@
     <string name="btn_end">停止</string>
     <string name="btn_disabled">打开GPS</string>
     <string name="title_detail">详情</string>
-    <string name="title_modify">添加描述</string>
+    <string name="title_modify">添加/修改描述</string>
     <string name="title_records">记录</string>
     <string name="share_report_formatter" formatted="false">完成了项运动(%s %s)，总计%s千米(从%s出发到%s结束，历时%s)，消耗%s卡路里，平均速度%s分钟/千米.</string>
 	<string name="activity_type_text">运动类型</string>

@@ -157,8 +157,10 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_share:
-                shareToSina();
+            case R.id.menu_edit:
+            	Intent intent = new Intent(this, Modify.class);
+                intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveFileName);
+                startActivity(intent);
                 break;
 
             case R.id.menu_delete:

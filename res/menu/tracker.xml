@@ -7,11 +7,6 @@
               android:icon="@drawable/ic_menu_recent_history"
             />
 
-        <item android:id="@+id/menu_configure"
-              android:title="@string/menu_configure"
-              android:icon="@drawable/ic_menu_manage"
-            />
-
         <item android:id="@+id/menu_feedback"
               android:title="@string/menu_feedback"
               android:icon="@drawable/ic_menu_start_conversation"
@@ -20,6 +15,12 @@
         <item android:id="@+id/menu_about"
               android:title="@string/menu_about"
               android:icon="@drawable/ic_menu_info_details"
+            />
+        
+        
+        <item android:id="@+id/menu_exit"
+              android:title="@string/menu_exit"
+              android:icon="@drawable/ic_exit"
             />
     </group>
 </menu>

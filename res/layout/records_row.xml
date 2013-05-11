@@ -19,7 +19,7 @@
 
         <TextView
             android:id="@+id/cost_time"
-            style="@style/MiddleTitle"
+            style="@style/RecordsTime"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
@@ -37,16 +37,17 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:src="@drawable/ic_cycling" />
-
+
         <TextView
             android:id="@+id/description"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="2dp"
+            android:layout_toLeftOf="@+id/distance_layout"
             android:layout_toRightOf="@id/activity_type_image"
             android:ellipsize="marquee"
-            android:marqueeRepeatLimit="1"
+            android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
             android:text="On my way home"
             android:textColor="@color/title"
@@ -61,13 +62,14 @@
 
             <TextView
                 android:id="@+id/distance"
-                style="@style/MiddleTitle"
+                style="@style/RecordsDistance"
                 android:text="19.9"
-                android:textColor="@color/mils" />
+                />
 
             <TextView
                 style="@style/SecondTitle"
-                android:text="@string/records_km" />
+                android:text="@string/records_km" 
+                android:paddingLeft="4dp"/>
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
