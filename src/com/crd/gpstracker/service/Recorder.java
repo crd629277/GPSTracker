@@ -288,10 +288,10 @@ public class Recorder extends Service {
         	this.serviceBinder = new ServiceBinder();
         }
 
-        boolean autoStart = sharedPreferences.getBoolean(Preference.AUTO_START, false);
+//        boolean autoStart = sharedPreferences.getBoolean(Preference.AUTO_START, false);
         boolean alreadyStarted = (serviceBinder.getStatus() == ServiceBinder.STATUS_RECORDING);
         
-        if (autoStart || alreadyStarted) {
+        if (alreadyStarted) {
         	if(alreadyStarted) {
         		serviceBinder.resetStatus();
         	}

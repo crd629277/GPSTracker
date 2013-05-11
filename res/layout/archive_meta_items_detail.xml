@@ -26,25 +26,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <include layout="@layout/item_average_speed" />
-
+        <include layout="@layout/item_start_time" />
+        
         <ImageView style="@style/Cell.Vertical" />
-
-        <include layout="@layout/item_distance" />
-    </LinearLayout>
-    <!--
-    <ImageView style="@style/Cell.Horizontal" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        >
+        
         <include layout="@layout/item_average_speed" />
-        <ImageView style="@style/Cell.Vertical" />
-        <include layout="@layout/item_records" />
     </LinearLayout>
-    -->
 
 </LinearLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    style="@style/PerferenceScreen"
+    >
+
+    <include layout="@layout/action_bar" />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollingCache="false"
+        android:fadingEdge="none"
+        android:divider="@color/gray"
+        android:dividerHeight="1sp"
+        android:cacheColorHint="@color/highlight"
+        />
+
+</LinearLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detail_all"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bg"
@@ -12,6 +13,25 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical" >
+        
+        
+        <LinearLayout
+            android:id="@+id/description_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical"
+            >
+            <FrameLayout
+                android:id="@+id/archive_meta_time_distance_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+            
+            <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/border_bottom_item" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/status_layout"
@@ -19,43 +39,20 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:orientation="vertical" >
-
             <FrameLayout
-                android:id="@+id/archive_meta_time_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
-
-            <FrameLayout
-                android:id="@+id/archive_meta_layout"
+                android:id="@+id/archive_meta_detail_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/description_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/status_layout"
-            >
-
-<!--             <HorizontalScrollView
-                style="@style/Detail.Description">
-                <TextView
-                    style="@style/Detail.Description.Text"
-                    android:id="@+id/item_description"
-                    android:layout_alignParentLeft="true"
-                    />
-            </HorizontalScrollView> -->
-
-
-            <LinearLayout style="@style/Cell.Horizontal" />
-        </LinearLayout>
 
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_above="@id/description_layout"
-            android:layout_alignParentTop="true" >
+            android:layout_below="@id/description_layout"
+            android:layout_above="@id/status_layout"
+            
+             >
 
             <FrameLayout
                 android:layout_width="fill_parent"
@@ -74,9 +71,9 @@
 
                 <ImageView
                     android:layout_width="fill_parent"
-                    android:layout_height="3dp"
+                    android:layout_height="2dp"
                     android:layout_alignParentBottom="true"
-                    android:background="@drawable/time_border_bottom_item" />
+                    android:background="@drawable/border_bottom_item" />
             </RelativeLayout>
         </FrameLayout>
     </RelativeLayout>

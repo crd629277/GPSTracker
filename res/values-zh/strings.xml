@@ -19,9 +19,9 @@
     <string name="initialing">初始化中</string>
     <string name="recording">记录中</string>
     <string name="running">运动追踪 正在运行</string>
-    <string name="menu_help">帮助</string>
+    <string name="menu_about">关于</string>
     <string name="menu_configure">配置</string>
-    <string name="menu_records">记录</string>
+    <string name="menu_records">历史记录</string>
     <string name="menu_pause">暂停</string>
     <string name="menu_start">开始</string>
     <string name="not_record_anything">没有记录任何东西</string>
@@ -42,6 +42,7 @@
     <string name="item_distance">距离</string>
     <string name="item_average_speed">均速</string>
     <string name="minkm">(分钟/千米)</string>
+    <string name="records_km">千米</string>
     <string name="km">(千米)</string>
     <string name="item_speed">速度</string>
     <string name="item_max_speed">最高时速</string>
@@ -75,7 +76,7 @@
     <string name="preference_weight">体重 (千克)</string>
     <string name="preference_gps_listener">GPS 监听</string>
     <string name="preference_gps_time_summary">GPS记录的最小时间间隔.</string>
-    <string name="preference_gps_time_title">GPS时间间隔 (毫秒)</string>
+    <string name="preference_gps_time_title">GPS记录时间间隔 (毫秒)</string>
     <string name="preference_gps_distance_summary">GPS记录的最小距离间隔.</string>
-	<string name="preference_gps_distance_title">GPS距离间隔 (米)</string>
+	<string name="preference_gps_distance_title">GPS记录距离间隔 (米)</string>
 </resources>

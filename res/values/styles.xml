@@ -62,9 +62,7 @@
 
     <style name="Status.Distance" parent="Status.Status"></style>
 
-    <style name="TrackerActionBar" parent="ActionBar">
-        <item name="android:background">@drawable/bg_action_bar</item>
-    </style>
+    <style name="TrackerActionBar" parent="ActionBar"></style>
 
     <style name="BigTitle" parent="Shadow">
         <item name="android:textColor">@color/mils</item>
@@ -79,7 +77,6 @@
         <item name="android:textColor">@color/mils</item>
         <item name="android:textSize">48sp</item>
     </style>
-    
 
     <style name="SecondTitle">
         <item name="android:textColor">@color/title_second</item>
@@ -87,7 +84,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-    
+
     <style name="Date">
         <item name="android:textColor">@color/title</item>
         <item name="android:textSize">16sp</item>
@@ -100,23 +97,23 @@
         <item name="android:textColor">@color/snowhite</item>
         <item name="android:background">@drawable/btn_start</item>
         <item name="android:textSize">18dp</item>
-        <item name="android:layout_height">50dip</item>
+        <item name="android:layout_height">48dip</item>
         <item name="android:layout_width">100dip</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">0dip</item>
     </style>
-    
+
     <style name="LongBigButton" parent="Shadow">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/snowhite</item>
         <item name="android:background">@drawable/btn_start</item>
         <item name="android:textSize">25dp</item>
-        <item name="android:layout_height">50dip</item>
-        <item name="android:layout_width">220dip</item>
+        <item name="android:layout_height">53dip</item>
+        <item name="android:layout_width">200dip</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">0dip</item>
     </style>
-    
+
     <style name="EndButton" parent="BigButton">
         <item name="android:background">@drawable/btn_end</item>
         <item name="android:shadowColor">@color/highlight_border</item>
@@ -211,5 +208,23 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">10dp</item>
     </style>
+    
+    <style name="MiddleTitle" parent="Shadow">
+        <item name="android:textColor">@color/mils</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="PerferenceScreen">
+        <item name="android:background">@drawable/background</item>
+        <item name="android:windowBackground">@color/title</item>
+        <item name="android:textColor">#ff000000</item>
+        <item name="android:focusable">false</item>
+        <item name="android:colorBackgroundCacheHint">#00000000</item>
+    </style>
+    
 
 </resources>

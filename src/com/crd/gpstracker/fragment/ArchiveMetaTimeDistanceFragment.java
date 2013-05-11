@@ -15,25 +15,27 @@ import android.widget.TextView;
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.dao.ArchiveMeta;
 
-public class ArchiveMetaTimeFragment extends Fragment {
+public class ArchiveMetaTimeDistanceFragment extends Fragment {
     private ArchiveMeta meta;
     private View metaLayout;
     private SimpleDateFormat dateFormat;
-    private TextView mStartTime;
-    private TextView mTotalTime;
+    private String formatter;
+    private TextView mCostTime;
+    private TextView mDistance;
     private Context context;
 
-    public ArchiveMetaTimeFragment(Context context, ArchiveMeta meta) {
+    public ArchiveMetaTimeDistanceFragment(Context context, ArchiveMeta meta) {
         this.meta = meta;
         this.context = context;
+        this.formatter = context.getString(R.string.records_formatter);
         this.dateFormat = new SimpleDateFormat(context.getString(R.string.time_format), Locale.CHINA);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        metaLayout = inflater.inflate(R.layout.archive_meta_time, container, false);
-        mStartTime = (TextView) metaLayout.findViewById(R.id.meta_start_time);
-        mTotalTime = (TextView) metaLayout.findViewById(R.id.total_time);
+        metaLayout = inflater.inflate(R.layout.archive_meta_time_distance, container, false);
+        mCostTime = (TextView) metaLayout.findViewById(R.id.item_cost_time);
+        mDistance = (TextView) metaLayout.findViewById(R.id.item_distance);
 		setRetainInstance(true);
         return metaLayout;
     }
@@ -45,11 +47,9 @@ public class ArchiveMetaTimeFragment extends Fragment {
     }
 
     protected void updateView() {
-    	Date startTime = meta.getStartTime();
-    	Date endTime = meta.getEndTime();
     	String totalTime = meta.getRawCostTimeString();
-        mStartTime.setText(startTime != null ? dateFormat.format(startTime) : getString(R.string.not_available));
-        mTotalTime.setText(totalTime.length() > 0 ? totalTime : getString(R.string.not_available));
+    	mCostTime.setText(totalTime.length() > 0 ? totalTime : getString(R.string.not_available));
+    	mDistance.setText(String.format(formatter, meta.getDistance() / ArchiveMeta.TO_KILOMETRE));
         
     }
 }

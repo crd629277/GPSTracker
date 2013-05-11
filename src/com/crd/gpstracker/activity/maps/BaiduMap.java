@@ -1,8 +1,5 @@
 package com.crd.gpstracker.activity.maps;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,8 +11,6 @@ import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.SeekBar;
-import android.widget.ToggleButton;
 
 import com.baidu.mapapi.MapView;
 import com.baidu.mapapi.Overlay;
@@ -25,54 +20,16 @@ import com.crd.gpstracker.activity.Detail;
 import com.crd.gpstracker.activity.Records;
 import com.crd.gpstracker.activity.base.MapActivity;
 import com.crd.gpstracker.dao.Archive;
-import com.crd.gpstracker.dao.ArchiveMeta;
 
-public class BaiduMap extends MapActivity implements
-		SeekBar.OnSeekBarChangeListener {
+public class BaiduMap extends MapActivity {
 	private Archive archive;
 
 	private Context context;
 
 	private String archiveFileName;
-	private SeekBar mSeekBar;
-	private SimpleDateFormat dateFormat;
-	private ToggleButton mSatellite;
-	private View mapController;
 	private PathOverlay pathOverlay;
 	private PointMarkLayout currentMarkLayout;
 
-	@Override
-	public void onProgressChanged(SeekBar seekBar, int progress,
-			boolean fromUser) {
-
-	}
-
-	@Override
-	public void onStartTrackingTouch(SeekBar seekBar) {
-
-	}
-
-	@Override
-	public void onStopTrackingTouch(SeekBar seekBar) {
-		try {
-			Location location = locations.get(seekBar.getProgress() - 1);
-			String recordsFormatter = getString(R.string.records_formatter);
-			
-			helper.showShortToast(dateFormat.format(location.getTime()) + "\n" + 
-					String.format(recordsFormatter, helper.changeSpeedToMinPerHour(location.getSpeed())) + "min/km");
-			
-			if(currentMarkLayout != null) {
-				mapView.getOverlays().remove(currentMarkLayout);
-			}
-			currentMarkLayout = new PointMarkLayout(location, R.drawable.point);
-			mapView.getOverlays().add(currentMarkLayout);
-			
-			setCenterPoint(location, true);
-		} catch (Exception e) {
-			return;
-		}
-
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -82,11 +39,7 @@ public class BaiduMap extends MapActivity implements
 		context = this;
 
 		mapView = (MapView) findViewById(R.id.bmapsView);
-		mapController = findViewById(R.id.map_controller);
 		archiveFileName = getIntent().getStringExtra(Records.INTENT_ARCHIVE_FILE_NAME);
-		mSeekBar = (SeekBar) findViewById(R.id.seek);
-
-		dateFormat = new SimpleDateFormat(getString(R.string.time_format), Locale.getDefault());
 
 		archive = new Archive(getApplicationContext(), archiveFileName);
 		locations = archive.fetchAll();
@@ -109,28 +62,7 @@ public class BaiduMap extends MapActivity implements
 			if(actionBar != null) {
 				actionBar.setVisibility(View.GONE);
 			}
-			mapController.setVisibility(View.GONE);
 		}
-
-		 mSeekBar.setMax(locations.size());
-		 mSeekBar.setProgress(0);
-		 mSeekBar.setOnSeekBarChangeListener(this);
-		//
-		// mSatellite.setOnClickListener(new View.OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if(mSatellite.isChecked()) {
-		// mapView.setSatellite(true);
-		// } else {
-		// mapView.setSatellite(false);
-		// }
-		//
-		// bMapManager.stop();
-		// bMapManager.start();
-		// uiHelper.showShortToast(getString(R.string.toggle_satellite));
-		// }
-		// });
 
 		mapView.getOverlays().add(new PathOverlay());
 		mapView.getOverlays().add(new PointMarkLayout(archive.getFirstRecord(), R.drawable.point_start));

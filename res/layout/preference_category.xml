@@ -1,0 +1,21 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@color/gray"
+    >
+
+    <TextView
+        android:layout_marginLeft="7dip"
+        android:id="@+android:id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:ellipsize="marquee"
+        android:fadingEdge="horizontal"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/dark" />
+
+    <!-- Preference should place its actual preference widget here. -->
+
+</LinearLayout>

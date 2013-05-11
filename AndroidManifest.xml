@@ -44,6 +44,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.maps.BaiduMapDetail"
+            android:theme="@style/Window" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".activity.Records"
             android:screenOrientation="behind"
             android:theme="@style/Window" >

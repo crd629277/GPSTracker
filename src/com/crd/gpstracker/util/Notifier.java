@@ -31,10 +31,6 @@ public class Notifier extends Notification{
     	this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         this.flags |= Notification.FLAG_ONGOING_EVENT;
-        boolean isLightingLed = sharedPreferences.getBoolean(Preference.LIGHTNING_LED, false);
-        if (isLightingLed) {
-            setShowLights();
-        }
     	
     	this.intent = new Intent(context, Tracker.class);
     	this.intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

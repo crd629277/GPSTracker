@@ -6,8 +6,10 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.view.View;
 
 import com.crd.gpstracker.R;
+import com.markupartist.android.widget.ActionBar;
 
 public class Preference extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -16,9 +18,6 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
 	public static final String WEIGHT = "weight";
 	
     public static final String USER_ORIENTATION = "orientation";
-    public static final String AUTO_START = "autoStart";
-    public static final String RECORD_BY = "recordBy";
-    public static final String LIGHTNING_LED = "lightLed";
     public static final String GPS_MINTIME = "gpsMinTime";
     public static final String GPS_MINDISTANCE = "gpsMinDistance";
 
@@ -32,12 +31,14 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
     private EditTextPreference mWeightEditTextPreference; 
     private ListPreference mGPSTimeInterval;
     private ListPreference mGPSDistanceInterval;
+    private ActionBar actionBar;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preference);
+        setContentView(R.layout.preference_screen);
         preferenceManager = PreferenceManager.getDefaultSharedPreferences(this);
         preferenceManager.registerOnSharedPreferenceChangeListener(this);
         
@@ -47,6 +48,27 @@ public class Preference extends PreferenceActivity implements SharedPreferences.
         
         mGPSTimeInterval = (ListPreference) getPreferenceScreen().findPreference(GPS_MINTIME);
         mGPSDistanceInterval = (ListPreference) getPreferenceScreen().findPreference(GPS_MINDISTANCE);
+        
+    }
+    
+    @Override
+    public void onStart() {
+    	super.onStart();
+
+    	actionBar = (ActionBar) findViewById(R.id.action_bar);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAction(new ActionBar.Action() {
+            @Override
+            public int getDrawable() {
+                return R.drawable.ic_menu_home;
+            }
+
+            @Override
+            public void performAction(View view) {
+                finish();
+            }
+        });
+    	
     }
     
     @Override

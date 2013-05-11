@@ -30,9 +30,9 @@
     <string name="no_dot_records">0</string>
     <string name="records_formatter">%02.2f</string>
     <string name="running">RunTracker Is Running</string>
-    <string name="menu_help">Help</string>
+    <string name="menu_about">About</string>
     <string name="menu_configure">Preference</string>
-    <string name="menu_records">Records</string>
+    <string name="menu_records">History Records</string>
     <string name="menu_pause">Pause</string>
     <string name="menu_start">Start</string>
     <string name="not_record_anything">Noes\'t Record Anything</string>
@@ -73,6 +73,7 @@
     <string name="title_modify">Add description</string>
     <string name="title_records">Records</string>
     <string name="km">(km)</string>
+    <string name="records_km">km</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_share">Share</string>
     <string name="share_report_formatter" formatted="false">Just finished a activity(%s %s) which total distance about %s km(from

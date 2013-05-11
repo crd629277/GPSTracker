@@ -150,12 +150,27 @@ public class Tracker extends Activity implements View.OnClickListener,
 
 			@Override
 			public int getDrawable() {
-				return R.drawable.ic_menu_friendslist;
+				return R.drawable.ic_menu_recent_history;
 			}
 
 			@Override
 			public void performAction(View view) {
 				gotoActivity(Records.class);
+
+			}
+
+		});
+		
+		actionBar.addAction(new ActionBar.Action() {
+
+			@Override
+			public int getDrawable() {
+				return R.drawable.ic_menu_manage;
+			}
+
+			@Override
+			public void performAction(View view) {
+				gotoActivity(Preference.class);
 
 			}
 
@@ -289,6 +304,10 @@ public class Tracker extends Activity implements View.OnClickListener,
 			
 		case R.id.menu_feedback:
 			UMFeedbackService.openUmengFeedbackSDK(context);
+			break;
+			
+		case R.id.menu_about:
+			gotoActivity(Info.class);
 			break;
 
 		default:

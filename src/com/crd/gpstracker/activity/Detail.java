@@ -12,15 +12,15 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TabHost;
-import android.widget.TextView;
 
 import com.crd.gpstracker.R;
 import com.crd.gpstracker.activity.base.Activity;
 import com.crd.gpstracker.activity.maps.BaiduMap;
+import com.crd.gpstracker.activity.maps.BaiduMapDetail;
 import com.crd.gpstracker.dao.Archive;
 import com.crd.gpstracker.dao.ArchiveMeta;
-import com.crd.gpstracker.fragment.ArchiveMetaFragment;
-import com.crd.gpstracker.fragment.ArchiveMetaTimeFragment;
+import com.crd.gpstracker.fragment.ArchiveMetaDetailFragment;
+import com.crd.gpstracker.fragment.ArchiveMetaTimeDistanceFragment;
 import com.markupartist.android.widget.ActionBar;
 
 public class Detail extends Activity implements View.OnTouchListener, View.OnClickListener{
@@ -29,8 +29,8 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
     private Archive archive;
     private ArchiveMeta archiveMeta;
 
-    private ArchiveMetaFragment archiveMetaFragment;
-    private ArchiveMetaTimeFragment archiveMetaTimeFragment;
+    private ArchiveMetaDetailFragment archiveMetaDetailFragment;
+    private ArchiveMetaTimeDistanceFragment archiveMetaTimeDistanceFragment;
 
 //    private TextView mDescription;
     private LocalActivityManager localActivityManager;
@@ -54,8 +54,8 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
 //        mDescription = (TextView) findViewById(R.id.item_description);
         mTabHost = (TabHost) findViewById(R.id.tabhost);
 
-        archiveMetaFragment = new ArchiveMetaFragment(context, archiveMeta);
-        archiveMetaTimeFragment = new ArchiveMetaTimeFragment(context, archiveMeta);
+        archiveMetaDetailFragment = new ArchiveMetaDetailFragment(context, archiveMeta);
+        archiveMetaTimeDistanceFragment = new ArchiveMetaTimeDistanceFragment(context, archiveMeta);
 
         addArchiveMetaTimeFragment();
         addArchiveMetaFragment();
@@ -179,7 +179,7 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
      * @return
      */
     private Bitmap getRouteBitmap() {
-    	View view = findViewById(R.id.detail_layout);
+    	View view = findViewById(R.id.detail_all);
     	view.setDrawingCacheEnabled(true);
     	view.buildDrawingCache();
     	view.destroyDrawingCache();
@@ -226,17 +226,17 @@ public class Detail extends Activity implements View.OnTouchListener, View.OnCli
     
 
     private void addArchiveMetaTimeFragment() {
-        addFragment(R.id.archive_meta_time_layout, archiveMetaTimeFragment);
+        addFragment(R.id.archive_meta_time_distance_layout, archiveMetaTimeDistanceFragment);
     }
 
     private void addArchiveMetaFragment() {
-        addFragment(R.id.archive_meta_layout, archiveMetaFragment);
+        addFragment(R.id.archive_meta_detail_layout, archiveMetaDetailFragment);
     }
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_UP) {
-            Intent intent = new Intent(this, BaiduMap.class);
+            Intent intent = new Intent(this, BaiduMapDetail.class);
             intent.putExtra(Records.INTENT_ARCHIVE_FILE_NAME, archiveFileName);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

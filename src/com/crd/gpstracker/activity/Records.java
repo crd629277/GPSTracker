@@ -1,6 +1,5 @@
 package com.crd.gpstracker.activity;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,11 +10,7 @@ import java.util.Locale;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +55,6 @@ public class Records extends Activity implements
 
 		startActivity(intent);
 	}
-	
 
 	@Override
 	public void onDateSet(DatePicker view, int year, int month, int day) {
@@ -75,7 +69,6 @@ public class Records extends Activity implements
 		}
 	}
 
-	
 	public class ArchivesAdapter extends ArrayAdapter<Archive> {
 
 		public ArchivesAdapter(ArrayList<Archive> archives) {
@@ -87,27 +80,36 @@ public class Records extends Activity implements
 			Archive archive = archives.get(position);
 			ArchiveMeta archiveMeta = archive.getMeta();
 
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View rowView = inflater.inflate(R.layout.records_row, parent, false);
+			LayoutInflater inflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View rowView = inflater
+					.inflate(R.layout.records_row, parent, false);
 
-			TextView mDescription = (TextView) rowView.findViewById(R.id.description);
-			TextView mCostTime = (TextView) rowView.findViewById(R.id.cost_time);
+			TextView mDescription = (TextView) rowView
+					.findViewById(R.id.description);
+			TextView mCostTime = (TextView) rowView
+					.findViewById(R.id.cost_time);
 			TextView mDistance = (TextView) rowView.findViewById(R.id.distance);
 			TextView mDate = (TextView) rowView.findViewById(R.id.date);
-			ImageView mActivityTypeImage = (ImageView) rowView.findViewById(R.id.activity_type_image);
+			ImageView mActivityTypeImage = (ImageView) rowView
+					.findViewById(R.id.activity_type_image);
 
 			mDistance.setText(String.format(
-					getString(R.string.records_formatter), archiveMeta.getDistance() / archiveMeta.TO_KILOMETRE));
+					getString(R.string.records_formatter),
+					archiveMeta.getDistance() / archiveMeta.TO_KILOMETRE));
 
 			String costTime = archiveMeta.getRawCostTimeString();
-			mCostTime.setText(costTime.length() > 0 ? costTime : getString(R.string.not_available));
+			mCostTime.setText(costTime.length() > 0 ? costTime
+					: getString(R.string.not_available));
 			mDate.setText(dateFormatter(archiveMeta.getStartTime()));
-			mActivityTypeImage.setImageBitmap(activityTypeUtil.getImageFromActivityType(archiveMeta.getActivityType()));
+			mActivityTypeImage.setImageBitmap(activityTypeUtil
+					.getImageFromActivityType(archiveMeta.getActivityType()));
 
 			String description = archiveMeta.getDescription();
 			if (description.length() <= 0) {
 				description = getString(R.string.no_description);
-				mDescription.setTextColor(getResources().getColor(R.color.gray));
+				mDescription
+						.setTextColor(getResources().getColor(R.color.gray));
 			}
 			mDescription.setText(description);
 
@@ -134,14 +136,14 @@ public class Records extends Activity implements
 	public void onStart() {
 		super.onStart();
 		listView.setOnItemClickListener(this);
-		
+
 		actionBar.removeAllActions();
 		actionBar.addAction(new Action() {
 			@Override
 			public int getDrawable() {
 				return R.drawable.ic_menu_today;
 			}
-			
+
 			@Override
 			public void performAction(View view) {
 				showTimeSelectDialog();
@@ -149,13 +151,15 @@ public class Records extends Activity implements
 
 		});
 
-		selectedTime = getIntent().getLongExtra(INTENT_SELECT_BY_MONTH, System.currentTimeMillis());
-		
+		selectedTime = getIntent().getLongExtra(INTENT_SELECT_BY_MONTH,
+				System.currentTimeMillis());
+
 		// setAction title as month string if there is not current month
 		actionBar.setTitle(R.string.title_records);
-		SimpleDateFormat formatter = new SimpleDateFormat(getString(R.string.time_month_format));
+		SimpleDateFormat formatter = new SimpleDateFormat(
+				getString(R.string.time_month_format));
 		String selectedTitle = formatter.format(new Date(selectedTime));
-		if(!selectedTitle.equals(formatter.format(new Date()))) {
+		if (!selectedTitle.equals(formatter.format(new Date()))) {
 			actionBar.setTitle(selectedTitle);
 		}
 		getArchiveFilesByMonth(new Date(selectedTime));
@@ -178,48 +182,44 @@ public class Records extends Activity implements
 	public void onPause() {
 		super.onPause();
 	}
-	
-	
+
 	private String dateFormatter(Date date) {
 		String timeFormatter = getString(R.string.time_format);
 		SimpleDateFormat formatter = new SimpleDateFormat(timeFormatter);
 		return formatter.format(date);
 	}
-	
-	
-	
+
 	private DatePicker findDatePicker(ViewGroup group) {
-        if (group != null) {
-            for (int i = 0, j = group.getChildCount(); i < j; i++) {
-                View child = group.getChildAt(i);
-                if (child instanceof DatePicker) {
-                    return (DatePicker) child;
-                } else if (child instanceof ViewGroup) {
-                    DatePicker result = findDatePicker((ViewGroup) child);
-                    if (result != null)
-                        return result;
-                }
-            }
-        }
-        return null;
-    }
-	
+		if (group != null) {
+			for (int i = 0, j = group.getChildCount(); i < j; i++) {
+				View child = group.getChildAt(i);
+				if (child instanceof DatePicker) {
+					return (DatePicker) child;
+				} else if (child instanceof ViewGroup) {
+					DatePicker result = findDatePicker((ViewGroup) child);
+					if (result != null)
+						return result;
+				}
+			}
+		}
+		return null;
+	}
 
 	private void showTimeSelectDialog() {
-        Calendar calendar = Calendar.getInstance(Locale.CHINA);
-        calendar.setTime(new Date(selectedTime));
+		Calendar calendar = Calendar.getInstance(Locale.CHINA);
+		calendar.setTime(new Date(selectedTime));
 
-        DatePickerDialog datePicker = new DatePickerDialog(
-            Records.this, Records.this,
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH));
+		DatePickerDialog datePicker = new DatePickerDialog(Records.this,
+				Records.this, calendar.get(Calendar.YEAR),
+				calendar.get(Calendar.MONTH),
+				calendar.get(Calendar.DAY_OF_MONTH));
 
-        datePicker.show();
-    }
+		datePicker.show();
+	}
 
 	private void getArchiveFilesByMonth(Date date) {
-		archiveFileNames = archiveFileNameHelper.getArchiveFilesNameByMonth(date);
+		archiveFileNames = archiveFileNameHelper
+				.getArchiveFilesNameByMonth(date);
 		openArchivesFromFileNames();
 	}
 
@@ -239,28 +239,42 @@ public class Records extends Activity implements
 			}
 		}
 	}
-	
-	
+
 	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.records, menu);
-        return true;
-    }
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.records, menu);
+		return true;
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_calendar:
-                showTimeSelectDialog();
-                break;
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_calendar:
+			showTimeSelectDialog();
+			break;
 
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 
-        return true;
-    }
-    
+		return true;
+	}
+	
+//
+//	// 长按菜单响应函数
+//	@Override
+//	public boolean onContextItemSelected(MenuItem item) {
+//		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+//				.getMenuInfo();
+//		final int position = info.position;
+//
+//		switch (item.getItemId()) {
+//		case R.id.menu_delete:
+//			confirmDeleteDatabaseFile(position);
+//			return true;
+//		}
+//		return false;
+//	}
 
 	/**
 	 * 清除列表
