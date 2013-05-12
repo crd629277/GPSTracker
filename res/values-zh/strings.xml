@@ -78,6 +78,7 @@
     <string name="preference_full_name">名字</string>
     <string name="preference_gender">性别</string>
     <string name="preference_select_gender">选择性别</string>
+    <string name="preference_height">身高 (厘米)</string>
     <string name="preference_weight">体重 (千克)</string>
     <string name="preference_gps_listener">GPS 监听</string>
     <string name="preference_gps_time_summary">GPS记录的最小时间间隔.</string>

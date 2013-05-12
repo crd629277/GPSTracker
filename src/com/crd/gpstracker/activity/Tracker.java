@@ -335,6 +335,7 @@ public class Tracker extends Activity implements View.OnClickListener,
 						}
 					});
 		} else {
+			serviceBinder.closeDB();
 			finish();
 		}
 	}

@@ -11,13 +11,21 @@
            	android:layout="@layout/preference_list"/>    
         <ListPreference
             android:key="gender"
-            android:defaultValue="Male"
             android:entries="@array/genderValues"
             android:entryValues="@array/genderValues"
             android:title="@string/preference_gender"
             android:dialogTitle="@string/preference_select_gender"
             android:layout="@layout/preference_list"
         />
+        <EditTextPreference
+            android:key="height"
+            android:defaultValue="170.0"
+           	android:singleLine="true"
+           	android:title="@string/preference_height" 
+           	android:dialogTitle="@string/preference_height"
+           	android:inputType="numberDecimal"
+           	android:layout="@layout/preference_list"
+           	/>
         <EditTextPreference
             android:key="weight"
             android:defaultValue="60.00"

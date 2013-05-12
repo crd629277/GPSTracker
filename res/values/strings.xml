@@ -87,12 +87,14 @@
     <string name="no_activity_type">---</string>
     <string name="item_calories">Calories</string>
     <string name="no_calories">0</string>
+    <string name="height_formatter">%.1f</string>
     <string name="weight_formatter">%.2f</string>
     
     <string name="preference_profile_settings">Profile Settings</string>
     <string name="preference_full_name">Full Name</string>
     <string name="preference_gender">Gender</string>
     <string name="preference_select_gender">Select Gender</string>
+    <string name="preference_height">Height (cm)</string>
     <string name="preference_weight">Weight (Kg)</string>
     <string name="preference_gps_listener">GPS Listener</string>
     <string name="preference_gps_time_summary">The minimum time interval for GPS notifications.</string>
