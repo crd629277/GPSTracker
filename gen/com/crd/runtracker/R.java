@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.jjoe64.graphview;
+package com.crd.runtracker;
 
 public final class R {
     public static final class anim {
